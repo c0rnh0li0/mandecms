@@ -6,14 +6,13 @@
                     <div class="card-header">Login</div>
 
                     <div class="card-body">
-                        <form method="POST" @submit.prevent="login">
-                            @csrf
-
+                        <form method="POST" v-on:submit.prevent="login">
                             <div class="form-group row">
                                 <label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
 
                                 <div class="col-md-6">
-                                    <input id="email" type="email" class="form-control" name="email" v-model="user.email" value="" required autofocus>
+                                    <input id="email" type="email" class="form-control" name="email" v-model="fields.email" value="" required autofocus>
+                                    <div v-if="errors && errors.email" class="text-danger">{{ errors.email[0] }}</div>
                                 </div>
                             </div>
 
@@ -21,14 +20,15 @@
                                 <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
 
                                 <div class="col-md-6">
-                                    <input id="password" type="password" class="form-control" v-model="user.password" name="password" required>
+                                    <input id="password" type="password" class="form-control" v-model="fields.password" name="password" required>
+                                    <div v-if="errors && errors.password" class="text-danger">{{ errors.password[0] }}</div>
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <div class="col-md-6 offset-md-4">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="remember" id="remember" v-model="user.remember_me">
+                                        <input class="form-check-input" type="checkbox" name="remember" id="remember" v-model="fields.remember_me">
 
                                         <label class="form-check-label" for="remember">Remember me?</label>
                                     </div>
@@ -59,37 +59,32 @@
         name: "Login",
         data() {
             return {
-                user: {
+                fields: {
                     email: '',
                     password: '',
-                    remember_me: false
-                }
+                    remember_me: false,
+                    '_token': window.Laravel.csrfToken
+                },
+                errors: {}
             }
         },
         methods: {
             login(e) {
-                axios({
-                    method: 'post',
-                    url: '/api/auth/login',
-                    data: this.user,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(function (response) {
-                    if (typeof response.access_token != 'undefined') {
-                        localStorage.setItem('user_data', JSON.stringify(response));
-                        console.log(response.access_token);
+                this.errors = {};
+                let that = this;
 
-                        this.$router.go('/');
+                this.fields._token = window.Laravel.csrfToken;
+
+                this.$auth.login(this.fields).then(function (response) {
+                    console.log('after login', response);
+                    that.$auth.setData(response.data);
+                    that.$router.go({ name: 'Home' });
+
+                }).catch(function (err) {
+                    console.log('after login error', err);
+                    if (err && err.response && err.response.status === 422) {
+                        this.errors = err.response.data.errors || {};
                     }
-                    else {
-                        console.log('error while logging in', response);
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
                 });
             }
         }

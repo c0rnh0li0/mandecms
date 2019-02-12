@@ -20,22 +20,8 @@ export default function (Vue) {
             }
         },
 
-        login({loginData}) {
-            axios({
-                method: 'post',
-                url: this.settings().loginUrl,
-                data: loginData,
-                headers: this.settings().xheaders
-            })
-                .then(function (response) {
-                    this.setData(response);
-                    this.$router.go('/');
-
-                    console.log(response.access_token);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+        login(loginData) {
+            return axios.post(this.settings().loginUrl, loginData);
         },
 
         logout() {
@@ -45,22 +31,13 @@ export default function (Vue) {
                 return;
             }
 
-            axios({
+            return axios({
                 method: 'get',
                 url: this.settings().logoutUrl,
-                headers: {
+                /*headers: {
                     'Authorization': this.createBearer(authData)
-                }
-            })
-                .then(function (response) {
-                    //this.setData(response);
-                    //this.$router.go('/login');
-
-                    console.log(response.access_token);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+                }*/
+            });
         },
 
         signup({signupData}) {
@@ -112,7 +89,7 @@ export default function (Vue) {
                 });
         },
 
-        setData({authData}) {
+        setData(authData) {
             //authData.access_token
             //authData.expires_at
             //authData.token_type
@@ -128,7 +105,7 @@ export default function (Vue) {
             localStorage.removeItem('user_data');
         },
 
-        createBearer({authData}) {
+        createBearer(authData) {
             return authData.token_type + ' ' + authData.access_token;
         },
 
@@ -139,7 +116,7 @@ export default function (Vue) {
             user.created_at = userData.created_at;
         },
 
-        isAuthed() {
+        getToken() {
             var userData = this.getData();
 
             if (!userData) {
@@ -147,7 +124,7 @@ export default function (Vue) {
             }
 
             var token = userData.access_token;
-            var expiration = userData.expires_at;
+            var expiration = new Date(userData.expires_at);
 
             if (!token || !expiration) {
                 return null
@@ -158,7 +135,15 @@ export default function (Vue) {
             } else {
                 return token
             }
-        }
+        },
+
+        isAuthenticated(){
+            if (this.getToken()) {
+                return true
+            } else {
+                return false;
+            }
+        },
     }
 
     Object.defineProperties(Vue.prototype, {

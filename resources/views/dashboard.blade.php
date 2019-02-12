@@ -29,3 +29,16 @@
     <div id="app"></div>
 </body>
 </html>
+
+<?php
+
+      /*
+       Encryption keys generated successfully.
+        Personal access client created successfully.
+        Client ID: 3
+        Client secret: YEonT5GXLrhHUepQPDmoMt0yOm5jZEFmcEcCWSeH
+        Password grant client created successfully.
+        Client ID: 4
+        Client secret: HzZZM0kUwFTOriLGMAxRRpWEhnMCkq8DiW1VQfTj
+*/
+?>

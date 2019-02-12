@@ -16,22 +16,19 @@ Vue.use(VueRouter);
 
 const router = new VueRouter({
     mode: 'history',
-    linkExactActiveClass: 'active',
+    linkActiveClass: 'active',
     routes: [
         {
             path: '/',
             name: 'Home',
-            component: Home,
-            meta: {
-                middleware: middleware_log,
-            },
+            component: Home
         },
         {
             path: '/login',
             name: 'Login',
             component: Login,
             meta: {
-                middleware: middleware_log,
+                forVisitors: true,
             },
         },
         {
@@ -39,7 +36,7 @@ const router = new VueRouter({
             name: 'Auth',
             component: AuthClient,
             meta: {
-                middleware: middleware_log,
+                forAuth: true,
             },
         },
         // users section
@@ -48,7 +45,7 @@ const router = new VueRouter({
             component: UserList,
             name: 'Users',
             meta: {
-                middleware: [middleware_log, middleware_auth],
+                forAuth: true,
             },
         },
         {
@@ -56,7 +53,7 @@ const router = new VueRouter({
             component: UserForm,
             name: 'Add/Edit user',
             meta: {
-                middleware: [middleware_log, middleware_auth],
+                forAuth: true,
             },
         },
         {
@@ -64,49 +61,28 @@ const router = new VueRouter({
             component: UserView,
             name: 'View user',
             meta: {
-                middleware: [middleware_log, middleware_auth],
+                forAuth: true,
             },
         },
     ]
 });
 
-// Creates a `nextMiddleware()` function which not only
-// runs the default `next()` callback but also triggers
-// the subsequent Middleware function.
-function nextFactory(context, middleware, index) {
-    const subsequentMiddleware = middleware[index];
-    // If no subsequent Middleware exists,
-    // the default `next()` callback is returned.
-    if (!subsequentMiddleware) return context.next;
-
-    return (...parameters) => {
-        // Run the default Vue Router `next()` callback first.
-        context.next(...parameters);
-        // Than run the subsequent Middleware with a new
-        // `nextMiddleware()` callback.
-        const nextMiddleware = nextFactory(context, middleware, index + 1);
-        subsequentMiddleware({ ...context, next: nextMiddleware });
-    };
-}
-
 router.beforeEach((to, from, next) => {
-    if (to.meta.middleware) {
-        const middleware = Array.isArray(to.meta.middleware)
-            ? to.meta.middleware
-            : [to.meta.middleware];
-
-        const context = {
-            from,
-            next,
-            router,
-            to,
-        };
-        const nextMiddleware = nextFactory(context, middleware, 1);
-
-        return middleware[0]({ ...context, next: nextMiddleware });
+    if (to.matched.some(record => record.meta.forVisitors)) {
+        /*if (Vue.auth.isAuthenticated()) {
+            next({
+                name: 'Home'
+            })
+        } else*/ next()
     }
-
-    return next();
+    else if (to.matched.some(record => record.meta.forAuth)) {
+        if (!Vue.auth.isAuthenticated()) {
+            next({
+                name: 'Login'
+            })
+        } else next()
+    }
+    else  next()
 });
 
 export default router;

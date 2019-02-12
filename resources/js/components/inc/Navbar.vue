@@ -11,9 +11,6 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <router-link class="nav-link" to="/login" tag="a" active-class="active">Login</router-link>
-                </li>
-                <li class="nav-item">
                     <router-link class="nav-link" to="/users" tag="a" active-class="active">Users</router-link>
                 </li>
                 <li class="nav-item">
@@ -41,7 +38,7 @@
                 </li> -->
             </ul>
 
-            <ul class="navbar-nav ml-auto nav-flex-icons">
+            <ul class="navbar-nav ml-auto nav-flex-icons" v-if="isLoggedIn">
                 <!-- <li class="nav-item">
                     <a class="nav-link" href="/about">About</a>
                 </li> -->
@@ -57,9 +54,15 @@
                         <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg" class="rounded-circle z-depth-0" alt="avatar image">
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-55">
-                        <router-link to="/profile" tag="a" class="navbar-brand" active-class="">Profile</router-link>
-                        <router-link to="/logout" tag="a" class="navbar-brand" active-class="" @click="logout">Logout</router-link>
+                        <router-link to="/profile" tag="a" class="navbar-brand" active-class="active">Profile</router-link>
+                        <router-link to="/tokens" tag="a" class="navbar-brand" active-class="active">Tokens</router-link>
+                        <a class="navbar-brand" active-class="active" href="#" @click="logout">Logout</a>
                     </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto nav-flex-icons" v-else>
+                <li class="nav-item">
+                    <router-link class="nav-link" to="/login" tag="a" active-class="active">Login</router-link>
                 </li>
             </ul>
         </div>
@@ -68,17 +71,31 @@
 </template>
 
 <script>
-    import authService from '../../AuthFunctions';
-
     export default {
+        data() {
+            return {
+                isLoggedIn: false,
+            }
+        },
         mounted() {
-            console.log('navbar mounted');
+            this.isLoggedIn = this.$auth.isAuthenticated();
         },
         methods: {
             logout(e) {
+                let that = this;
                 e.preventDefault();
-                //document.getElementById('logout-form').submit();
-                // make axios logout based with csrf string
+                this.$auth.logout()
+                .then(function (response) {
+
+                    if (response.data.success == true) {
+                        that.isLoggedIn = false;
+                        that.$auth.destroyData();
+                        that.$router.go('/login');
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
             }
         }
     }

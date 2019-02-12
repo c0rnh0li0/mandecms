@@ -16,4 +16,3 @@
 Route::get('/{any}', 'DashboardController@index')->where('any', '.*');
 
 //Route::get('/dashboard', 'DashboardController@index');
-
