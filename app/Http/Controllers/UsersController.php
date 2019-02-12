@@ -17,7 +17,7 @@ class UsersController extends Controller
     public function index()
     {
         $users = User::orderBy('created_at', 'desc')->paginate(10);
-        return view('users.index')->with('users', $users);
+        return UserResource::collection($users);
     }
 
     public function userslist()
@@ -30,7 +30,7 @@ class UsersController extends Controller
         dd(auth('api'));
         $user = User::findOrFail(auth('api')->user()->id);
 
-        return response()->json($user);
+        return new UserResource($user);
     }
 
     /**
