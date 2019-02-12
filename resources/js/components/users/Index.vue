@@ -6,12 +6,11 @@
         <table id="users_table" class="datatable table table-striped table-bordered" cellspacing="0" width="100%">
             <thead>
             <tr>
+                <th>Avatar</th>
                 <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Extn.</th>
-                <th>Start date</th>
-                <th>Salary</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Created on</th>
             </tr>
             </thead>
             <tbody>
@@ -19,11 +18,11 @@
                     <td>{{ user.user_avatar }}</td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.email }}</td>
-                    <td>{{ user.role }}</td>
+                    <td>{{ user.user_role }}</td>
                     <td>{{ user.created_at }}</td>
                 </tr>
             </tbody>
-            <tfoot>
+            <!-- <tfoot>
             <tr>
                 <th>Name</th>
                 <th>Position</th>
@@ -32,7 +31,7 @@
                 <th>Start date</th>
                 <th>Salary</th>
             </tr>
-            </tfoot>
+            </tfoot> -->
         </table>
 
         <!-- <script src="{{ asset('js/mdb/addons/datatables.min.js') }}" defer></script> -->
