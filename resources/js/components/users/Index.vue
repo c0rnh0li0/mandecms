@@ -71,7 +71,7 @@
                 <template slot="items" slot-scope="props">
                     <td class="text-xs-center">
                         <v-avatar size="32px">
-                            <img v-bind:src="props.item.user_avatar" />
+                            <img v-bind:src="'/storage/user_avatars/' + props.item.user_avatar" />
                         </v-avatar>
                     </td>
                     <td class="text-xs-left">{{ props.item.name }}</td>
@@ -249,7 +249,7 @@
 
                 let that = this;
 
-                axios.delete('api/users/delete/' + item.id)
+                axios.delete('/api/users/delete/' + item.id)
                     .then(function (response) {
                         if (response.data.success) {
                             that.getData()
@@ -278,7 +278,7 @@
                 if (this.editedIndex > -1) {
                     this.editedItem.method = 'PUT';
 
-                    axios.put('api/users/update/' + this.editedItem.id,
+                    axios.put('/api/users/update/' + this.editedItem.id,
                         this.editedItem, {
                             headers: {
                                 'Content-Type': 'multipart/form-data'

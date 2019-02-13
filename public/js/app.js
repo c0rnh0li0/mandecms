@@ -3302,7 +3302,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     deleteItem: function deleteItem(item) {
       if (!confirm('Are you sure you want to delete ' + item.name + '?')) return;
       var that = this;
-      axios.delete('api/users/delete/' + item.id).then(function (response) {
+      axios.delete('/api/users/delete/' + item.id).then(function (response) {
         if (response.data.success) {
           that.getData().then(function (response) {
             that.updateData(response.data.data);
@@ -3326,7 +3326,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     save: function save(e) {
       if (this.editedIndex > -1) {
         this.editedItem.method = 'PUT';
-        axios.put('api/users/update/' + this.editedItem.id, this.editedItem, {
+        axios.put('/api/users/update/' + this.editedItem.id, this.editedItem, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -42249,7 +42249,13 @@ var render = function() {
                       { staticClass: "text-xs-center" },
                       [
                         _c("v-avatar", { attrs: { size: "32px" } }, [
-                          _c("img", { attrs: { src: props.item.user_avatar } })
+                          _c("img", {
+                            attrs: {
+                              src:
+                                "/storage/user_avatars/" +
+                                props.item.user_avatar
+                            }
+                          })
                         ])
                       ],
                       1
