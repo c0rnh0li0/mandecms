@@ -40,28 +40,9 @@ export default function (Vue) {
             });
         },
 
-        signup({signupData}) {
-            axios({
-                method: 'post',
-                url: this.settings().signupUrl,
-                data: signupData,
-                headers: this.settings().xheaders
-            })
-                .then(function (response) {
-                    if (response.success == true) {
-                        //this.$router.go('/login');
-                        console.log(response.message);
-                    }
-                    else {
-                        console.log(response.message);
-                    }
-                    //this.setData(response);
-
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+        register(signupData) {
+            console.log('registration data', signupData)
+            return axios.post(this.settings().signupUrl, signupData);
         },
 
         getUser() {

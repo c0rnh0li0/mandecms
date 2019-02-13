@@ -1,10 +1,21 @@
 <template>
-    <div id="app">
+    <v-app>
+        <!-- <v-navigation-drawer app></v-navigation-drawer> -->
+        <navbar></navbar>
+        <v-content>
+            <v-container fluid>
+                <router-view></router-view>
+            </v-container>
+        </v-content>
+        <v-footer app></v-footer>
+    </v-app>
+    <!-- <div id="app">
         <navbar></navbar>
         <main class="container">
+
             <router-view></router-view>
         </main>
-    </div>
+    </div> -->
 </template>
 
 <script>
