@@ -41,6 +41,7 @@ class User extends Authenticatable
 
     protected $attributes = [
         'role_id' => UserRole::DEFAULT_USER_ROLE,
+        'user_avatar' => 'default_avatar.png',
     ];
 
     public function role() {

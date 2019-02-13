@@ -1,16 +1,18 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import middleware_auth from './middleware/middleware_auth';
-import middleware_log from './middleware/middleware_log';
 
 import Home from './components/Home';
 import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
 import AuthClient from './components/Auth/Auth';
 
 // users views
 import UserList from './components/users/Index.vue';
 import UserForm from './components/users/Form.vue';
 import UserView from './components/users/View.vue';
+
+// roles views
+import RoleList from './components/users/roles/Index.vue';
 
 Vue.use(VueRouter);
 
@@ -20,6 +22,11 @@ const router = new VueRouter({
     routes: [
         {
             path: '/',
+            name: '',
+            component: Home
+        },
+        {
+            path: '/home',
             name: 'Home',
             component: Home
         },
@@ -29,6 +36,16 @@ const router = new VueRouter({
             component: Login,
             meta: {
                 forVisitors: true,
+                breadcrumb: 'Login',
+            },
+        },
+        {
+            path: '/register',
+            name: 'Register',
+            component: Register,
+            meta: {
+                forVisitors: true,
+                breadcrumb: 'Create account',
             },
         },
         {
@@ -37,6 +54,7 @@ const router = new VueRouter({
             component: AuthClient,
             meta: {
                 forAuth: true,
+                breadcrumb: 'Auth',
             },
         },
         // users section
@@ -46,6 +64,7 @@ const router = new VueRouter({
             name: 'Users',
             meta: {
                 forAuth: true,
+                breadcrumb: 'Users',
             },
         },
         {
@@ -54,6 +73,7 @@ const router = new VueRouter({
             name: 'Add/Edit user',
             meta: {
                 forAuth: true,
+                breadcrumb: 'Add/Edit user',
             },
         },
         {
@@ -62,6 +82,17 @@ const router = new VueRouter({
             name: 'View user',
             meta: {
                 forAuth: true,
+                breadcrumb: 'User',
+            },
+        },
+        // roles section
+        {
+            path: '/roles',
+            component: RoleList,
+            name: 'Roles',
+            meta: {
+                forAuth: true,
+                breadcrumb: 'Roles',
             },
         },
     ]
