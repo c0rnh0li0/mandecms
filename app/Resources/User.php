@@ -20,7 +20,7 @@ class User extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'user_role' => $this->role->name,
-            'user_avatar' => $this->user_avatar,
+            'user_avatar' => '/storage/user_avatars/' . $this->user_avatar,
             'created_at' => $this->created_at->format('d.m.Y'),
         ];
     }

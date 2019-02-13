@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Request;
 use App\Http\Resources\User as UserResource;
 use App\User;
 
@@ -15,7 +15,23 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = User::orderBy('created_at', 'desc')->paginate(10);
+        $sort = Request::get('sort');
+        $dir = Request::get('direction');
+
+        if ($sort == '')
+            $sort = 'created_at';
+
+        $search = Request::get('q');
+        if ($search != '') {
+            $users = User::where('name', 'LIKE', '%' . $search . '%')
+                         ->orWhere('email', 'LIKE', '%' . $search . '%')
+                         ->orderBy($sort, $dir)->paginate(10);
+        }
+        else {
+            $users = User::orderBy($sort, $dir)->paginate(10);
+        }
+
+
         return UserResource::collection($users);
     }
 
@@ -44,7 +60,29 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /*$request->validate([
+            'name' => 'required|string',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|string|confirmed'
+        ]);
+        $user = new User([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password)
+        ]);
+
+        if ($user->save()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Successfully created user!'
+            ], 201);
+        }
+        else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating user!'
+            ], 201);
+        }*/
     }
 
     /**
@@ -78,7 +116,40 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required',
+            'user_role' => 'required',
+            'user_avatar' => 'image|nullable|max:1999'
+        ]);
+
+        $user = User::findOrFail($id);
+
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->user_role = $request->input('user_role');
+
+        // handle file upload
+        if ($request->hasFile('user_avatar')) {
+            // get just filename
+            $filename = pathinfo($request->file('user_avatar')->getClientOriginalName(), PATHINFO_FILENAME);
+            // get just extension
+            $extension = $request->file('user_avatar')->getClientOriginalExtension();
+            // filename to store
+            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+            // upload
+            $path = $request->file('user_avatar')->storeAs('public/user_avatars', $fileNameToStore);
+        }
+        else {
+            $fileNameToStore = 'default_avatar.png';
+        }
+
+        $user->user_avatar = $fileNameToStore;
+
+        if ($user->save())
+        {
+            return new UserResource($user);
+        }
     }
 
     /**
@@ -89,6 +160,19 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        if ($user->delete()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Successfully deleted user!'
+            ], 201);
+        }
+        else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting user!'
+            ], 201);
+        }
     }
 }

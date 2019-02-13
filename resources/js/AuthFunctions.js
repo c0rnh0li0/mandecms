@@ -55,15 +55,10 @@ export default function (Vue) {
 
             axios({
                 method: 'get',
-                url: this.settings().userUrl,
-                headers: {
-                    'Authorization': this.createBearer(authData)
-                }
+                url: this.settings().userUrl
             })
                 .then(function (response) {
                     this.setUserData(response);
-
-                    console.log(response.access_token);
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -114,6 +109,7 @@ export default function (Vue) {
                 this.destroyData();
                 return null;
             } else {
+                this.getUser();
                 return token
             }
         },
@@ -131,6 +127,11 @@ export default function (Vue) {
         $auth: {
             get(){
                 return Vue.auth
+            }
+        },
+        $user: {
+            get(){
+                return Vue.user
             }
         }
     })

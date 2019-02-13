@@ -7,15 +7,12 @@
                 <router-view></router-view>
             </v-container>
         </v-content>
-        <v-footer app></v-footer>
+        <v-footer color="red darken-4" app>
+            <v-spacer></v-spacer>
+            <span class="caption white--text"><strong>Cornholio</strong> &copy; {{ new Date().getFullYear() }}</span>
+            <v-spacer></v-spacer>
+        </v-footer>
     </v-app>
-    <!-- <div id="app">
-        <navbar></navbar>
-        <main class="container">
-
-            <router-view></router-view>
-        </main>
-    </div> -->
 </template>
 
 <script>
@@ -26,9 +23,6 @@
         components: {
             Navbar,
         },
-        mounted() {
-            console.log("main page app mounted");
-        }
     }
 </script>
 

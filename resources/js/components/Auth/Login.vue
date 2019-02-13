@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" width="500" color="red darken-4">
+    <v-dialog width="500" color="red darken-4">
         <span slot="activator">
             Login
         </span>
@@ -27,7 +27,7 @@
                     <v-btn block outline color="red darken-4" @click="forgotpassword">
                         Forgot password?
                     </v-btn>
-                    <v-btn block color="red darken-4" @click="register">
+                    <v-btn block color="red darken-4" @click="login">
                         Sign in
                     </v-btn>
                 </v-card-actions>
@@ -41,6 +41,7 @@
         name: "Login",
         data() {
             return {
+                drawer: false,
                 fields: {
                     email: '',
                     password: '',

@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" width="500" color="red darken-4">
+    <v-dialog width="500" color="red darken-4">
         <span slot="activator">
             Register
         </span>
@@ -47,6 +47,7 @@
         name: "Register",
         data() {
             return {
+                drawer: false,
                 fields: {
                     name: '',
                     email: '',

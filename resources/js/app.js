@@ -28,7 +28,7 @@ const app = new Vue({
     router: Routes,
     render: h => h(App),
     mounted() {
-        console.log('should check session here');
+
     }
 });
 
