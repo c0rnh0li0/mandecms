@@ -1798,6 +1798,27 @@ __webpack_require__.r(__webpack_exports__);
   name: "App",
   components: {
     Navbar: _inc_Navbar__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  data: function data() {
+    return {};
+  },
+  mounted: function mounted() {
+    this.getUser();
+  },
+  methods: {
+    getUser: function getUser() {
+      var that = this;
+      this.$auth.getUser().then(function (response) {
+        if (response.data.message && response.data.message == 'Unauthenticated.') {
+          console.log(response.data.message);
+        } else {
+          that.$auth.setUserData(response);
+          console.log('app.vue ', that.$auth.user);
+        }
+      }).catch(function (error) {
+        console.log(error.message);
+      });
+    }
   }
 });
 
@@ -3123,6 +3144,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -3170,12 +3195,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       role_select: '',
       user_roles: [],
       roles_model: [],
+      edited_role: {},
       // add/edit section
       editedIndex: -1,
       editedItem: {
         id: '',
         name: '',
         user_role: '',
+        role_id: '',
         user_avatar: '',
         created_at: ''
       },
@@ -3183,11 +3210,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         id: '',
         name: '',
         user_role: '',
+        role_id: '',
         user_avatar: '',
         created_at: ''
       },
+      errors: [],
       // avatar section
-      imageName: '',
       imageUrl: '',
       imageFile: '',
       // search section
@@ -3295,8 +3323,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return getData;
     }(),
     editItem: function editItem(item) {
+      var _this2 = this;
+
       this.editedIndex = this.records.indexOf(item);
       this.editedItem = Object.assign({}, item);
+      this.edited_role = this.user_roles[this.user_roles.findIndex(function (f) {
+        return f.id === _this2.editedItem.role_id;
+      })];
+      this.errors = [];
       this.dialog = true;
     },
     deleteItem: function deleteItem(item) {
@@ -3315,31 +3349,53 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     close: function close() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.dialog = false;
       setTimeout(function () {
-        _this2.editedItem = Object.assign({}, _this2.defaultItem);
-        _this2.editedIndex = -1;
+        _this3.editedItem = Object.assign({}, _this3.defaultItem);
+        _this3.editedIndex = -1;
       }, 300);
     },
     save: function save(e) {
       if (this.editedIndex > -1) {
         this.editedItem.method = 'PUT';
-        axios.put('/api/users/update/' + this.editedItem.id, this.editedItem, {
+        this.editedItem.role_id = this.edited_role.id;
+        this.editedItem.user_role = this.edited_role.text;
+        if (typeof this.imageFile == 'Object') this.editedItem.user_avatar = this.imageFile;else this.editedItem.user_avatar = null;
+        var formData = this.buildFormData(this.editedItem);
+        var that = this;
+        var requestOptions = {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': "multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2)
           }
-        }).then(function (response) {
+        };
+        axios.put('api/users/update/' + this.editedItem.id, formData
+        /*, */
+        ).then(function (response) {
           console.log(response);
+          Object.assign(this.records[this.editedIndex], this.editedItem);
+        }).catch(function (err) {
+          if (err && err.response && err.response.status === 422) {
+            that.errors = err.response.data.errors || {};
+          }
         });
-        Object.assign(this.records[this.editedIndex], this.editedItem);
       } else {
         //axios.post
         this.records.push(this.editedItem);
+      } //this.close();
+
+    },
+    buildFormData: function buildFormData(data) {
+      var formData = new FormData();
+
+      for (var property in data) {
+        if (data.hasOwnProperty(property)) {
+          formData.append(property, data[[property]]);
+        }
       }
 
-      this.close();
+      return formData;
     },
     getRoles: function getRoles() {
       var that = this;
@@ -3358,25 +3414,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.$refs.image.click();
     },
     onFilePicked: function onFilePicked(e) {
-      var _this3 = this;
+      var _this4 = this;
 
       var files = e.target.files;
 
       if (files[0] !== undefined) {
-        this.imageName = files[0].name;
+        this.editedItem.user_avatar = files[0].name;
 
-        if (this.imageName.lastIndexOf('.') <= 0) {
+        if (this.editedItem.user_avatar.lastIndexOf('.') <= 0) {
           return;
         }
 
         var fr = new FileReader();
         fr.readAsDataURL(files[0]);
         fr.addEventListener('load', function () {
-          _this3.imageUrl = fr.result;
-          _this3.imageFile = files[0]; // this is an image file that can be sent to server...
+          _this4.imageUrl = fr.result;
+          _this4.editedItem.user_avatar = _this4.imageFile = files[0]; // this is an image file that can be sent to server...
         });
       } else {
-        this.imageName = '';
+        this.editedItem.user_avatar = '';
         this.imageFile = '';
         this.imageUrl = '';
       }
@@ -40487,7 +40543,7 @@ var render = function() {
                         {
                           on: {
                             click: function($event) {
-                              return _vm.navigate("/users")
+                              return _vm.navigate("/people")
                             }
                           }
                         },
@@ -40602,12 +40658,16 @@ var render = function() {
                           _c("img", {
                             attrs: {
                               src:
-                                "https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg",
-                              alt: "avatar"
+                                "/storage/user_avatars/" +
+                                _vm.$auth.user.user_avatar
                             }
                           })
                         ]
-                      )
+                      ),
+                      _vm._v(" "),
+                      _c("v-label", { staticClass: "white--text" }, [
+                        _vm._v(_vm._s(_vm.$auth.user.name))
+                      ])
                     ],
                     1
                   ),
@@ -42066,7 +42126,8 @@ var render = function() {
                                           _c("v-text-field", {
                                             attrs: {
                                               label: "Name",
-                                              color: "red darken-4"
+                                              color: "red darken-4",
+                                              messages: _vm.errors.name
                                             },
                                             model: {
                                               value: _vm.editedItem.name,
@@ -42091,7 +42152,8 @@ var render = function() {
                                           _c("v-text-field", {
                                             attrs: {
                                               label: "Email",
-                                              color: "red darken-4"
+                                              color: "red darken-4",
+                                              messages: _vm.errors.email
                                             },
                                             model: {
                                               value: _vm.editedItem.email,
@@ -42116,15 +42178,18 @@ var render = function() {
                                           _c("v-combobox", {
                                             attrs: {
                                               items: _vm.user_roles,
+                                              messages: _vm.errors.user_role,
+                                              "item-text": "text",
+                                              "item-value": "id",
                                               label: "Role",
                                               color: "red darken-4"
                                             },
                                             model: {
-                                              value: _vm.roles_model,
+                                              value: _vm.edited_role,
                                               callback: function($$v) {
-                                                _vm.roles_model = $$v
+                                                _vm.edited_role = $$v
                                               },
-                                              expression: "roles_model"
+                                              expression: "edited_role"
                                             }
                                           })
                                         ],
@@ -42148,11 +42213,16 @@ var render = function() {
                                               }
                                             },
                                             model: {
-                                              value: _vm.imageName,
+                                              value: _vm.editedItem.user_avatar,
                                               callback: function($$v) {
-                                                _vm.imageName = $$v
+                                                _vm.$set(
+                                                  _vm.editedItem,
+                                                  "user_avatar",
+                                                  $$v
+                                                )
                                               },
-                                              expression: "imageName"
+                                              expression:
+                                                "editedItem.user_avatar"
                                             }
                                           }),
                                           _vm._v(" "),
@@ -42161,6 +42231,7 @@ var render = function() {
                                             staticStyle: { display: "none" },
                                             attrs: {
                                               type: "file",
+                                              name: "user_avatar",
                                               accept: "image/*"
                                             },
                                             on: { change: _vm.onFilePicked }
@@ -82929,8 +83000,15 @@ module.exports = function(module) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 /* harmony default export */ __webpack_exports__["default"] = (function (Vue) {
-  var user = {};
   Vue.auth = {
     settings: function settings() {
       return {
@@ -82941,15 +83019,10 @@ __webpack_require__.r(__webpack_exports__);
         loginUrl: '/api/auth/login',
         signupUrl: '/api/auth/signup',
         logoutUrl: '/api/auth/logout',
-        userUrl: '/api/auth/user',
-        user: {
-          id: '',
-          name: '',
-          email: '',
-          created_at: ''
-        }
+        userUrl: '/api/auth/user'
       };
     },
+    user: {},
     login: function login(loginData) {
       return axios.post(this.settings().loginUrl, loginData);
     },
@@ -82974,24 +83047,51 @@ __webpack_require__.r(__webpack_exports__);
       console.log('registration data', signupData);
       return axios.post(this.settings().signupUrl, signupData);
     },
-    getUser: function getUser() {
-      var authData = this.getData();
+    getUser: function () {
+      var _getUser = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var authData, that;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                authData = this.getData();
 
-      if (!authData) {
-        console.log('no auth data preserved');
-        this.isAuthed = false;
-        return;
+                if (authData) {
+                  _context.next = 5;
+                  break;
+                }
+
+                console.log('no auth data preserved');
+                this.isAuthed = false;
+                return _context.abrupt("return");
+
+              case 5:
+                that = this;
+                _context.next = 8;
+                return axios({
+                  method: 'get',
+                  url: this.settings().userUrl
+                });
+
+              case 8:
+                return _context.abrupt("return", _context.sent);
+
+              case 9:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function getUser() {
+        return _getUser.apply(this, arguments);
       }
 
-      axios({
-        method: 'get',
-        url: this.settings().userUrl
-      }).then(function (response) {
-        this.setUserData(response);
-      }).catch(function (error) {
-        console.log(error);
-      });
-    },
+      return getUser;
+    }(),
     setData: function setData(authData) {
       //authData.access_token
       //authData.expires_at
@@ -83003,16 +83103,18 @@ __webpack_require__.r(__webpack_exports__);
     },
     destroyData: function destroyData() {
       localStorage.removeItem('user_data');
+      this.user = [];
     },
     createBearer: function createBearer(authData) {
       return authData.token_type + ' ' + authData.access_token;
     },
-    setUserData: function setUserData(_ref) {
-      var userData = _ref.userData;
-      user.id = userData.id;
-      user.name = userData.name;
-      user.email = userData.email;
-      user.created_at = userData.created_at;
+    setUserData: function setUserData(userData) {
+      this.user.id = userData.data.id;
+      this.user.name = userData.data.name;
+      this.user.email = userData.data.email;
+      this.user.created_at = userData.data.created_at;
+      this.user.user_avatar = userData.data.user_avatar;
+      this.user.role = userData.data.role;
     },
     getToken: function getToken() {
       var userData = this.getData();
@@ -83032,7 +83134,17 @@ __webpack_require__.r(__webpack_exports__);
         this.destroyData();
         return null;
       } else {
-        this.getUser();
+        var that = this;
+        this.getUser().then(function (response) {
+          if (response.data.message && response.data.message == 'Unauthenticated.') {
+            console.log(response.data.message);
+          } else {
+            that.setUserData(response);
+          }
+        }).catch(function (error) {
+          console.log(error.message);
+        });
+        ;
         return token;
       }
     },
@@ -83048,11 +83160,6 @@ __webpack_require__.r(__webpack_exports__);
     $auth: {
       get: function get() {
         return Vue.auth;
-      }
-    },
-    $user: {
-      get: function get() {
-        return Vue.user;
       }
     }
   });
@@ -84192,7 +84299,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
     }
   }, // users section
   {
-    path: '/users',
+    path: '/people',
     component: _components_users_Index_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
     name: 'Users',
     meta: {

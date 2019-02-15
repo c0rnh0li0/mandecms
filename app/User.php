@@ -12,6 +12,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
+    protected $with = [
+        'role',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *

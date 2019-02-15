@@ -24,24 +24,28 @@
                                     <v-layout wrap>
                                         <v-input type="hidden" name="id" v-model="editedItem.id"></v-input>
                                         <v-container grid-list-md>
-                                            <v-text-field v-model="editedItem.name" label="Name" color="red darken-4"></v-text-field>
+                                            <v-text-field v-model="editedItem.name" label="Name" color="red darken-4" :messages="errors.name"></v-text-field>
                                         </v-container>
                                         <v-container grid-list-md>
-                                            <v-text-field v-model="editedItem.email" label="Email" color="red darken-4"></v-text-field>
+                                            <v-text-field v-model="editedItem.email" label="Email" color="red darken-4" :messages="errors.email"></v-text-field>
                                         </v-container>
                                         <v-container grid-list-md>
                                             <v-combobox
-                                                    v-model="roles_model"
+                                                    v-model="edited_role"
                                                     :items="user_roles"
+                                                    :messages="errors.user_role"
+                                                    item-text="text"
+                                                    item-value="id"
                                                     label="Role"
-                                                    color="red darken-4"
-                                            ></v-combobox>
+                                                    color="red darken-4">
+                                            </v-combobox>
                                         </v-container>
                                         <v-container grid-list-md>
-                                            <v-text-field label="Select Avatar" @click.stop="pickFile" v-model='imageName' prepend-icon='attach_file' color="red darken-4"></v-text-field>
+                                            <v-text-field label="Select Avatar" @click.stop="pickFile" v-model='editedItem.user_avatar' prepend-icon='attach_file' color="red darken-4"></v-text-field>
                                             <input
                                                     type="file"
                                                     style="display: none"
+                                                    name="user_avatar"
                                                     ref="image"
                                                     accept="image/*"
                                                     @change="onFilePicked">
@@ -113,6 +117,7 @@
                 role_select: '',
                 user_roles: [],
                 roles_model: [],
+                edited_role: {},
 
                 // add/edit section
                 editedIndex: -1,
@@ -120,6 +125,7 @@
                     id: '',
                     name: '',
                     user_role: '',
+                    role_id: '',
                     user_avatar: '',
                     created_at: ''
                 },
@@ -127,12 +133,13 @@
                     id: '',
                     name: '',
                     user_role: '',
+                    role_id: '',
                     user_avatar: '',
                     created_at: ''
                 },
+                errors: [],
 
                 // avatar section
-                imageName: '',
                 imageUrl: '',
                 imageFile: '',
 
@@ -240,6 +247,9 @@
             editItem (item) {
                 this.editedIndex = this.records.indexOf(item);
                 this.editedItem = Object.assign({}, item);
+                this.edited_role = this.user_roles[this.user_roles.findIndex(f => f.id === this.editedItem.role_id)];
+                this.errors = [];
+
                 this.dialog = true;
             },
 
@@ -277,21 +287,47 @@
             save (e) {
                 if (this.editedIndex > -1) {
                     this.editedItem.method = 'PUT';
+                    this.editedItem.role_id = this.edited_role.id;
+                    this.editedItem.user_role = this.edited_role.text;
 
-                    axios.put('/api/users/update/' + this.editedItem.id,
-                        this.editedItem, {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
-                            }
-                        }).then(function (response) {
+                    if (typeof this.imageFile == 'Object')
+                        this.editedItem.user_avatar = this.imageFile;
+                    else
+                        this.editedItem.user_avatar = null;
+
+                    let formData = this.buildFormData(this.editedItem);
+                    let that = this;
+                    let requestOptions = {
+                        headers: {
+                            'Content-Type': "multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2)
+                        }
+                    };
+
+                    axios.put('api/users/update/' + this.editedItem.id, formData/*, */).then(function (response) {
                             console.log(response);
+                            Object.assign(this.records[this.editedIndex], this.editedItem);
+                        }).catch(function(err) {
+                            if (err && err.response && err.response.status === 422) {
+                                that.errors = err.response.data.errors || {};
+                            }
                         });
-                    Object.assign(this.records[this.editedIndex], this.editedItem);
                 } else {
                     //axios.post
                     this.records.push(this.editedItem);
                 }
-                this.close();
+                //this.close();
+            },
+
+            buildFormData(data) {
+                let formData = new FormData();
+
+                for (var property in data) {
+                    if (data.hasOwnProperty(property)) {
+                        formData.append(property, data[[property]]);
+                    }
+                }
+
+                return formData;
             },
 
             getRoles() {
@@ -317,18 +353,18 @@
             onFilePicked (e) {
                 const files = e.target.files;
                 if(files[0] !== undefined) {
-                    this.imageName = files[0].name;
-                    if(this.imageName.lastIndexOf('.') <= 0) {
+                    this.editedItem.user_avatar = files[0].name;
+                    if(this.editedItem.user_avatar.lastIndexOf('.') <= 0) {
                         return;
                     }
                     const fr = new FileReader ();
                     fr.readAsDataURL(files[0]);
                     fr.addEventListener('load', () => {
                         this.imageUrl = fr.result;
-                        this.imageFile = files[0]; // this is an image file that can be sent to server...
+                        this.editedItem.user_avatar = this.imageFile = files[0]; // this is an image file that can be sent to server...
                     });
                 } else {
-                    this.imageName = '';
+                    this.editedItem.user_avatar = '';
                     this.imageFile = '';
                     this.imageUrl = '';
                 }

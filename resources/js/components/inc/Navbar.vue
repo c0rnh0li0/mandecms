@@ -6,14 +6,13 @@
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items v-if="isLoggedIn">
-
             <v-menu>
                 <v-btn flat slot="activator">
                     <span>People</span>
                     <v-icon dark>arrow_drop_down</v-icon>
                 </v-btn>
                 <v-list>
-                    <v-list-tile @click="navigate('/users')">
+                    <v-list-tile @click="navigate('/people')">
                         <v-list-tile-title>Users</v-list-tile-title>
                     </v-list-tile>
                     <v-list-tile @click="navigate('/roles')">
@@ -33,8 +32,9 @@
             <v-menu>
                 <v-btn flat small slot="activator">
                     <v-avatar :tile="false" color="grey lighten-4" :size="36">
-                        <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg" alt="avatar">
+                        <img v-bind:src="'/storage/user_avatars/' + $auth.user.user_avatar" />
                     </v-avatar>
+                    <v-label class="white--text">{{ $auth.user.name }}</v-label>
                 </v-btn>
                 <v-list>
                     <v-list-tile @click="navigate('/profile')">
@@ -62,7 +62,6 @@
 
     export default {
         data() {
-
             return {
                 isLoggedIn: false,
             }
@@ -79,7 +78,7 @@
                 let that = this;
                 e.preventDefault();
                 this.$auth.logout()
-                .then(function (response) {
+                    .then(function (response) {
 
                     if (response.data.success == true) {
                         that.isLoggedIn = false;
@@ -87,9 +86,9 @@
                         that.$router.go('/login');
                     }
                 })
-                .catch(function (error) {
-                    console.log(error);
-                });
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             },
             navigate(path) {
                 this.$router.push(path);

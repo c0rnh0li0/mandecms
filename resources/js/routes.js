@@ -59,7 +59,7 @@ const router = new VueRouter({
         },
         // users section
         {
-            path: '/users',
+            path: '/people',
             component: UserList,
             name: 'Users',
             meta: {

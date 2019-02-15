@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Request;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 use App\Http\Resources\User as UserResource;
 use App\User;
 
@@ -15,13 +16,13 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $sort = Request::get('sort');
-        $dir = Request::get('direction');
+        $sort = FacadesRequest::get('sort');
+        $dir = FacadesRequest::get('direction');
 
         if ($sort == '')
             $sort = 'created_at';
 
-        $search = Request::get('q');
+        $search = FacadesRequest::get('q');
         if ($search != '') {
             $users = User::where('name', 'LIKE', '%' . $search . '%')
                          ->orWhere('email', 'LIKE', '%' . $search . '%')
@@ -116,18 +117,22 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
+        $rules = [
             'name' => 'required',
             'email' => 'required',
-            'user_role' => 'required',
+            'role_id' => 'required|integer',
             'user_avatar' => 'image|nullable|max:1999'
-        ]);
+        ];
+
+        print_r($request->all());
+
+        $this->validate($request, $rules);
 
         $user = User::findOrFail($id);
 
         $user->name = $request->input('name');
         $user->email = $request->input('email');
-        $user->user_role = $request->input('user_role');
+        $user->role_id = $request->input('role_id');
 
         // handle file upload
         if ($request->hasFile('user_avatar')) {

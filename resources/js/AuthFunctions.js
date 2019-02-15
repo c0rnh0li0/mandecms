@@ -1,5 +1,4 @@
 export default function (Vue) {
-    let user = {};
     Vue.auth = {
         settings() {
             return {
@@ -11,15 +10,9 @@ export default function (Vue) {
                 signupUrl: '/api/auth/signup',
                 logoutUrl: '/api/auth/logout',
                 userUrl: '/api/auth/user',
-                user: {
-                    id: '',
-                    name: '',
-                    email: '',
-                    created_at: ''
-                }
             }
         },
-
+        user: {},
         login(loginData) {
             return axios.post(this.settings().loginUrl, loginData);
         },
@@ -45,7 +38,7 @@ export default function (Vue) {
             return axios.post(this.settings().signupUrl, signupData);
         },
 
-        getUser() {
+        async getUser() {
             let authData = this.getData();
             if (!authData) {
                 console.log('no auth data preserved');
@@ -53,16 +46,12 @@ export default function (Vue) {
                 return;
             }
 
-            axios({
+            let that = this;
+
+            return await axios({
                 method: 'get',
                 url: this.settings().userUrl
-            })
-                .then(function (response) {
-                    this.setUserData(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            });
         },
 
         setData(authData) {
@@ -79,17 +68,20 @@ export default function (Vue) {
 
         destroyData() {
             localStorage.removeItem('user_data');
+            this.user = [];
         },
 
         createBearer(authData) {
             return authData.token_type + ' ' + authData.access_token;
         },
 
-        setUserData({userData}) {
-            user.id = userData.id;
-            user.name = userData.name;
-            user.email = userData.email;
-            user.created_at = userData.created_at;
+        setUserData(userData) {
+            this.user.id = userData.data.id;
+            this.user.name = userData.data.name;
+            this.user.email = userData.data.email;
+            this.user.created_at = userData.data.created_at;
+            this.user.user_avatar = userData.data.user_avatar;
+            this.user.role = userData.data.role;
         },
 
         getToken() {
@@ -109,8 +101,21 @@ export default function (Vue) {
                 this.destroyData();
                 return null;
             } else {
-                this.getUser();
-                return token
+                let that = this;
+                this.getUser()
+                    .then(function (response) {
+                        if (response.data.message && response.data.message == 'Unauthenticated.') {
+                            console.log(response.data.message);
+                        }
+                        else {
+                            that.setUserData(response);
+                        }
+
+                    })
+                    .catch(function (error) {
+                        console.log(error.message);
+                    });;
+                return token;
             }
         },
 
@@ -129,10 +134,5 @@ export default function (Vue) {
                 return Vue.auth
             }
         },
-        $user: {
-            get(){
-                return Vue.user
-            }
-        }
     })
 }

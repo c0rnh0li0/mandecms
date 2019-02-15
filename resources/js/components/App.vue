@@ -23,6 +23,30 @@
         components: {
             Navbar,
         },
+        data() {
+            return {}
+        },
+        mounted() {
+            this.getUser();
+        },
+        methods: {
+            getUser() {
+                let that = this;
+                this.$auth.getUser()
+                    .then(function (response) {
+                        if (response.data.message && response.data.message == 'Unauthenticated.') {
+                            console.log(response.data.message);
+                        }
+                        else {
+                            that.$auth.setUserData(response);
+                            console.log('app.vue ', that.$auth.user);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error.message);
+                    });
+            }
+        }
     }
 </script>
 
