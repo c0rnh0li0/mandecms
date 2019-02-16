@@ -101,20 +101,6 @@ export default function (Vue) {
                 this.destroyData();
                 return null;
             } else {
-                let that = this;
-                this.getUser()
-                    .then(function (response) {
-                        if (response.data.message && response.data.message == 'Unauthenticated.') {
-                            console.log(response.data.message);
-                        }
-                        else {
-                            that.setUserData(response);
-                        }
-
-                    })
-                    .catch(function (error) {
-                        console.log(error.message);
-                    });;
                 return token;
             }
         },

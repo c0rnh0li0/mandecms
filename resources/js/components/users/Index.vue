@@ -1,6 +1,23 @@
 <template>
     <div>
         <v-card>
+            <v-snackbar
+                    v-model="snackbar"
+                    :bottom="false"
+                    :left="false"
+                    :multi-line="false"
+                    :right="false"
+                    :timeout="3000"
+                    :top="true"
+                    :vertical="false">
+                {{ notification }}
+                <v-btn color="pink"
+                       flat
+                       @click="snackbar = false">
+                    <v-icon small class="mr-2">close</v-icon>
+                </v-btn>
+            </v-snackbar>
+
             <v-toolbar flat color="white">
                 <v-toolbar-title>Users</v-toolbar-title>
                 <v-spacer></v-spacer>
@@ -8,32 +25,46 @@
                               prepend-inner-icon="search"
                               label="Search"
                               v-model="search"
+                              clearable
                               single-line
                               hide-details></v-text-field>
                 <v-spacer></v-spacer>
                 <v-dialog v-model="dialog" max-width="500px">
-                    <v-btn slot="activator" flat color="red darken-4">New user</v-btn>
+                    <v-btn slot="activator" flat color="red darken-4" @click="setDefaultUserData">New user</v-btn>
                     <v-card>
                         <v-card-title>
                             <span class="headline">{{ formTitle }}</span>
+                            <v-label v-bind:text="errors.msg"></v-label>
                         </v-card-title>
 
                         <v-card-text>
                             <v-form method="POST" v-on:submit.prevent="save">
-                                <v-container grid-list-md>
                                     <v-layout wrap>
                                         <v-input type="hidden" name="id" v-model="editedItem.id"></v-input>
                                         <v-container grid-list-md>
-                                            <v-text-field v-model="editedItem.name" label="Name" color="red darken-4" :messages="errors.name"></v-text-field>
+                                            <v-text-field
+                                                    v-model="editedItem.name"
+                                                    label="Name"
+                                                    color="red darken-4"
+                                                    :messages="errors.name"
+                                                    :error="typeof errors.name != 'undefined'">
+                                            </v-text-field>
                                         </v-container>
                                         <v-container grid-list-md>
-                                            <v-text-field v-model="editedItem.email" label="Email" color="red darken-4" :messages="errors.email"></v-text-field>
+                                            <v-text-field
+                                                    v-model="editedItem.email"
+                                                    label="Email"
+                                                    color="red darken-4"
+                                                    :messages="errors.email"
+                                                    :error="typeof errors.email != 'undefined'">
+                                            </v-text-field>
                                         </v-container>
                                         <v-container grid-list-md>
                                             <v-combobox
                                                     v-model="edited_role"
                                                     :items="user_roles"
                                                     :messages="errors.user_role"
+                                                    :error="typeof errors.user_role != 'undefined'"
                                                     item-text="text"
                                                     item-value="id"
                                                     label="Role"
@@ -41,7 +72,13 @@
                                             </v-combobox>
                                         </v-container>
                                         <v-container grid-list-md>
-                                            <v-text-field label="Select Avatar" @click.stop="pickFile" v-model='editedItem.user_avatar' prepend-icon='attach_file' color="red darken-4"></v-text-field>
+                                            <v-text-field label="Select Avatar"
+                                                          @click.stop="pickFile"
+                                                          v-model='editedItem.user_avatar'
+                                                          prepend-icon='attach_file'
+                                                          color="red darken-4"
+                                                          :messages="errors.user_avatar"
+                                                          :error="typeof errors.user_avatar != 'undefined'"></v-text-field>
                                             <input
                                                     type="file"
                                                     style="display: none"
@@ -49,16 +86,16 @@
                                                     ref="image"
                                                     accept="image/*"
                                                     @change="onFilePicked">
+                                            <v-spacer></v-spacer>
                                             <img :src="imageUrl" height="150" v-if="imageUrl"/>
+                                            <v-spacer></v-spacer>
                                         </v-container>
                                     </v-layout>
-                                </v-container>
                             </v-form>
                         </v-card-text>
-
                         <v-card-actions>
-                            <v-spacer></v-spacer>
                             <v-btn color="red darken-4" flat @click="close">Cancel</v-btn>
+                            <v-spacer></v-spacer>
                             <v-btn color="red darken-4" flat @click="save">Save</v-btn>
                         </v-card-actions>
                     </v-card>
@@ -68,6 +105,7 @@
             <v-data-table
                     :headers="headers"
                     :items="records"
+                    :rows-per-page-items="[]"
                     :pagination.sync="pagination"
                     :total-items="totalRecords"
                     :loading="loading"
@@ -84,7 +122,19 @@
                     <td class="text-xs-right">{{ props.item.created_at }}</td>
                     <td class="justify-center layout px-0">
                         <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-                        <v-icon small @click="deleteItem(props.item)">delete</v-icon>
+                        <v-icon small class="mr-2" @click="deleteItemDialog()">delete</v-icon>
+
+                        <v-dialog v-model="delete_dialog" persistent max-width="290">
+                            <v-card>
+                                <v-card-title class="headline">Delete user?</v-card-title>
+                                <v-card-text>Are you sure you want to delete {{ props.item.name }}?</v-card-text>
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="green darken-1" flat @click="delete_dialog = false">No</v-btn>
+                                    <v-btn color="green darken-1" flat @click="deleteItem(props.item);">Yes</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
                     </td>
                 </template>
             </v-data-table>
@@ -97,13 +147,17 @@
         data() {
             return {
                 dialog: false,
+                delete_dialog: false,
+                snackbar: false,
+                notification: '',
                 records: [],
                 metapaging: {},
                 metalinks: {},
                 totalRecords: 0,
                 loading: true,
                 pagination: {
-                    sortBy: 'created_at'
+                    sortBy: 'created_at',
+                    value: 0
                 },
                 headers: [
                     { text: '', align: 'center', value: 'user_avatar', sortable: false },
@@ -117,7 +171,10 @@
                 role_select: '',
                 user_roles: [],
                 roles_model: [],
-                edited_role: {},
+                edited_role: {
+                    id: 2,
+                    text: 'Contributor'
+                },
 
                 // add/edit section
                 editedIndex: -1,
@@ -126,7 +183,7 @@
                     name: '',
                     user_role: '',
                     role_id: '',
-                    user_avatar: '',
+                    user_avatar: 'default_avatar.png',
                     created_at: ''
                 },
                 defaultItem: {
@@ -134,13 +191,13 @@
                     name: '',
                     user_role: '',
                     role_id: '',
-                    user_avatar: '',
+                    user_avatar: 'default_avatar.png',
                     created_at: ''
                 },
                 errors: [],
 
                 // avatar section
-                imageUrl: '',
+                imageUrl: '/storage/user_avatars/default_avatar.png',
                 imageFile: '',
 
                 // search section
@@ -178,13 +235,15 @@
                     dataUrl += '?a=b';
 
                 let that = this;
-                this.searchTerm = val;
-                this.getData(dataUrl + '&q=' + val)
+                this.searchTerm = val != null ? val : '';
+                let searchQ = val != null ? '&q=' + val : '';
+
+                this.getData(dataUrl + searchQ)
                     .then(function (data) {
                         that.updateData(data.data);
                     })
                     .catch(function (error) {
-                        console.log(error);
+                        that.notify(error);
                     });
             },
         },
@@ -244,36 +303,52 @@
                 return await axios.get(page_url);
             },
 
+            setDefaultUserData() {
+                this.editedItem = this.defaultItem;
+                this.imageUrl = '/storage/user_avatars/default_avatar.png';
+                this.imageFile = null;
+                this.edited_role = {
+                    id: 2,
+                    text: 'Contributor'
+                };
+            },
+
             editItem (item) {
                 this.editedIndex = this.records.indexOf(item);
                 this.editedItem = Object.assign({}, item);
                 this.edited_role = this.user_roles[this.user_roles.findIndex(f => f.id === this.editedItem.role_id)];
+                this.imageUrl = '/storage/user_avatars/' + this.editedItem.user_avatar;
+                this.imageFile = null;
                 this.errors = [];
 
                 this.dialog = true;
             },
 
-            deleteItem (item) {
-                if (!confirm('Are you sure you want to delete ' + item.name + '?'))
-                    return;
+            deleteItemDialog() {
+                this.delete_dialog = true;
+            },
 
+            deleteItem (item) {
                 let that = this;
 
-                axios.delete('/api/users/delete/' + item.id)
-                    .then(function (response) {
-                        if (response.data.success) {
-                            that.getData()
-                                .then(function (response) {
-                                    that.updateData(response.data.data);
-                                })
-                                .catch(function (error) {
-                                    console.log(error);
-                                });
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                let formData = new FormData();
+                formData.append('_method', 'delete');
+
+                axios.post('api/users/delete/' + item.id, formData).then(function (response) {
+                    if (response.data.success == true) {
+                        that.getData()
+                            .then(function (data) {
+                                that.updateData(data.data);
+                            })
+                            .catch(function (error) {
+                                that.notify(error);
+                            });
+
+                        that.delete_dialog = false;
+                    }
+                }).catch(function(err) {
+                    that.notify(error);
+                });
             },
 
             close () {
@@ -285,49 +360,76 @@
             },
 
             save (e) {
-                if (this.editedIndex > -1) {
-                    this.editedItem.method = 'PUT';
-                    this.editedItem.role_id = this.edited_role.id;
-                    this.editedItem.user_role = this.edited_role.text;
+                this.editedItem.method = 'PUT';
+                this.editedItem.role_id = this.edited_role.id;
+                this.editedItem.user_role = this.edited_role.text;
 
-                    if (typeof this.imageFile == 'Object')
-                        this.editedItem.user_avatar = this.imageFile;
-                    else
-                        this.editedItem.user_avatar = null;
+                if (typeof this.imageFile == 'Object')
+                    this.editedItem.user_avatar = this.imageFile;
+                else
+                    this.editedItem.user_avatar = null;
 
-                    let formData = this.buildFormData(this.editedItem);
-                    let that = this;
-                    let requestOptions = {
-                        headers: {
-                            'Content-Type': "multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2)
-                        }
-                    };
-
-                    axios.put('api/users/update/' + this.editedItem.id, formData/*, */).then(function (response) {
-                            console.log(response);
-                            Object.assign(this.records[this.editedIndex], this.editedItem);
-                        }).catch(function(err) {
-                            if (err && err.response && err.response.status === 422) {
-                                that.errors = err.response.data.errors || {};
-                            }
-                        });
-                } else {
-                    //axios.post
-                    this.records.push(this.editedItem);
-                }
-                //this.close();
-            },
-
-            buildFormData(data) {
                 let formData = new FormData();
 
-                for (var property in data) {
-                    if (data.hasOwnProperty(property)) {
-                        formData.append(property, data[[property]]);
+                for (var property in this.editedItem) {
+                    if (this.editedItem.hasOwnProperty(property)) {
+                        if (property == 'user_avatar' && this.imageFile != null)
+                            formData.append(property, this.imageFile, this.imageFile.name);
+                        else
+                            formData.append(property, this.editedItem[property]);
                     }
                 }
 
-                return formData;
+                if (!this.imageFile) {
+                    formData.delete('user_avatar');
+                }
+
+                let that = this;
+                let requestOptions = {
+                    headers: {
+                        //'Content-Type': "multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2)
+                        'content-type': 'multipart/form-data'
+                    }
+                };
+
+                if (this.editedIndex > -1) {
+                    formData.append('_method', 'put');
+
+                    axios.post('api/users/update/' + this.editedItem.id, formData, requestOptions).then(function (response) {
+                            Object.assign(that.records[that.editedIndex], response.data.data);
+                            that.close();
+                        }).catch(function(err) {
+                            if (err && err.response && err.response.status === 422) {
+                                that.errors = err.response.data.errors || {};
+                                that.errors.msg = err.response.data.message;
+                            }
+                        });
+                } else {
+                    this.editedItem.method = 'POST';
+                    //formData.append('_method', 'post');
+
+                    axios.post('api/users/store', formData, requestOptions).then(function (response) {
+                        if (response.data.success == true) {
+                            that.getData()
+                                .then(function (data) {
+                                    that.updateData(data.data);
+                                })
+                                .catch(function (error) {
+                                    that.notify(error);
+                                });
+
+                            that.close();
+                        }
+
+                        that.notify(response.data.message);
+                    }).catch(function(err) {
+                        if (err && err.response && err.response.status === 422) {
+                            that.errors = err.response.data.errors || {};
+                            that.errors.msg = err.response.data.message;
+                        }
+                    });
+                }
+                //this.close();
             },
 
             getRoles() {
@@ -342,7 +444,7 @@
                         });
                     })
                     .catch(function (error) {
-                        console.log(error);
+                        that.notify(error);
                     });
             },
 
@@ -361,7 +463,7 @@
                     fr.readAsDataURL(files[0]);
                     fr.addEventListener('load', () => {
                         this.imageUrl = fr.result;
-                        this.editedItem.user_avatar = this.imageFile = files[0]; // this is an image file that can be sent to server...
+                        this.imageFile = files[0]; // this is an image file that can be sent to server...
                     });
                 } else {
                     this.editedItem.user_avatar = '';
@@ -371,8 +473,6 @@
             },
 
             doSearch() {
-                //console.log('searching', this.search);
-                console.log('searching val', this.search);
                 if (this.search != '') {
                     let pageUrl = this.pagination.
                     if (pageUrl.indexOf('?') < 0)
@@ -380,8 +480,11 @@
 
                     pageUrl += '&q=' + this.search;
                 }
+            },
 
-                console.log(pageUrl);
+            notify(text) {
+                this.notification = text;
+                this.snackbar = true;
             }
         }
     }

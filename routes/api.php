@@ -32,11 +32,9 @@ Route::group([
 //Route::resource('users', 'UsersController');
 Route::get('users', 'UsersController@index');
 Route::get('users/info', 'UsersController@info');
-Route::get('users/userslist', 'UsersController@userslist');
-Route::get('users/create', 'UsersController@create');
-Route::get('users/edit', 'UsersController@edit');
-Route::post('users/store', 'UsersController@store');
+Route::post('/users/store', 'UsersController@store');
 Route::put('/users/update/{user}', 'UsersController@update');
+Route::delete('/users/delete/{user}', 'UsersController@destroy');
 
 //Route::resource('users', 'UsersController');
 /*Route::get('users', 'UsersController@index');

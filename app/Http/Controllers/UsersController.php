@@ -61,20 +61,47 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        /*$request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed'
-        ]);
-        $user = new User([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password)
-        ]);
+        $rules = [
+            'name' => 'required',
+            'email' => 'required',
+            'role_id' => 'required|integer',
+            'user_avatar' => 'image|nullable|max:1999'
+        ];
+
+        $this->validate($request, $rules);
+
+        $user = new User();
+
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->role_id = $request->input('role_id');
+
+
+        $password = str_random(10);
+        $user->password = bcrypt($password);
+
+
+        // handle file upload
+        if ($request->hasFile('user_avatar') && $request->file('user_avatar') != null) {
+            // get just filename
+            $filename = pathinfo($request->file('user_avatar')->getClientOriginalName(), PATHINFO_FILENAME);
+            // get just extension
+            $extension = $request->file('user_avatar')->getClientOriginalExtension();
+            // filename to store
+            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+            // upload
+            $path = $request->file('user_avatar')->storeAs('public/user_avatars', $fileNameToStore);
+        }
+        else {
+            $fileNameToStore = 'default_avatar.png';
+        }
+
+        $user->user_avatar = $fileNameToStore;
 
         if ($user->save()) {
             return response()->json([
                 'success' => true,
+                'password' => $password,
                 'message' => 'Successfully created user!'
             ], 201);
         }
@@ -83,7 +110,7 @@ class UsersController extends Controller
                 'success' => false,
                 'message' => 'Error creating user!'
             ], 201);
-        }*/
+        }
     }
 
     /**
@@ -121,10 +148,8 @@ class UsersController extends Controller
             'name' => 'required',
             'email' => 'required',
             'role_id' => 'required|integer',
-            'user_avatar' => 'image|nullable|max:1999'
+            'user_avatar' => 'image|max:1999|nullable'
         ];
-
-        print_r($request->all());
 
         $this->validate($request, $rules);
 
@@ -135,7 +160,7 @@ class UsersController extends Controller
         $user->role_id = $request->input('role_id');
 
         // handle file upload
-        if ($request->hasFile('user_avatar')) {
+        if ($request->hasFile('user_avatar') && $request->file('user_avatar') != null) {
             // get just filename
             $filename = pathinfo($request->file('user_avatar')->getClientOriginalName(), PATHINFO_FILENAME);
             // get just extension

@@ -31,10 +31,10 @@
 
             <v-menu>
                 <v-btn flat small slot="activator">
-                    <v-avatar :tile="false" color="grey lighten-4" :size="36">
-                        <img v-bind:src="'/storage/user_avatars/' + $auth.user.user_avatar" />
+                    <v-avatar :tile="false" :size="36">
+                        <img v-bind:src="'/storage/user_avatars/' + loggedUser.user_avatar" />
                     </v-avatar>
-                    <v-label class="white--text">{{ $auth.user.name }}</v-label>
+                    <v-label class="white--text">Hi {{ loggedUser.name }}</v-label>
                 </v-btn>
                 <v-list>
                     <v-list-tile @click="navigate('/profile')">
@@ -61,14 +61,21 @@
     import Login from './../Auth/Login.vue';
 
     export default {
+        props: [
+            'loggedUser'
+        ],
         data() {
             return {
                 isLoggedIn: false,
+                theUser: this.loggedUser
             }
         },
         components: {
             Register,
             Login
+        },
+        created() {
+            console.log(this.theUser);
         },
         mounted() {
             this.isLoggedIn = this.$auth.isAuthenticated();

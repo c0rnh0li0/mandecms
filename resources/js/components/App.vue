@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <!-- <v-navigation-drawer app></v-navigation-drawer> -->
-        <navbar></navbar>
+        <navbar :logged-user="$auth.user"></navbar>
         <v-content>
             <v-container fluid>
                 <router-view></router-view>
@@ -21,7 +21,7 @@
     export default {
         name: "App",
         components: {
-            Navbar,
+            Navbar
         },
         data() {
             return {}
@@ -39,7 +39,6 @@
                         }
                         else {
                             that.$auth.setUserData(response);
-                            console.log('app.vue ', that.$auth.user);
                         }
                     })
                     .catch(function (error) {
