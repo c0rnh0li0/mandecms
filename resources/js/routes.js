@@ -10,6 +10,7 @@ import AuthClient from './components/Auth/Auth';
 import UserList from './components/users/Index.vue';
 import UserForm from './components/users/Form.vue';
 import UserView from './components/users/View.vue';
+import UsersCrud from './components/users/Crud.vue';
 
 // roles views
 import RoleList from './components/users/roles/Index.vue';
@@ -83,6 +84,15 @@ const router = new VueRouter({
             meta: {
                 forAuth: true,
                 breadcrumb: 'User',
+            },
+        },
+        {
+            path: '/people/crud',
+            component: UsersCrud,
+            name: 'UsersCrud',
+            meta: {
+                forAuth: true,
+                breadcrumb: 'Users',
             },
         },
         // roles section

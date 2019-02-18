@@ -1,10 +1,8 @@
 <template>
     <div>
+        <p>Users crud</p>
         <crud
-            :form="Form"
-            :list="List"
-            :crud="users_crud"
-        ></crud>
+            :crud-data="users_crud"></crud>
     </div>
 </template>
 
@@ -22,22 +20,35 @@
         data() {
             return {
                 users_crud: {
+                    title: 'Users',
+                    singular: 'user',
+                    plural: 'users',
+                    dt_headers: [
+                        { text: '', align: 'center', value: 'user_avatar', sortable: false },
+                        { text: 'Name', align: 'left', sortable: true, value: 'name' },
+                        { text: 'Email', align: 'left', value: 'email', sortable: true },
+                        { text: 'Role', align: 'left', value: 'user_role', sortable: false },
+                        { text: 'Created at', align: 'right', value: 'created_at', sortable: true },
+                        { text: '', align: 'center', value: 'name', sortable: false }
+                    ],
+                    crud_url: '/api/users',
 
-                        title: 'Users',
-                        singular: 'user',
-                        plural: 'users',
-                        dt_headers: [
-                            { text: '', align: 'center', value: 'user_avatar', sortable: false },
-                            { text: 'Name', align: 'left', sortable: true, value: 'name' },
-                            { text: 'Email', align: 'left', value: 'email', sortable: true },
-                            { text: 'Role', align: 'left', value: 'user_role', sortable: false },
-                            { text: 'Created at', align: 'right', value: 'created_at', sortable: true },
-                            { text: '', align: 'center', value: 'name', sortable: false }
-                        ],
-                        records: [],
-                        totalRecords: 0,
-                        crud_url: 'api/users'
-
+                    editedItem: {
+                        id: '',
+                        name: '',
+                        user_role: '',
+                        role_id: '',
+                        user_avatar: 'default_avatar.png',
+                        created_at: ''
+                    },
+                    defaultItem: {
+                        id: '',
+                        name: '',
+                        user_role: '',
+                        role_id: '',
+                        user_avatar: 'default_avatar.png',
+                        created_at: ''
+                    },
                 },
                 dialog: false,
                 delete_dialog: false,
@@ -88,6 +99,9 @@
                 // search section
                 search: null,
                 searchTerm: '',
+
+                form: null,
+                list: null
             }
         },
         mounted() {

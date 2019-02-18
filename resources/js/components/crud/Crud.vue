@@ -19,7 +19,7 @@
             </v-snackbar>
 
             <v-toolbar flat color="white">
-                <v-toolbar-title>{{ crud.title }}</v-toolbar-title>
+                <v-toolbar-title>{{ crudData.title }}</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-text-field color="red darken-4"
                               prepend-inner-icon="search"
@@ -30,7 +30,7 @@
                               hide-details></v-text-field>
                 <v-spacer></v-spacer>
                 <v-dialog v-model="dialog" max-width="500px">
-                    <v-btn slot="activator" flat color="red darken-4" @click="setItemDefaultData">New {{ crud.singular }}</v-btn>
+                    <v-btn slot="activator" flat color="red darken-4" @click="setDefaultItemData">New {{ this.crudData.singular }}</v-btn>
                     <v-card>
                         <v-card-title>
                             <span class="headline">{{ formTitle }}</span>
@@ -39,7 +39,58 @@
 
                         <v-card-text>
                             <v-form method="POST" v-on:submit.prevent="save">
-                                <form></form>
+                                <v-layout wrap>
+                                    <v-input type="hidden" name="id" v-model="editedItem.id"></v-input>
+                                    <v-container grid-list-md>
+                                        <v-text-field
+                                                v-model="editedItem.name"
+                                                label="Name"
+                                                color="red darken-4"
+                                                :messages="errors.name"
+                                                :error="typeof errors.name != 'undefined'">
+                                        </v-text-field>
+                                    </v-container>
+                                    <v-container grid-list-md>
+                                        <v-text-field
+                                                v-model="editedItem.email"
+                                                label="Email"
+                                                color="red darken-4"
+                                                :messages="errors.email"
+                                                :error="typeof errors.email != 'undefined'">
+                                        </v-text-field>
+                                    </v-container>
+                                    <v-container grid-list-md>
+                                        <v-combobox
+                                                v-model="edited_role"
+                                                :items="user_roles"
+                                                :messages="errors.user_role"
+                                                :error="typeof errors.user_role != 'undefined'"
+                                                item-text="text"
+                                                item-value="id"
+                                                label="Role"
+                                                color="red darken-4">
+                                        </v-combobox>
+                                    </v-container>
+                                    <v-container grid-list-md>
+                                        <v-text-field label="Select Avatar"
+                                                      @click.stop="pickFile"
+                                                      v-model='editedItem.user_avatar'
+                                                      prepend-icon='attach_file'
+                                                      color="red darken-4"
+                                                      :messages="errors.user_avatar"
+                                                      :error="typeof errors.user_avatar != 'undefined'"></v-text-field>
+                                        <input
+                                                type="file"
+                                                style="display: none"
+                                                name="user_avatar"
+                                                ref="image"
+                                                accept="image/*"
+                                                @change="onFilePicked">
+                                        <v-spacer></v-spacer>
+                                        <img :src="imageUrl" height="150" v-if="imageUrl"/>
+                                        <v-spacer></v-spacer>
+                                    </v-container>
+                                </v-layout>
                             </v-form>
                         </v-card-text>
                         <v-card-actions>
@@ -52,14 +103,40 @@
             </v-toolbar>
 
             <v-data-table
-                    :headers="crud.dt_headers"
-                    :items="crud.records"
+                    :headers="headers"
+                    :items="records"
                     :rows-per-page-items="[]"
                     :pagination.sync="pagination"
-                    :total-items="crud.totalRecords"
+                    :total-items="totalRecords"
                     :loading="loading"
                     class="elevation-1">
-                <list></list>
+                <template slot="items" slot-scope="props">
+                    <td class="text-xs-center">
+                        <v-avatar size="32px">
+                            <img v-bind:src="'/storage/user_avatars/' + props.item.user_avatar" />
+                        </v-avatar>
+                    </td>
+                    <td class="text-xs-left">{{ props.item.name }}</td>
+                    <td class="text-xs-left">{{ props.item.email }}</td>
+                    <td class="text-xs-left">{{ props.item.user_role }}</td>
+                    <td class="text-xs-right">{{ props.item.created_at }}</td>
+                    <td class="justify-center layout px-0">
+                        <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
+                        <v-icon small class="mr-2" @click="deleteItemDialog()">delete</v-icon>
+
+                        <v-dialog v-model="delete_dialog" persistent max-width="290">
+                            <v-card>
+                                <v-card-title class="headline">Delete user?</v-card-title>
+                                <v-card-text>Are you sure you want to delete {{ props.item.name }}?</v-card-text>
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="green darken-1" flat @click="delete_dialog = false">No</v-btn>
+                                    <v-btn color="green darken-1" flat @click="deleteItem(props.item);">Yes</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </td>
+                </template>
             </v-data-table>
         </v-card>
     </div>
@@ -67,18 +144,16 @@
 
 <script>
     export default {
+        props: {
+            crudData: { type: Object, required: false, default: {}},
+        },
         data() {
             return {
-                crud: {
-                    title: '',
-                    singular: '',
-                    plural: '',
-                    dt_headers: [],
-                    records: [],
-                    totalRecords: 0,
-                    crud_url: '',
-                },
-                form: {},
+                createUrl: this.crudData.crud_url + '/store',
+                updateUrl: this.crudData.crud_url + '/update/',
+                deleteUrl: this.crudData.crud_url + '/delete/',
+                baseUrl: this.crudData.crud_url,
+
                 dialog: false,
                 delete_dialog: false,
                 snackbar: false,
@@ -92,6 +167,10 @@
                     sortBy: 'created_at',
                     value: 0
                 },
+
+                headers: this.crudData.dt_headers,
+
+
                 // roles section
                 role_select: '',
                 user_roles: [],
@@ -103,22 +182,8 @@
 
                 // add/edit section
                 editedIndex: -1,
-                editedItem: {
-                    id: '',
-                    name: '',
-                    user_role: '',
-                    role_id: '',
-                    user_avatar: 'default_avatar.png',
-                    created_at: ''
-                },
-                defaultItem: {
-                    id: '',
-                    name: '',
-                    user_role: '',
-                    role_id: '',
-                    user_avatar: 'default_avatar.png',
-                    created_at: ''
-                },
+                editedItem: this.crudData.editedItem,
+                defaultItem: this.crudData.defaultItem,
                 errors: [],
 
                 // avatar section
@@ -131,6 +196,7 @@
             }
         },
         mounted() {
+            console.log('crudData', this.crudData);
             this.getRoles();
         },
         watch: {
@@ -174,7 +240,7 @@
         },
         computed: {
             formTitle () {
-                return this.editedIndex === -1 ? 'New ' + this.crud.singular : 'Edit ' + this.editedItem.name + ' data';
+                return this.editedIndex === -1 ? 'New ' + this.crudData.singular : 'Edit ' + this.editedItem.name + ' data';
             }
         },
         methods: {
@@ -224,18 +290,19 @@
             },
             async getData(page_url) {
                 this.loading = true;
-                page_url = page_url || this.crud.crud_url;
+                page_url = page_url || this.baseUrl;
+
                 return await axios.get(page_url);
             },
 
-            setItemDefaultData() {
-                this.editedItem = this.defaultItem;
-                this.imageUrl = '/storage/user_avatars/default_avatar.png';
+            setDefaultItemData() {
+                this.editedItem = this.crudData.defaultItem;
+                /*this.imageUrl = '/storage/user_avatars/default_avatar.png';
                 this.imageFile = null;
                 this.edited_role = {
                     id: 2,
                     text: 'Contributor'
-                };
+                };*/
             },
 
             editItem (item) {
@@ -259,7 +326,7 @@
                 let formData = new FormData();
                 formData.append('_method', 'delete');
 
-                axios.post('api/users/delete/' + item.id, formData).then(function (response) {
+                axios.post(this.deleteUrl + item.id, formData).then(function (response) {
                     if (response.data.success == true) {
                         that.getData()
                             .then(function (data) {
@@ -320,20 +387,20 @@
                 if (this.editedIndex > -1) {
                     formData.append('_method', 'put');
 
-                    axios.post('api/users/update/' + this.editedItem.id, formData, requestOptions).then(function (response) {
-                            Object.assign(that.records[that.editedIndex], response.data.data);
-                            that.close();
-                        }).catch(function(err) {
-                            if (err && err.response && err.response.status === 422) {
-                                that.errors = err.response.data.errors || {};
-                                that.errors.msg = err.response.data.message;
-                            }
-                        });
+                    axios.post(this.updateUrl + this.editedItem.id, formData, requestOptions).then(function (response) {
+                        Object.assign(that.records[that.editedIndex], response.data.data);
+                        that.close();
+                    }).catch(function(err) {
+                        if (err && err.response && err.response.status === 422) {
+                            that.errors = err.response.data.errors || {};
+                            that.errors.msg = err.response.data.message;
+                        }
+                    });
                 } else {
                     this.editedItem.method = 'POST';
                     //formData.append('_method', 'post');
 
-                    axios.post('api/users/store', formData, requestOptions).then(function (response) {
+                    axios.post(this.createUrl, formData, requestOptions).then(function (response) {
                         if (response.data.success == true) {
                             that.getData()
                                 .then(function (data) {
@@ -359,7 +426,7 @@
 
             getRoles() {
                 let that = this;
-                axios.get('api/roles')
+                axios.get('/api/roles')
                     .then(function (response) {
                         response.data.data.map(function(value, key) {
                             that.user_roles.push({

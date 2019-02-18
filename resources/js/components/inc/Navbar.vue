@@ -15,6 +15,9 @@
                     <v-list-tile @click="navigate('/people')">
                         <v-list-tile-title>Users</v-list-tile-title>
                     </v-list-tile>
+                    <v-list-tile @click="navigate('/people/crud')">
+                        <v-list-tile-title>Crud</v-list-tile-title>
+                    </v-list-tile>
                     <v-list-tile @click="navigate('/roles')">
                         <v-list-tile-title>Roles</v-list-tile-title>
                     </v-list-tile>
@@ -67,7 +70,7 @@
         data() {
             return {
                 isLoggedIn: false,
-                userAvatar: '',
+                userAvatar: 'default_avatar.png',
                 userName: ''
             }
         },

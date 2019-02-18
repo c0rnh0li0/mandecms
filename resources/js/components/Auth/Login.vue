@@ -60,8 +60,8 @@
                 this.fields._token = window.Laravel.csrfToken;
 
                 this.$auth.login(this.fields).then(function (response) {
+                    that.dialog = false;
                     that.$auth.setData(response.data);
-                    this.dialog = false;
                     that.$router.go({ name: 'Home' });
 
                 }).catch(function (err) {
