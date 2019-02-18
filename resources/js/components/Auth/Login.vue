@@ -1,11 +1,11 @@
 <template>
-    <v-dialog width="500" color="red darken-4">
+    <v-dialog width="500" color="red darken-4" v-model="dialog">
         <span slot="activator">
             Login
         </span>
 
         <v-card>
-            <v-toolbar color="red darken-4">
+            <v-toolbar>
                 <v-btn icon @click="dialog = false">
                     <v-icon>close</v-icon>
                 </v-btn>
@@ -24,9 +24,10 @@
                 <v-divider></v-divider>
 
                 <v-card-actions>
-                    <v-btn block outline color="red darken-4" @click="forgotpassword">
+                    <v-btn block flat color="red darken-4" @click="forgotpassword">
                         Forgot password?
                     </v-btn>
+                    <v-spacer></v-spacer>
                     <v-btn block color="red darken-4" @click="login">
                         Sign in
                     </v-btn>
@@ -41,7 +42,7 @@
         name: "Login",
         data() {
             return {
-                drawer: false,
+                dialog: false,
                 fields: {
                     email: '',
                     password: '',
@@ -60,6 +61,7 @@
 
                 this.$auth.login(this.fields).then(function (response) {
                     that.$auth.setData(response.data);
+                    this.dialog = false;
                     that.$router.go({ name: 'Home' });
 
                 }).catch(function (err) {

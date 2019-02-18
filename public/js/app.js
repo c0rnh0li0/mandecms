@@ -1807,16 +1807,18 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     getUser: function getUser() {
-      var that = this;
-      this.$auth.getUser().then(function (response) {
-        if (response.data.message && response.data.message == 'Unauthenticated.') {
-          console.log(response.data.message);
-        } else {
-          that.$auth.setUserData(response);
-        }
-      }).catch(function (error) {
-        console.log(error.message);
-      });
+      if (this.$auth.isAuthenticated()) {
+        var that = this;
+        this.$auth.getUser().then(function (response) {
+          if (response.data.message && response.data.message == 'Unauthenticated.') {
+            console.log(response.data.message);
+          } else {
+            that.$auth.setUserData(response);
+          }
+        }).catch(function (error) {
+          console.log(error.message);
+        });
+      }
     }
   }
 });
@@ -1893,11 +1895,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Login",
   data: function data() {
     return {
-      drawer: false,
+      dialog: false,
       fields: {
         email: '',
         password: '',
@@ -1914,6 +1917,7 @@ __webpack_require__.r(__webpack_exports__);
       this.fields._token = window.Laravel.csrfToken;
       this.$auth.login(this.fields).then(function (response) {
         that.$auth.setData(response.data);
+        this.dialog = false;
         that.$router.go({
           name: 'Home'
         });
@@ -1986,7 +1990,7 @@ __webpack_require__.r(__webpack_exports__);
   name: "Register",
   data: function data() {
     return {
-      drawer: false,
+      dialog: false,
       fields: {
         name: '',
         email: '',
@@ -2003,18 +2007,13 @@ __webpack_require__.r(__webpack_exports__);
       var that = this;
       this.fields._token = window.Laravel.csrfToken;
       this.$auth.register(this.fields).then(function (response) {
-        console.log('after register', response);
-
         if (response.data.success == true) {
+          this.dialog = false;
           that.$router.go({
             name: 'Login'
           });
-        } //that.$auth.setData(response.data);
-        //that.$router.go({ name: 'Home' });
-
+        }
       }).catch(function (err) {
-        console.log('after register error', err);
-
         if (err && err.response && err.response.status === 422) {
           that.errors = err.response.data.errors || {};
         }
@@ -2136,18 +2135,32 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       isLoggedIn: false,
-      theUser: this.loggedUser
+      userAvatar: '',
+      userName: ''
     };
   },
   components: {
     Register: _Auth_Register_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     Login: _Auth_Login_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
-  created: function created() {
-    console.log(this.theUser);
-  },
+  created: function created() {},
   mounted: function mounted() {
     this.isLoggedIn = this.$auth.isAuthenticated();
+
+    if (this.isLoggedIn) {
+      var that = this;
+      this.$auth.getUser().then(function (response) {
+        if (response.data.message && response.data.message == 'Unauthenticated.') {
+          console.log(response.data.message);
+        } else {
+          that.$auth.setUserData(response);
+          that.userAvatar = that.$auth.user.user_avatar;
+          that.userName = that.$auth.user.name.split(' ')[0];
+        }
+      }).catch(function (error) {
+        console.log(error.message);
+      });
+    }
   },
   methods: {
     logout: function logout(e) {
@@ -2157,7 +2170,9 @@ __webpack_require__.r(__webpack_exports__);
         if (response.data.success == true) {
           that.isLoggedIn = false;
           that.$auth.destroyData();
-          that.$router.go('/login');
+          that.$router.go({
+            name: 'Home'
+          });
         }
       }).catch(function (error) {
         console.log(error);
@@ -40265,7 +40280,7 @@ var render = function() {
   return _c(
     "v-app",
     [
-      _c("navbar", { attrs: { "logged-user": _vm.$auth.user } }),
+      _c("navbar"),
       _vm._v(" "),
       _c(
         "v-content",
@@ -40350,7 +40365,16 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "v-dialog",
-    { attrs: { width: "500", color: "red darken-4" } },
+    {
+      attrs: { width: "500", color: "red darken-4" },
+      model: {
+        value: _vm.dialog,
+        callback: function($$v) {
+          _vm.dialog = $$v
+        },
+        expression: "dialog"
+      }
+    },
     [
       _c("span", { attrs: { slot: "activator" }, slot: "activator" }, [
         _vm._v("\n        Login\n    ")
@@ -40361,7 +40385,6 @@ var render = function() {
         [
           _c(
             "v-toolbar",
-            { attrs: { color: "red darken-4" } },
             [
               _c(
                 "v-btn",
@@ -40455,7 +40478,7 @@ var render = function() {
                   _c(
                     "v-btn",
                     {
-                      attrs: { block: "", outline: "", color: "red darken-4" },
+                      attrs: { block: "", flat: "", color: "red darken-4" },
                       on: { click: _vm.forgotpassword }
                     },
                     [
@@ -40464,6 +40487,8 @@ var render = function() {
                       )
                     ]
                   ),
+                  _vm._v(" "),
+                  _c("v-spacer"),
                   _vm._v(" "),
                   _c(
                     "v-btn",
@@ -40510,7 +40535,16 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "v-dialog",
-    { attrs: { width: "500", color: "red darken-4" } },
+    {
+      attrs: { width: "500", color: "red darken-4" },
+      model: {
+        value: _vm.dialog,
+        callback: function($$v) {
+          _vm.dialog = $$v
+        },
+        expression: "dialog"
+      }
+    },
     [
       _c("span", { attrs: { slot: "activator" }, slot: "activator" }, [
         _vm._v("\n        Register\n    ")
@@ -40521,7 +40555,6 @@ var render = function() {
         [
           _c(
             "v-toolbar",
-            { attrs: { color: "red darken-4" } },
             [
               _c(
                 "v-btn",
@@ -40947,15 +40980,13 @@ var render = function() {
                       _c("v-avatar", { attrs: { tile: false, size: 36 } }, [
                         _c("img", {
                           attrs: {
-                            src:
-                              "/storage/user_avatars/" +
-                              _vm.loggedUser.user_avatar
+                            src: "/storage/user_avatars/" + _vm.userAvatar
                           }
                         })
                       ]),
                       _vm._v(" "),
-                      _c("v-label", { staticClass: "white--text" }, [
-                        _vm._v("Hi " + _vm._s(_vm.loggedUser.name))
+                      _c("span", { staticClass: "white--text" }, [
+                        _vm._v("  Hi " + _vm._s(_vm.userName))
                       ])
                     ],
                     1
@@ -41334,7 +41365,7 @@ var render = function() {
                       on: {
                         keyup: function($event) {
                           if (
-                            !$event.type.indexOf("key") &&
+                            "keyCode" in $event &&
                             _vm._k(
                               $event.keyCode,
                               "enter",
@@ -41385,7 +41416,7 @@ var render = function() {
                       on: {
                         keyup: function($event) {
                           if (
-                            !$event.type.indexOf("key") &&
+                            "keyCode" in $event &&
                             _vm._k(
                               $event.keyCode,
                               "enter",
@@ -41506,7 +41537,7 @@ var render = function() {
                       on: {
                         keyup: function($event) {
                           if (
-                            !$event.type.indexOf("key") &&
+                            "keyCode" in $event &&
                             _vm._k(
                               $event.keyCode,
                               "enter",
@@ -41557,7 +41588,7 @@ var render = function() {
                       on: {
                         keyup: function($event) {
                           if (
-                            !$event.type.indexOf("key") &&
+                            "keyCode" in $event &&
                             _vm._k(
                               $event.keyCode,
                               "enter",
@@ -84875,8 +84906,8 @@ secret: xmoah81trlgdEoLLRvTx5mHy9lpmWZIbMlQNotPu
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\wamp\www\mandecms\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\wamp\www\mandecms\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! G:\wamp64\www\mandecms\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! G:\wamp64\www\mandecms\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

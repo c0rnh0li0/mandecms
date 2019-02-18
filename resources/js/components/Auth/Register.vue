@@ -1,12 +1,12 @@
 <template>
-    <v-dialog width="500" color="red darken-4">
+    <v-dialog width="500" color="red darken-4" v-model="dialog">
         <span slot="activator">
             Register
         </span>
 
         <v-card>
-            <v-toolbar color="red darken-4">
-                <v-btn icon @click="dialog = false">
+            <v-toolbar>
+                <v-btn icon @click="dialog = false;">
                     <v-icon>close</v-icon>
                 </v-btn>
                 <v-toolbar-title>Create account</v-toolbar-title>
@@ -47,7 +47,7 @@
         name: "Register",
         data() {
             return {
-                drawer: false,
+                dialog: false,
                 fields: {
                     name: '',
                     email: '',
@@ -66,15 +66,11 @@
                 this.fields._token = window.Laravel.csrfToken;
 
                 this.$auth.register(this.fields).then(function (response) {
-                    console.log('after register', response);
                     if (response.data.success == true) {
+                        this.dialog = false;
                         that.$router.go({ name: 'Login' });
                     }
-                    //that.$auth.setData(response.data);
-                    //that.$router.go({ name: 'Home' });
-
                 }).catch(function (err) {
-                    console.log('after register error', err);
                     if (err && err.response && err.response.status === 422) {
                         that.errors = err.response.data.errors || {};
                     }

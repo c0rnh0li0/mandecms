@@ -32,9 +32,9 @@
             <v-menu>
                 <v-btn flat small slot="activator">
                     <v-avatar :tile="false" :size="36">
-                        <img v-bind:src="'/storage/user_avatars/' + loggedUser.user_avatar" />
+                        <img v-bind:src="'/storage/user_avatars/' + userAvatar" />
                     </v-avatar>
-                    <v-label class="white--text">Hi {{ loggedUser.name }}</v-label>
+                    <span class="white--text">&nbsp;&nbsp;Hi {{ userName }}</span>
                 </v-btn>
                 <v-list>
                     <v-list-tile @click="navigate('/profile')">
@@ -67,18 +67,35 @@
         data() {
             return {
                 isLoggedIn: false,
-                theUser: this.loggedUser
+                userAvatar: '',
+                userName: ''
             }
         },
         components: {
             Register,
             Login
         },
-        created() {
-            console.log(this.theUser);
-        },
+        created() {},
         mounted() {
             this.isLoggedIn = this.$auth.isAuthenticated();
+
+            if (this.isLoggedIn) {
+                let that = this;
+                this.$auth.getUser()
+                    .then(function (response) {
+                        if (response.data.message && response.data.message == 'Unauthenticated.') {
+                            console.log(response.data.message);
+                        }
+                        else {
+                            that.$auth.setUserData(response);
+                            that.userAvatar = that.$auth.user.user_avatar;
+                            that.userName = that.$auth.user.name.split(' ')[0];
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error.message);
+                    });
+            }
         },
         methods: {
             logout(e) {
@@ -90,7 +107,7 @@
                     if (response.data.success == true) {
                         that.isLoggedIn = false;
                         that.$auth.destroyData();
-                        that.$router.go('/login');
+                        that.$router.go({ name: 'Home' });
                     }
                 })
                     .catch(function (error) {

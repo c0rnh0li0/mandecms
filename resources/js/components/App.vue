@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <!-- <v-navigation-drawer app></v-navigation-drawer> -->
-        <navbar :logged-user="$auth.user"></navbar>
+        <navbar></navbar>
         <v-content>
             <v-container fluid>
                 <router-view></router-view>
@@ -31,19 +31,21 @@
         },
         methods: {
             getUser() {
-                let that = this;
-                this.$auth.getUser()
-                    .then(function (response) {
-                        if (response.data.message && response.data.message == 'Unauthenticated.') {
-                            console.log(response.data.message);
-                        }
-                        else {
-                            that.$auth.setUserData(response);
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error.message);
-                    });
+                if (this.$auth.isAuthenticated()) {
+                    let that = this;
+                    this.$auth.getUser()
+                        .then(function (response) {
+                            if (response.data.message && response.data.message == 'Unauthenticated.') {
+                                console.log(response.data.message);
+                            }
+                            else {
+                                that.$auth.setUserData(response);
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error.message);
+                        });
+                }
             }
         }
     }
