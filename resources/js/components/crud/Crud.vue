@@ -30,7 +30,7 @@
                               hide-details></v-text-field>
                 <v-spacer></v-spacer>
                 <v-dialog v-model="dialog" max-width="500px">
-                    <v-btn slot="activator" flat color="red darken-4" @click="setDefaultItemData">New {{ this.crudData.singular }}</v-btn>
+                    <v-btn slot="activator" flat color="red darken-4" @click="setDefaultItemData">New {{ crudData.singular }}</v-btn>
                     <v-card>
                         <v-card-title>
                             <span class="headline">{{ formTitle }}</span>
@@ -38,60 +38,11 @@
                         </v-card-title>
 
                         <v-card-text>
-                            <v-form method="POST" v-on:submit.prevent="save">
-                                <v-layout wrap>
-                                    <v-input type="hidden" name="id" v-model="editedItem.id"></v-input>
-                                    <v-container grid-list-md>
-                                        <v-text-field
-                                                v-model="editedItem.name"
-                                                label="Name"
-                                                color="red darken-4"
-                                                :messages="errors.name"
-                                                :error="typeof errors.name != 'undefined'">
-                                        </v-text-field>
-                                    </v-container>
-                                    <v-container grid-list-md>
-                                        <v-text-field
-                                                v-model="editedItem.email"
-                                                label="Email"
-                                                color="red darken-4"
-                                                :messages="errors.email"
-                                                :error="typeof errors.email != 'undefined'">
-                                        </v-text-field>
-                                    </v-container>
-                                    <v-container grid-list-md>
-                                        <v-combobox
-                                                v-model="edited_role"
-                                                :items="user_roles"
-                                                :messages="errors.user_role"
-                                                :error="typeof errors.user_role != 'undefined'"
-                                                item-text="text"
-                                                item-value="id"
-                                                label="Role"
-                                                color="red darken-4">
-                                        </v-combobox>
-                                    </v-container>
-                                    <v-container grid-list-md>
-                                        <v-text-field label="Select Avatar"
-                                                      @click.stop="pickFile"
-                                                      v-model='editedItem.user_avatar'
-                                                      prepend-icon='attach_file'
-                                                      color="red darken-4"
-                                                      :messages="errors.user_avatar"
-                                                      :error="typeof errors.user_avatar != 'undefined'"></v-text-field>
-                                        <input
-                                                type="file"
-                                                style="display: none"
-                                                name="user_avatar"
-                                                ref="image"
-                                                accept="image/*"
-                                                @change="onFilePicked">
-                                        <v-spacer></v-spacer>
-                                        <img :src="imageUrl" height="150" v-if="imageUrl"/>
-                                        <v-spacer></v-spacer>
-                                    </v-container>
-                                </v-layout>
-                            </v-form>
+                            <component :is="form"
+                                       :edited-item="editedItem"
+                                       :errors="errors"
+                                       :extras="crudData.extras">
+                            </component>
                         </v-card-text>
                         <v-card-actions>
                             <v-btn color="red darken-4" flat @click="close">Cancel</v-btn>
@@ -147,6 +98,9 @@
         props: {
             crudData: { type: Object, required: false, default: {}},
         },
+        components: {
+
+        },
         data() {
             return {
                 createUrl: this.crudData.crud_url + '/store',
@@ -154,6 +108,7 @@
                 deleteUrl: this.crudData.crud_url + '/delete/',
                 baseUrl: this.crudData.crud_url,
 
+                form: this.crudData.form,
                 dialog: false,
                 delete_dialog: false,
                 snackbar: false,
@@ -170,25 +125,11 @@
 
                 headers: this.crudData.dt_headers,
 
-
-                // roles section
-                role_select: '',
-                user_roles: [],
-                roles_model: [],
-                edited_role: {
-                    id: 2,
-                    text: 'Contributor'
-                },
-
                 // add/edit section
                 editedIndex: -1,
                 editedItem: this.crudData.editedItem,
                 defaultItem: this.crudData.defaultItem,
                 errors: [],
-
-                // avatar section
-                imageUrl: '/storage/user_avatars/default_avatar.png',
-                imageFile: '',
 
                 // search section
                 search: null,
@@ -196,8 +137,9 @@
             }
         },
         mounted() {
-            console.log('crudData', this.crudData);
-            this.getRoles();
+            if (this.crudData.onMounted != null && typeof this.crudData.onMounted == 'function') {
+                this.crudData.onMounted();
+            }
         },
         watch: {
             pagination: {
@@ -308,11 +250,13 @@
             editItem (item) {
                 this.editedIndex = this.records.indexOf(item);
                 this.editedItem = Object.assign({}, item);
-                this.edited_role = this.user_roles[this.user_roles.findIndex(f => f.id === this.editedItem.role_id)];
+
+                /*this.edited_role = this.user_roles[this.user_roles.findIndex(f => f.id === this.editedItem.role_id)];
                 this.imageUrl = '/storage/user_avatars/' + this.editedItem.user_avatar;
                 this.imageFile = null;
-                this.errors = [];
+                */
 
+                this.errors = [];
                 this.dialog = true;
             },
 
@@ -351,118 +295,7 @@
                 }, 300);
             },
 
-            save (e) {
-                this.editedItem.method = 'PUT';
-                this.editedItem.role_id = this.edited_role.id;
-                this.editedItem.user_role = this.edited_role.text;
 
-                if (typeof this.imageFile == 'Object')
-                    this.editedItem.user_avatar = this.imageFile;
-                else
-                    this.editedItem.user_avatar = null;
-
-                let formData = new FormData();
-
-                for (var property in this.editedItem) {
-                    if (this.editedItem.hasOwnProperty(property)) {
-                        if (property == 'user_avatar' && this.imageFile != null)
-                            formData.append(property, this.imageFile, this.imageFile.name);
-                        else
-                            formData.append(property, this.editedItem[property]);
-                    }
-                }
-
-                if (!this.imageFile) {
-                    formData.delete('user_avatar');
-                }
-
-                let that = this;
-                let requestOptions = {
-                    headers: {
-                        //'Content-Type': "multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2)
-                        'content-type': 'multipart/form-data'
-                    }
-                };
-
-                if (this.editedIndex > -1) {
-                    formData.append('_method', 'put');
-
-                    axios.post(this.updateUrl + this.editedItem.id, formData, requestOptions).then(function (response) {
-                        Object.assign(that.records[that.editedIndex], response.data.data);
-                        that.close();
-                    }).catch(function(err) {
-                        if (err && err.response && err.response.status === 422) {
-                            that.errors = err.response.data.errors || {};
-                            that.errors.msg = err.response.data.message;
-                        }
-                    });
-                } else {
-                    this.editedItem.method = 'POST';
-                    //formData.append('_method', 'post');
-
-                    axios.post(this.createUrl, formData, requestOptions).then(function (response) {
-                        if (response.data.success == true) {
-                            that.getData()
-                                .then(function (data) {
-                                    that.updateData(data.data);
-                                })
-                                .catch(function (error) {
-                                    that.notify(error);
-                                });
-
-                            that.close();
-                        }
-
-                        that.notify(response.data.message);
-                    }).catch(function(err) {
-                        if (err && err.response && err.response.status === 422) {
-                            that.errors = err.response.data.errors || {};
-                            that.errors.msg = err.response.data.message;
-                        }
-                    });
-                }
-                //this.close();
-            },
-
-            getRoles() {
-                let that = this;
-                axios.get('/api/roles')
-                    .then(function (response) {
-                        response.data.data.map(function(value, key) {
-                            that.user_roles.push({
-                                text: value.name,
-                                id: value.id
-                            });
-                        });
-                    })
-                    .catch(function (error) {
-                        that.notify(error);
-                    });
-            },
-
-            pickFile () {
-                this.$refs.image.click();
-            },
-
-            onFilePicked (e) {
-                const files = e.target.files;
-                if(files[0] !== undefined) {
-                    this.editedItem.user_avatar = files[0].name;
-                    if(this.editedItem.user_avatar.lastIndexOf('.') <= 0) {
-                        return;
-                    }
-                    const fr = new FileReader ();
-                    fr.readAsDataURL(files[0]);
-                    fr.addEventListener('load', () => {
-                        this.imageUrl = fr.result;
-                        this.imageFile = files[0]; // this is an image file that can be sent to server...
-                    });
-                } else {
-                    this.editedItem.user_avatar = '';
-                    this.imageFile = '';
-                    this.imageUrl = '';
-                }
-            },
 
             doSearch() {
                 if (this.search != '') {
