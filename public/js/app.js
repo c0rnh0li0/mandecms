@@ -2994,6 +2994,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -42096,166 +42114,136 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "v-dialog",
-    {
-      attrs: { "max-width": "500px" },
-      model: {
-        value: _vm.dialog,
-        callback: function($$v) {
-          _vm.dialog = $$v
-        },
-        expression: "dialog"
-      }
-    },
+    "div",
     [
       _c(
-        "v-btn",
-        {
-          attrs: { slot: "activator", color: "red darken-4" },
-          slot: "activator"
-        },
-        [_vm._v("New Item")]
-      ),
-      _vm._v(" "),
-      _c(
-        "v-card",
+        "v-layout",
+        { attrs: { wrap: "" } },
         [
-          _c("v-card-title", [
-            _c("span", { staticClass: "headline" }, [_vm._v("User")])
-          ]),
+          _c("v-input", {
+            attrs: { type: "hidden", name: "id" },
+            model: {
+              value: _vm.editedItem.id,
+              callback: function($$v) {
+                _vm.$set(_vm.editedItem, "id", $$v)
+              },
+              expression: "editedItem.id"
+            }
+          }),
           _vm._v(" "),
           _c(
-            "v-card-text",
+            "v-container",
+            { attrs: { "grid-list-md": "" } },
             [
-              _c(
-                "v-container",
-                { attrs: { "grid-list-md": "" } },
-                [
-                  _c(
-                    "v-layout",
-                    { attrs: { wrap: "" } },
-                    [
-                      _c(
-                        "v-flex",
-                        { attrs: { xs12: "", sm6: "", md4: "" } },
-                        [
-                          _c("v-text-field", {
-                            attrs: { label: "Name" },
-                            model: {
-                              value: _vm.editedItem.name,
-                              callback: function($$v) {
-                                _vm.$set(_vm.editedItem, "name", $$v)
-                              },
-                              expression: "editedItem.name"
-                            }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-flex",
-                        { attrs: { xs12: "", sm6: "", md4: "" } },
-                        [
-                          _c("v-text-field", {
-                            attrs: { label: "Email" },
-                            model: {
-                              value: _vm.editedItem.email,
-                              callback: function($$v) {
-                                _vm.$set(_vm.editedItem, "email", $$v)
-                              },
-                              expression: "editedItem.email"
-                            }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-flex",
-                        { attrs: { xs12: "", sm6: "", md4: "" } },
-                        [
-                          _c("v-text-field", {
-                            attrs: { label: "Role" },
-                            model: {
-                              value: _vm.editedItem.user_role,
-                              callback: function($$v) {
-                                _vm.$set(_vm.editedItem, "user_role", $$v)
-                              },
-                              expression: "editedItem.user_role"
-                            }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-flex",
-                        { attrs: { xs12: "", sm6: "", md4: "" } },
-                        [
-                          _c("v-text-field", {
-                            attrs: { label: "Avatar" },
-                            model: {
-                              value: _vm.editedItem.user_avatar,
-                              callback: function($$v) {
-                                _vm.$set(_vm.editedItem, "user_avatar", $$v)
-                              },
-                              expression: "editedItem.user_avatar"
-                            }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-flex",
-                        { attrs: { xs12: "", sm6: "", md4: "" } },
-                        [
-                          _c("v-text-field", {
-                            attrs: { label: "Created at" },
-                            model: {
-                              value: _vm.editedItem.created_at,
-                              callback: function($$v) {
-                                _vm.$set(_vm.editedItem, "created_at", $$v)
-                              },
-                              expression: "editedItem.created_at"
-                            }
-                          })
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  )
-                ],
-                1
-              )
+              _c("v-text-field", {
+                attrs: {
+                  label: "Name",
+                  color: "red darken-4",
+                  messages: _vm.errors.name,
+                  error: typeof _vm.errors.name != "undefined"
+                },
+                model: {
+                  value: _vm.editedItem.name,
+                  callback: function($$v) {
+                    _vm.$set(_vm.editedItem, "name", $$v)
+                  },
+                  expression: "editedItem.name"
+                }
+              })
             ],
             1
           ),
           _vm._v(" "),
           _c(
-            "v-card-actions",
+            "v-container",
+            { attrs: { "grid-list-md": "" } },
             [
+              _c("v-text-field", {
+                attrs: {
+                  label: "Email",
+                  color: "red darken-4",
+                  messages: _vm.errors.email,
+                  error: typeof _vm.errors.email != "undefined"
+                },
+                model: {
+                  value: _vm.editedItem.email,
+                  callback: function($$v) {
+                    _vm.$set(_vm.editedItem, "email", $$v)
+                  },
+                  expression: "editedItem.email"
+                }
+              })
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-container",
+            { attrs: { "grid-list-md": "" } },
+            [
+              _c("v-combobox", {
+                attrs: {
+                  items: _vm.user_roles,
+                  messages: _vm.errors.user_role,
+                  error: typeof _vm.errors.user_role != "undefined",
+                  "item-text": "text",
+                  "item-value": "id",
+                  label: "Role",
+                  color: "red darken-4"
+                },
+                model: {
+                  value: _vm.edited_role,
+                  callback: function($$v) {
+                    _vm.edited_role = $$v
+                  },
+                  expression: "edited_role"
+                }
+              })
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-container",
+            { attrs: { "grid-list-md": "" } },
+            [
+              _c("v-text-field", {
+                attrs: {
+                  label: "Select Avatar",
+                  "prepend-icon": "attach_file",
+                  color: "red darken-4",
+                  messages: _vm.errors.user_avatar,
+                  error: typeof _vm.errors.user_avatar != "undefined"
+                },
+                on: {
+                  click: function($event) {
+                    $event.stopPropagation()
+                    return _vm.pickFile($event)
+                  }
+                },
+                model: {
+                  value: _vm.editedItem.user_avatar,
+                  callback: function($$v) {
+                    _vm.$set(_vm.editedItem, "user_avatar", $$v)
+                  },
+                  expression: "editedItem.user_avatar"
+                }
+              }),
+              _vm._v(" "),
+              _c("input", {
+                ref: "image",
+                staticStyle: { display: "none" },
+                attrs: { type: "file", name: "user_avatar", accept: "image/*" },
+                on: { change: _vm.onFilePicked }
+              }),
+              _vm._v(" "),
               _c("v-spacer"),
               _vm._v(" "),
-              _c(
-                "v-btn",
-                {
-                  attrs: { color: "blue darken-1", flat: "" },
-                  on: { click: _vm.close }
-                },
-                [_vm._v("Cancel")]
-              ),
+              _vm.imageUrl
+                ? _c("img", { attrs: { src: _vm.imageUrl, height: "150" } })
+                : _vm._e(),
               _vm._v(" "),
-              _c(
-                "v-btn",
-                {
-                  attrs: { color: "blue darken-1", flat: "" },
-                  on: { click: _vm.save }
-                },
-                [_vm._v("Save")]
-              )
+              _c("v-spacer")
             ],
             1
           )

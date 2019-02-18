@@ -1,40 +1,58 @@
 <template>
-    <v-dialog v-model="dialog" max-width="500px">
-        <v-btn slot="activator" color="red darken-4">New Item</v-btn>
-        <v-card>
-            <v-card-title>
-                <span class="headline">User</span>
-            </v-card-title>
-
-            <v-card-text>
-                <v-container grid-list-md>
-                    <v-layout wrap>
-                        <v-flex xs12 sm6 md4>
-                            <v-text-field v-model="editedItem.name" label="Name"></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                            <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                            <v-text-field v-model="editedItem.user_role" label="Role"></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                            <v-text-field v-model="editedItem.user_avatar" label="Avatar"></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                            <v-text-field v-model="editedItem.created_at" label="Created at"></v-text-field>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
-            </v-card-text>
-
-            <v-card-actions>
+    <div>
+        <v-layout wrap>
+            <v-input type="hidden" name="id" v-model="editedItem.id"></v-input>
+            <v-container grid-list-md>
+                <v-text-field
+                        v-model="editedItem.name"
+                        label="Name"
+                        color="red darken-4"
+                        :messages="errors.name"
+                        :error="typeof errors.name != 'undefined'">
+                </v-text-field>
+            </v-container>
+            <v-container grid-list-md>
+                <v-text-field
+                        v-model="editedItem.email"
+                        label="Email"
+                        color="red darken-4"
+                        :messages="errors.email"
+                        :error="typeof errors.email != 'undefined'">
+                </v-text-field>
+            </v-container>
+            <v-container grid-list-md>
+                <v-combobox
+                        v-model="edited_role"
+                        :items="user_roles"
+                        :messages="errors.user_role"
+                        :error="typeof errors.user_role != 'undefined'"
+                        item-text="text"
+                        item-value="id"
+                        label="Role"
+                        color="red darken-4">
+                </v-combobox>
+            </v-container>
+            <v-container grid-list-md>
+                <v-text-field label="Select Avatar"
+                              @click.stop="pickFile"
+                              v-model='editedItem.user_avatar'
+                              prepend-icon='attach_file'
+                              color="red darken-4"
+                              :messages="errors.user_avatar"
+                              :error="typeof errors.user_avatar != 'undefined'"></v-text-field>
+                <input
+                        type="file"
+                        style="display: none"
+                        name="user_avatar"
+                        ref="image"
+                        accept="image/*"
+                        @change="onFilePicked">
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+                <img :src="imageUrl" height="150" v-if="imageUrl"/>
+                <v-spacer></v-spacer>
+            </v-container>
+        </v-layout>
+    </div>
 </template>
 
 <script>
