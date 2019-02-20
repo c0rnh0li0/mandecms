@@ -29,7 +29,7 @@
                               single-line
                               hide-details></v-text-field>
                 <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" max-width="500px">
+                <v-dialog v-model="form_dialog" max-width="500px">
                     <v-btn slot="activator" flat color="red darken-4" @click="setDefaultItemData">New {{ crudData.singular }}</v-btn>
                     <v-card>
                         <v-card-title>
@@ -37,18 +37,17 @@
                             <v-label v-bind:text="errors.msg"></v-label>
                         </v-card-title>
 
-                        <v-card-text>
-                            <component :is="form"
-                                       :edited-item="editedItem"
-                                       :errors="errors"
-                                       :extras="crudData.extras">
-                            </component>
-                        </v-card-text>
-                        <v-card-actions>
-                            <v-btn color="red darken-4" flat @click="close">Cancel</v-btn>
-                            <v-spacer></v-spacer>
-                            <v-btn color="red darken-4" flat @click="save">Save</v-btn>
-                        </v-card-actions>
+
+                        <component :is="form"
+                                   ref="form"
+                                   :edited-item="editedItem"
+                                   :errors="errors"
+                                   :extras="crudData.extras"
+                                   @close="close"
+                                   @saved="saved"
+                                   @updated="updated"
+                                   @notified="notify">
+                        </component>
                     </v-card>
                 </v-dialog>
             </v-toolbar>
@@ -56,39 +55,39 @@
             <v-data-table
                     :headers="headers"
                     :items="records"
-                    :rows-per-page-items="[]"
+                    :rows-per-page-items="[-1]"
                     :pagination.sync="pagination"
                     :total-items="totalRecords"
                     :loading="loading"
                     class="elevation-1">
                 <template slot="items" slot-scope="props">
-                    <td class="text-xs-center">
-                        <v-avatar size="32px">
-                            <img v-bind:src="'/storage/user_avatars/' + props.item.user_avatar" />
-                        </v-avatar>
-                    </td>
-                    <td class="text-xs-left">{{ props.item.name }}</td>
-                    <td class="text-xs-left">{{ props.item.email }}</td>
-                    <td class="text-xs-left">{{ props.item.user_role }}</td>
-                    <td class="text-xs-right">{{ props.item.created_at }}</td>
-                    <td class="justify-center layout px-0">
-                        <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-                        <v-icon small class="mr-2" @click="deleteItemDialog()">delete</v-icon>
-
-                        <v-dialog v-model="delete_dialog" persistent max-width="290">
-                            <v-card>
-                                <v-card-title class="headline">Delete user?</v-card-title>
-                                <v-card-text>Are you sure you want to delete {{ props.item.name }}?</v-card-text>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="green darken-1" flat @click="delete_dialog = false">No</v-btn>
-                                    <v-btn color="green darken-1" flat @click="deleteItem(props.item);">Yes</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                    </td>
+                    <component :is="list"
+                               :key="props.item.id"
+                               :list-item="props.item"
+                               @showDeleteDialog="deleteItemDialog"
+                               @showEditForm="editedItemDialog">
+                    </component>
                 </template>
+                <!-- <template slot="items" slot-scope="props">
+                    <component :is="list"
+                               v-bind:list-item="props.item"
+                               @showDeleteDialog="deleteItemDialog"
+                               @showEditForm="editedItemDialog">
+                    </component>
+                </template> -->
             </v-data-table>
+
+            <v-dialog v-model="delete_dialog" persistent max-width="290">
+                <v-card>
+                    <v-card-title class="headline">Delete {{ crudData.singular }}?</v-card-title>
+                    <v-card-text>Are you sure you want to delete '{{ itemToDelete.name }}'?</v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="green darken-1" flat @click="delete_dialog = false">No</v-btn>
+                        <v-btn color="green darken-1" flat @click="deleteItem(itemToDelete);">Yes</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
         </v-card>
     </div>
 </template>
@@ -109,7 +108,9 @@
                 baseUrl: this.crudData.crud_url,
 
                 form: this.crudData.form,
-                dialog: false,
+                list: this.crudData.list,
+
+                form_dialog: false,
                 delete_dialog: false,
                 snackbar: false,
                 notification: '',
@@ -125,6 +126,7 @@
 
                 headers: this.crudData.dt_headers,
 
+                itemToDelete: {},
                 // add/edit section
                 editedIndex: -1,
                 editedItem: this.crudData.editedItem,
@@ -137,6 +139,16 @@
             }
         },
         mounted() {
+            let that = this;
+            this.getData()
+                .then(data => {
+                    that.updateData(data.data);
+                    that.loading = false;
+                })
+                .catch(error => {
+                    that.notify(error);
+                });
+
             if (this.crudData.onMounted != null && typeof this.crudData.onMounted == 'function') {
                 this.crudData.onMounted();
             }
@@ -145,12 +157,15 @@
             pagination: {
                 handler () {
                     let pageUrl = this.buildPagingUrl();
-
+                    let that = this;
                     this.getData(pageUrl)
                         .then(data => {
-                            this.updateData(data.data);
-                            this.loading = false;
+                            that.updateData(data.data);
+                            that.loading = false;
                         })
+                        .catch(error => {
+                            that.notify(error);
+                        });
                 },
                 deep: true
             },
@@ -186,6 +201,16 @@
             }
         },
         methods: {
+            deleteItemDialog(item) {
+                this.itemToDelete = item;
+                this.delete_dialog = true;
+            },
+            editedItemDialog(item) {
+                this.editedItem = item;
+                this.$refs.form.editedItem = this.editedItem;
+                this.form_dialog = true;
+            },
+
             updateData(data) {
                 this.loading = false;
 
@@ -257,11 +282,7 @@
                 */
 
                 this.errors = [];
-                this.dialog = true;
-            },
-
-            deleteItemDialog() {
-                this.delete_dialog = true;
+                this.form_dialog = true;
             },
 
             deleteItem (item) {
@@ -272,6 +293,8 @@
 
                 axios.post(this.deleteUrl + item.id, formData).then(function (response) {
                     if (response.data.success == true) {
+                        that.notify(response.data.message);
+
                         that.getData()
                             .then(function (data) {
                                 that.updateData(data.data);
@@ -288,14 +311,12 @@
             },
 
             close () {
-                this.dialog = false;
+                this.form_dialog = false;
                 setTimeout(() => {
                     this.editedItem = Object.assign({}, this.defaultItem);
                     this.editedIndex = -1;
                 }, 300);
             },
-
-
 
             doSearch() {
                 if (this.search != '') {
@@ -310,7 +331,24 @@
             notify(text) {
                 this.notification = text;
                 this.snackbar = true;
+            },
+
+            saved(data) {
+                Object.assign(this.records[this.editedIndex], data);
+                this.notify(data.name + ' saved!');
+                this.close();
+            },
+
+            updated(data) {
+                this.updateData(data);
+                this.close();
+            },
+
+            deleteDialogClose() {
+                this.form_dialog = false;
             }
+
+            //delete_dialog = false
         }
     }
 </script>

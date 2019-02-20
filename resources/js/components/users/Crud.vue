@@ -7,6 +7,7 @@
 <script>
     import Crud from './../crud/Crud.vue';
     import Form from './Form.vue';
+    import List from './List.vue';
 
     export default {
         components: {
@@ -19,6 +20,7 @@
                     singular: 'user',
                     plural: 'users',
                     form: Form,
+                    list: List,
                     dt_headers: [
                         { text: '', align: 'center', value: 'user_avatar', sortable: false },
                         { text: 'Name', align: 'left', sortable: true, value: 'name' },

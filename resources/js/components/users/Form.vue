@@ -1,77 +1,78 @@
 <template>
-    <v-form method="POST" v-on:submit.prevent="save">
-        <v-layout wrap>
-            <v-input type="hidden" name="id" v-model="editedItem.id"></v-input>
-            <v-container grid-list-md>
-                <v-text-field
-                        v-model="editedItem.name"
-                        label="Name"
-                        color="red darken-4"
-                        :messages="errors.name"
-                        :error="typeof errors.name != 'undefined'">
-                </v-text-field>
-            </v-container>
-            <v-container grid-list-md>
-                <v-text-field
-                        v-model="editedItem.email"
-                        label="Email"
-                        color="red darken-4"
-                        :messages="errors.email"
-                        :error="typeof errors.email != 'undefined'">
-                </v-text-field>
-            </v-container>
-            <v-container grid-list-md>
-                <v-combobox
-                        v-model="edited_role"
-                        :items="user_roles"
-                        :messages="errors.user_role"
-                        :error="typeof errors.user_role != 'undefined'"
-                        item-text="text"
-                        item-value="id"
-                        label="Role"
-                        color="red darken-4">
-                </v-combobox>
-            </v-container>
-            <v-container grid-list-md>
-                <v-text-field label="Select Avatar"
-                              @click.stop="pickFile"
-                              v-model='editedItem.user_avatar'
-                              prepend-icon='attach_file'
-                              color="red darken-4"
-                              :messages="errors.user_avatar"
-                              :error="typeof errors.user_avatar != 'undefined'"></v-text-field>
-                <input
-                        type="file"
-                        style="display: none"
-                        name="user_avatar"
-                        ref="image"
-                        accept="image/*"
-                        @change="onFilePicked">
-                <v-spacer></v-spacer>
-                <img :src="imageUrl" height="150" v-if="imageUrl"/>
-                <v-spacer></v-spacer>
-            </v-container>
-        </v-layout>
-    </v-form>
+    <div>
+        <v-card-text>
+            <v-form method="POST" v-on:submit.prevent="save">
+                <v-layout wrap>
+                    <v-input type="hidden" name="id" v-model="editedItem.id"></v-input>
+                    <v-container grid-list-md>
+                        <v-text-field
+                                v-model="editedItem.name"
+                                label="Name"
+                                color="red darken-4"
+                                :messages="errors.name"
+                                :error="typeof errors.name != 'undefined'">
+                        </v-text-field>
+                    </v-container>
+                    <v-container grid-list-md>
+                        <v-text-field
+                                v-model="editedItem.email"
+                                label="Email"
+                                color="red darken-4"
+                                :messages="errors.email"
+                                :error="typeof errors.email != 'undefined'">
+                        </v-text-field>
+                    </v-container>
+                    <v-container grid-list-md>
+                        <v-combobox
+                                v-model="edited_role"
+                                :items="user_roles"
+                                :messages="errors.user_role"
+                                :error="typeof errors.user_role != 'undefined'"
+                                item-text="text"
+                                item-value="id"
+                                label="Role"
+                                color="red darken-4">
+                        </v-combobox>
+                    </v-container>
+                    <v-container grid-list-md>
+                        <v-text-field label="Select Avatar"
+                                      @click.stop="pickFile"
+                                      v-model='editedItem.user_avatar'
+                                      prepend-icon='attach_file'
+                                      color="red darken-4"
+                                      :messages="errors.user_avatar"
+                                      :error="typeof errors.user_avatar != 'undefined'"></v-text-field>
+                        <input
+                                type="file"
+                                style="display: none"
+                                name="user_avatar"
+                                ref="image"
+                                accept="image/*"
+                                @change="onFilePicked">
+                        <v-spacer></v-spacer>
+                        <img :src="'/storage/user_avatars/' + editedItem.user_avatar" height="150" v-if="editedItem.user_avatar"/>
+                        <v-spacer></v-spacer>
+                    </v-container>
+                </v-layout>
+            </v-form>
+        </v-card-text>
+        <v-card-actions>
+            <v-btn color="red darken-4" flat @click="close">Cancel</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-4" flat @click="save">Save</v-btn>
+        </v-card-actions>
+    </div>
 </template>
 
 <script>
     export default {
         props: {
+            itemToEdit: {type: Object, required: false, default: function(){ return {}; }},
             extras: {type: Object, required: false, default: {}},
-            //errors: {type: Array, required: false, default: {}},
-            //userRoles: {type: Array, required: false, default: {}},
         },
         data() {
             return {
-                editedItem: {
-                    id: '',
-                    name: '',
-                    user_role: '',
-                    role_id: '',
-                    user_avatar: 'default_avatar.png',
-                    created_at: ''
-                },
+                editedItem: {},
 
                 errors: [],
 
@@ -89,6 +90,9 @@
             }
         },
         mounted() {
+            console.log('form: item to edit', this.itemToEdit);
+            console.log('form: editedItem', this.editedItem);
+
             this.getRoles();
         },
         methods: {
@@ -128,8 +132,8 @@
                     formData.append('_method', 'put');
 
                     axios.post(this.updateUrl + this.editedItem.id, formData, requestOptions).then(function (response) {
-                        Object.assign(that.records[that.editedIndex], response.data.data);
-                        that.close();
+                        //Object.assign(that.records[that.editedIndex], response.data.data);
+                        this.$emit('saved', response.data.data);
                     }).catch(function(err) {
                         if (err && err.response && err.response.status === 422) {
                             that.errors = err.response.data.errors || {};
@@ -144,16 +148,14 @@
                         if (response.data.success == true) {
                             that.getData()
                                 .then(function (data) {
-                                    that.updateData(data.data);
+                                    this.$emit('updated', data.data);
                                 })
                                 .catch(function (error) {
-                                    that.notify(error);
+                                    this.$emit('notified', error);
                                 });
-
-                            that.close();
                         }
 
-                        that.notify(response.data.message);
+                        this.$emit('notified', response.data.message);
                     }).catch(function(err) {
                         if (err && err.response && err.response.status === 422) {
                             that.errors = err.response.data.errors || {};
@@ -199,9 +201,17 @@
                         });
                     })
                     .catch(function (error) {
-                        that.notify(error);
+                        this.$emit('notified', error);
                     });
             },
+
+            close() {
+                this.$emit('close');
+            },
+
+            setData(userData) {
+
+            }
         }
     }
 </script>
