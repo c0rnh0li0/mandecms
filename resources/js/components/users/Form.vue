@@ -50,7 +50,7 @@
                                 accept="image/*"
                                 @change="onFilePicked">
                         <v-spacer></v-spacer>
-                        <img :src="'/storage/user_avatars/' + editedItem.user_avatar" height="150" v-if="editedItem.user_avatar"/>
+                        <img :src="imageUrl" height="150" v-if="imageUrl"/>
                         <v-spacer></v-spacer>
                     </v-container>
                 </v-layout>
@@ -69,9 +69,14 @@
         props: {
             itemToEdit: {type: Object, required: false, default: function(){ return {}; }},
             extras: {type: Object, required: false, default: {}},
+            createUrl: {type: String, required: false, default: function() { return ''; }},
+            updateUrl: {type: String, required: false, default: function() { return ''; }},
         },
         data() {
             return {
+                userCreateUrl: this.createUrl,
+                userUpdateUrl: this.updateUrl,
+
                 editedItem: {},
 
                 errors: [],
@@ -90,9 +95,6 @@
             }
         },
         mounted() {
-            console.log('form: item to edit', this.itemToEdit);
-            console.log('form: editedItem', this.editedItem);
-
             this.getRoles();
         },
         methods: {
@@ -101,7 +103,7 @@
                 this.editedItem.role_id = this.edited_role.id;
                 this.editedItem.user_role = this.edited_role.text;
 
-                if (typeof this.imageFile == 'Object')
+                if (this.imageFile != null)
                     this.editedItem.user_avatar = this.imageFile;
                 else
                     this.editedItem.user_avatar = null;
@@ -128,12 +130,12 @@
                     }
                 };
 
-                if (this.editedIndex > -1) {
+                if (this.editedItem.id != '') {
                     formData.append('_method', 'put');
 
                     axios.post(this.updateUrl + this.editedItem.id, formData, requestOptions).then(function (response) {
                         //Object.assign(that.records[that.editedIndex], response.data.data);
-                        this.$emit('saved', response.data.data);
+                        that.$emit('updated', response.data.data);
                     }).catch(function(err) {
                         if (err && err.response && err.response.status === 422) {
                             that.errors = err.response.data.errors || {};
@@ -142,24 +144,20 @@
                     });
                 } else {
                     this.editedItem.method = 'POST';
-                    //formData.append('_method', 'post');
 
                     axios.post(this.createUrl, formData, requestOptions).then(function (response) {
                         if (response.data.success == true) {
-                            that.getData()
-                                .then(function (data) {
-                                    this.$emit('updated', data.data);
-                                })
-                                .catch(function (error) {
-                                    this.$emit('notified', error);
-                                });
+                            that.$emit('saved');
                         }
 
-                        this.$emit('notified', response.data.message);
+                        that.$emit('notified', response.data.message);
                     }).catch(function(err) {
                         if (err && err.response && err.response.status === 422) {
                             that.errors = err.response.data.errors || {};
                             that.errors.msg = err.response.data.message;
+                        }
+                        else {
+                            that.$emit('notified', err.message);
                         }
                     });
                 }
@@ -172,10 +170,10 @@
             onFilePicked (e) {
                 const files = e.target.files;
                 if(files[0] !== undefined) {
-                    this.editedItem.user_avatar = files[0].name;
-                    if(this.editedItem.user_avatar.lastIndexOf('.') <= 0) {
+                    //this.editedItem.user_avatar = files[0].name;
+                    /*if(this.editedItem.user_avatar.lastIndexOf('.') <= 0) {
                         return;
-                    }
+                    }*/
                     const fr = new FileReader ();
                     fr.readAsDataURL(files[0]);
                     fr.addEventListener('load', () => {
@@ -210,7 +208,18 @@
             },
 
             setData(userData) {
+                this.editedItem = userData;
+                this.errors = [];
 
+                if (this.editedItem.id == '') {
+                    this.imageFile = '';
+                    this.imageUrl = '';
+                }
+                else {
+                    this.edited_role = this.user_roles[this.user_roles.findIndex(f => f.id === this.editedItem.role_id)];
+                    this.imageUrl = '/storage/user_avatars/' + this.editedItem.user_avatar;
+                    this.imageFile = null;
+                }
             }
         }
     }

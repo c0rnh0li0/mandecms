@@ -5,11 +5,11 @@
         </span>
 
         <v-card>
-            <v-toolbar>
+            <v-toolbar color="red darken-4">
                 <v-btn icon @click="dialog = false">
-                    <v-icon>close</v-icon>
+                    <v-icon color="white">close</v-icon>
                 </v-btn>
-                <v-toolbar-title>Log in</v-toolbar-title>
+                <v-toolbar-title class="white--text">Log in</v-toolbar-title>
             </v-toolbar>
             <v-form method="POST" v-on:submit.prevent="login">
                 <v-card-text>
@@ -28,7 +28,7 @@
                         Forgot password?
                     </v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn block color="red darken-4" @click="login">
+                    <v-btn block color="red darken-4" class="white--text" @click="login">
                         Sign in
                     </v-btn>
                 </v-card-actions>

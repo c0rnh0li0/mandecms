@@ -40,12 +40,14 @@
 
                         <component :is="form"
                                    ref="form"
+                                   :updateUrl="updateUrl"
+                                   :createUrl="createUrl"
                                    :edited-item="editedItem"
                                    :errors="errors"
                                    :extras="crudData.extras"
                                    @close="close"
-                                   @saved="saved"
-                                   @updated="updated"
+                                   @saved="itemCreated"
+                                   @updated="itemUpdated"
                                    @notified="notify">
                         </component>
                     </v-card>
@@ -68,13 +70,6 @@
                                @showEditForm="editedItemDialog">
                     </component>
                 </template>
-                <!-- <template slot="items" slot-scope="props">
-                    <component :is="list"
-                               v-bind:list-item="props.item"
-                               @showDeleteDialog="deleteItemDialog"
-                               @showEditForm="editedItemDialog">
-                    </component>
-                </template> -->
             </v-data-table>
 
             <v-dialog v-model="delete_dialog" persistent max-width="290">
@@ -136,6 +131,10 @@
                 // search section
                 search: null,
                 searchTerm: '',
+
+                selected: [],
+
+                formTitle: '',
             }
         },
         mounted() {
@@ -169,9 +168,9 @@
                 },
                 deep: true
             },
-            dialog (val) {
+            /*dialog (val) {
                 val || this.close();
-            },
+            },*/
             search (val) {
                 // Items have already been requested
                 if (this.loading && val != '') return;
@@ -196,9 +195,9 @@
             },
         },
         computed: {
-            formTitle () {
-                return this.editedIndex === -1 ? 'New ' + this.crudData.singular : 'Edit ' + this.editedItem.name + ' data';
-            }
+            /*formTitle () {
+                return this.editedIndex === -1 ? 'New ' + this.crudData.singular : 'Edit ' + this.crudData.singular + ' \'' + this.editedItem.name + '\'';
+            }*/
         },
         methods: {
             deleteItemDialog(item) {
@@ -207,7 +206,11 @@
             },
             editedItemDialog(item) {
                 this.editedItem = item;
-                this.$refs.form.editedItem = this.editedItem;
+                this.editedIndex = this.findWithAttr(this.records, 'id', item.id);
+
+                this.formTitle = 'Edit ' + this.crudData.singular + ' \'' + this.editedItem.name + '\'';
+
+                this.$refs.form.setData(this.editedItem);
                 this.form_dialog = true;
             },
 
@@ -263,26 +266,9 @@
             },
 
             setDefaultItemData() {
-                this.editedItem = this.crudData.defaultItem;
-                /*this.imageUrl = '/storage/user_avatars/default_avatar.png';
-                this.imageFile = null;
-                this.edited_role = {
-                    id: 2,
-                    text: 'Contributor'
-                };*/
-            },
-
-            editItem (item) {
-                this.editedIndex = this.records.indexOf(item);
-                this.editedItem = Object.assign({}, item);
-
-                /*this.edited_role = this.user_roles[this.user_roles.findIndex(f => f.id === this.editedItem.role_id)];
-                this.imageUrl = '/storage/user_avatars/' + this.editedItem.user_avatar;
-                this.imageFile = null;
-                */
-
-                this.errors = [];
-                this.form_dialog = true;
+                this.editedIndex = -1;
+                this.formTitle = 'New ' + this.crudData.singular;
+                this.$refs.form.setData(this.crudData.defaultItem);
             },
 
             deleteItem (item) {
@@ -333,22 +319,44 @@
                 this.snackbar = true;
             },
 
-            saved(data) {
-                Object.assign(this.records[this.editedIndex], data);
-                this.notify(data.name + ' saved!');
-                this.close();
+            itemCreated() {
+                let that = this;
+                this.getData(this.buildPagingUrl())
+                    .then(function (data) {
+                        that.updateData(data.data);
+                    })
+                    .catch(function (error) {
+                        that.notify(error);
+                    });
+
+                this.notify('Sucessfully saved!');
+                this.form_dialog = false;
             },
 
-            updated(data) {
-                this.updateData(data);
-                this.close();
+            itemUpdated(data) {
+                console.log('item updated', data);
+
+                Object.assign(this.records[this.editedIndex], data);
+                this.notify('\'' + data.name + '\' sucessfully saved!');
+                this.form_dialog = false;
             },
 
             deleteDialogClose() {
-                this.form_dialog = false;
-            }
+                this.delete_dialog = false;
+            },
 
-            //delete_dialog = false
+            close() {
+                this.form_dialog = false;
+            },
+
+            findWithAttr(array, attr, value) {
+                for(var i = 0; i < array.length; i += 1) {
+                    if(array[i][attr] === value) {
+                        return i;
+                    }
+                }
+                return -1;
+            },
         }
     }
 </script>

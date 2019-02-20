@@ -13,10 +13,7 @@
                 </v-btn>
                 <v-list>
                     <v-list-tile @click="navigate('/people')">
-                        <v-list-tile-title>Users</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile @click="navigate('/people/crud')">
-                        <v-list-tile-title>Crud</v-list-tile-title>
+                        <v-list-tile-title>People</v-list-tile-title>
                     </v-list-tile>
                     <v-list-tile @click="navigate('/roles')">
                         <v-list-tile-title>Roles</v-list-tile-title>
@@ -110,7 +107,7 @@
                     if (response.data.success == true) {
                         that.isLoggedIn = false;
                         that.$auth.destroyData();
-                        that.$router.go({ name: 'Home' });
+                        that.$router.go('/');
                     }
                 })
                     .catch(function (error) {
