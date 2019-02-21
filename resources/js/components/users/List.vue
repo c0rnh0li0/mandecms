@@ -5,6 +5,7 @@
                 <img v-bind:src="'/storage/user_avatars/' + item.user_avatar" />
             </v-avatar>
             {{ item.name }}
+            <span v-if="$auth.user.id == item.id" class="red--text text--darken-4"><small>&nbsp;(You)</small></span>
         </td>
         <td class="text-xs-left">{{ item.email }}</td>
         <td class="text-xs-left">{{ item.user_role }}</td>

@@ -1792,7 +1792,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "App",
@@ -2049,12 +2048,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      user: {}
+    };
+  },
   mounted: function mounted() {
-    console.log('jumbotron mounted');
+    this.isLoggedIn = this.$auth.isAuthenticated();
+
+    if (this.isLoggedIn) {
+      var that = this;
+      this.$auth.getUser().then(function (response) {
+        if (response.data.message && response.data.message == 'Unauthenticated.') {
+          console.log(response.data.message);
+        } else {
+          that.$auth.setUserData(response);
+          that.user = that.$auth.user;
+        }
+      }).catch(function (error) {
+        console.log(error.message);
+      });
+    }
   }
 });
 
@@ -2081,6 +2096,8 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//
+//
 //
 //
 //
@@ -2216,7 +2233,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   mounted: function mounted() {
     var that = this;
-    this.getData().then(function (data) {
+    this.getData(this.buildPagingUrl()).then(function (data) {
       that.updateData(data.data);
       that.loading = false;
     }).catch(function (error) {
@@ -2348,7 +2365,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       axios.post(this.deleteUrl + item.id, formData).then(function (response) {
         if (response.data.success == true) {
           that.notify(response.data.message);
-          that.getData().then(function (data) {
+          that.getData(this.buildPagingUrl()).then(function (data) {
             that.updateData(data.data);
           }).catch(function (error) {
             that.notify(error);
@@ -3906,6 +3923,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -40576,16 +40594,14 @@ var render = function() {
       _vm._v(" "),
       _c(
         "v-footer",
-        { attrs: { color: "red darken-4", app: "" } },
+        { staticClass: "pa-3", attrs: { color: "red darken-4", app: "" } },
         [
           _c("v-spacer"),
           _vm._v(" "),
           _c("span", { staticClass: "caption white--text" }, [
             _c("strong", [_vm._v("Cornholio")]),
             _vm._v(" © " + _vm._s(new Date().getFullYear()))
-          ]),
-          _vm._v(" "),
-          _c("v-spacer")
+          ])
         ],
         1
       )
@@ -40618,11 +40634,11 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("passport-clients"),
+      _c("passport-clients", { staticClass: "mb-3" }),
       _vm._v(" "),
-      _c("passport-authorized-clients"),
+      _c("passport-authorized-clients", { staticClass: "mb-3" }),
       _vm._v(" "),
-      _c("passport-personal-access-tokens")
+      _c("passport-personal-access-tokens", { staticClass: "mb-3" })
     ],
     1
   )
@@ -41035,59 +41051,39 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { attrs: { id: "home" } }, [
-      _c(
-        "div",
-        {
-          staticClass: "card card-image mb-3",
-          staticStyle: {
-            "background-image":
-              "url(https://mdbootstrap.com/img/Photos/Others/forest2.jpg)"
-          }
-        },
-        [
-          _c(
-            "div",
-            {
-              staticClass:
-                "text-white text-center rgba-stylish-strong py-5 px-4"
-            },
-            [
-              _c("div", { staticClass: "py-5" }, [
-                _c("h5", { staticClass: "h5 orange-text" }, [
-                  _c("i", { staticClass: "fas fa-camera-retro" }),
-                  _vm._v(" Photography")
-                ]),
-                _vm._v(" "),
-                _c("h2", { staticClass: "card-title h2 my-4 py-2" }, [
-                  _vm._v("Jumbotron with image overlay")
-                ]),
-                _vm._v(" "),
-                _c("p", { staticClass: "mb-4 pb-2 px-md-5 mx-md-5" }, [
-                  _vm._v(
-                    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur obcaecati vero aliquid libero doloribus ad, unde tempora maiores, ullam, modi qui quidem minima debitis perferendis vitae cumque et quo impedit."
-                  )
-                ]),
-                _vm._v(" "),
-                _c("a", { staticClass: "btn peach-gradient" }, [
-                  _c("i", { staticClass: "fas fa-clone left" }),
-                  _vm._v(" View project")
-                ])
+  return _c("div", { attrs: { id: "home" } }, [
+    _c(
+      "div",
+      {
+        staticClass: "card card-image mb-3",
+        staticStyle: {
+          "background-image":
+            "url(https://mdbootstrap.com/img/Photos/Others/forest2.jpg)"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "text-white text-center rgba-stylish-strong py-5 px-4"
+          },
+          [
+            _c("div", { staticClass: "py-5" }, [
+              _c("h5", { staticClass: "h5 orange-text" }, [
+                _vm._v("Hi " + _vm._s(_vm.user.name))
+              ]),
+              _vm._v(" "),
+              _c("h2", { staticClass: "card-title h2 my-4 py-2" }, [
+                _vm._v("Welcome to MandeCMS")
               ])
-            ]
-          )
-        ]
-      )
-    ])
-  }
-]
+            ])
+          ]
+        )
+      ]
+    )
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -41136,13 +41132,14 @@ var render = function() {
               }
             },
             [
-              _vm._v(
-                "\n            " + _vm._s(_vm.notification) + "\n            "
-              ),
+              _c("span", { staticClass: "red--text lighten-4" }, [
+                _vm._v(_vm._s(_vm.notification))
+              ]),
+              _vm._v(" "),
               _c(
                 "v-btn",
                 {
-                  attrs: { color: "pink", flat: "" },
+                  attrs: { color: "white", flat: "" },
                   on: {
                     click: function($event) {
                       _vm.snackbar = false
@@ -41150,7 +41147,7 @@ var render = function() {
                   }
                 },
                 [
-                  _c("v-icon", { staticClass: "mr-2", attrs: { small: "" } }, [
+                  _c("v-icon", { staticClass: "mr-0", attrs: { small: "" } }, [
                     _vm._v("close")
                   ])
                 ],
@@ -41161,136 +41158,142 @@ var render = function() {
           ),
           _vm._v(" "),
           _c(
-            "v-toolbar",
-            { attrs: { flat: "", color: "white" } },
+            "v-card-text",
             [
-              _c("v-toolbar-title", [_vm._v(_vm._s(_vm.crudData.title))]),
-              _vm._v(" "),
-              _c("v-spacer"),
-              _vm._v(" "),
-              _c("v-text-field", {
-                attrs: {
-                  color: "red darken-4",
-                  "prepend-inner-icon": "search",
-                  label: "Search",
-                  clearable: "",
-                  "single-line": "",
-                  "hide-details": ""
-                },
-                model: {
-                  value: _vm.search,
-                  callback: function($$v) {
-                    _vm.search = $$v
-                  },
-                  expression: "search"
-                }
-              }),
-              _vm._v(" "),
-              _c("v-spacer"),
-              _vm._v(" "),
               _c(
-                "v-dialog",
-                {
-                  attrs: { "max-width": "500px" },
-                  model: {
-                    value: _vm.form_dialog,
-                    callback: function($$v) {
-                      _vm.form_dialog = $$v
-                    },
-                    expression: "form_dialog"
-                  }
-                },
+                "v-toolbar",
+                { staticClass: "mb-3", attrs: { flat: "", color: "white" } },
                 [
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: {
-                        slot: "activator",
-                        flat: "",
-                        color: "red darken-4"
-                      },
-                      on: { click: _vm.setDefaultItemData },
-                      slot: "activator"
+                  _c("v-toolbar-title", [_vm._v(_vm._s(_vm.crudData.title))]),
+                  _vm._v(" "),
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c("v-text-field", {
+                    attrs: {
+                      color: "red darken-4",
+                      "prepend-inner-icon": "search",
+                      label: "Search",
+                      clearable: "",
+                      "single-line": "",
+                      "hide-details": ""
                     },
-                    [_vm._v("New " + _vm._s(_vm.crudData.singular))]
-                  ),
+                    model: {
+                      value: _vm.search,
+                      callback: function($$v) {
+                        _vm.search = $$v
+                      },
+                      expression: "search"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("v-spacer"),
                   _vm._v(" "),
                   _c(
-                    "v-card",
+                    "v-dialog",
+                    {
+                      attrs: { "max-width": "500px" },
+                      model: {
+                        value: _vm.form_dialog,
+                        callback: function($$v) {
+                          _vm.form_dialog = $$v
+                        },
+                        expression: "form_dialog"
+                      }
+                    },
                     [
                       _c(
-                        "v-card-title",
-                        [
-                          _c("span", { staticClass: "headline" }, [
-                            _vm._v(_vm._s(_vm.formTitle))
-                          ]),
-                          _vm._v(" "),
-                          _c("v-label", { attrs: { text: _vm.errors.msg } })
-                        ],
-                        1
+                        "v-btn",
+                        {
+                          attrs: {
+                            slot: "activator",
+                            flat: "",
+                            color: "red darken-4"
+                          },
+                          on: { click: _vm.setDefaultItemData },
+                          slot: "activator"
+                        },
+                        [_vm._v("New " + _vm._s(_vm.crudData.singular))]
                       ),
                       _vm._v(" "),
-                      _c(_vm.form, {
-                        ref: "form",
-                        tag: "component",
-                        attrs: {
-                          updateUrl: _vm.updateUrl,
-                          createUrl: _vm.createUrl,
-                          "edited-item": _vm.editedItem,
-                          errors: _vm.errors,
-                          extras: _vm.crudData.extras
-                        },
-                        on: {
-                          close: _vm.close,
-                          saved: _vm.itemCreated,
-                          updated: _vm.itemUpdated,
-                          notified: _vm.notify
-                        }
-                      })
+                      _c(
+                        "v-card",
+                        [
+                          _c(
+                            "v-card-title",
+                            [
+                              _c("span", { staticClass: "headline" }, [
+                                _vm._v(_vm._s(_vm.formTitle))
+                              ]),
+                              _vm._v(" "),
+                              _c("v-label", { attrs: { text: _vm.errors.msg } })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(_vm.form, {
+                            ref: "form",
+                            tag: "component",
+                            attrs: {
+                              updateUrl: _vm.updateUrl,
+                              createUrl: _vm.createUrl,
+                              "edited-item": _vm.editedItem,
+                              errors: _vm.errors,
+                              extras: _vm.crudData.extras
+                            },
+                            on: {
+                              close: _vm.close,
+                              saved: _vm.itemCreated,
+                              updated: _vm.itemUpdated,
+                              notified: _vm.notify
+                            }
+                          })
+                        ],
+                        1
+                      )
                     ],
                     1
                   )
                 ],
                 1
-              )
+              ),
+              _vm._v(" "),
+              _c("v-data-table", {
+                staticClass: "elevation-1",
+                attrs: {
+                  headers: _vm.headers,
+                  items: _vm.records,
+                  "rows-per-page-items": [-1],
+                  pagination: _vm.pagination,
+                  "total-items": _vm.totalRecords,
+                  loading: _vm.loading
+                },
+                on: {
+                  "update:pagination": function($event) {
+                    _vm.pagination = $event
+                  }
+                },
+                scopedSlots: _vm._u([
+                  {
+                    key: "items",
+                    fn: function(props) {
+                      return [
+                        _c(_vm.list, {
+                          key: props.item.id,
+                          tag: "component",
+                          attrs: { "list-item": props.item },
+                          on: {
+                            showDeleteDialog: _vm.deleteItemDialog,
+                            showEditForm: _vm.editedItemDialog
+                          }
+                        })
+                      ]
+                    }
+                  }
+                ])
+              })
             ],
             1
           ),
-          _vm._v(" "),
-          _c("v-data-table", {
-            staticClass: "elevation-1",
-            attrs: {
-              headers: _vm.headers,
-              items: _vm.records,
-              "rows-per-page-items": [-1],
-              pagination: _vm.pagination,
-              "total-items": _vm.totalRecords,
-              loading: _vm.loading
-            },
-            on: {
-              "update:pagination": function($event) {
-                _vm.pagination = $event
-              }
-            },
-            scopedSlots: _vm._u([
-              {
-                key: "items",
-                fn: function(props) {
-                  return [
-                    _c(_vm.list, {
-                      key: props.item.id,
-                      tag: "component",
-                      attrs: { "list-item": props.item },
-                      on: {
-                        showDeleteDialog: _vm.deleteItemDialog,
-                        showEditForm: _vm.editedItemDialog
-                      }
-                    })
-                  ]
-                }
-              }
-            ])
-          }),
           _vm._v(" "),
           _c(
             "v-dialog",
@@ -43178,7 +43181,12 @@ var render = function() {
             attrs: { src: "/storage/user_avatars/" + _vm.item.user_avatar }
           })
         ]),
-        _vm._v("\n        " + _vm._s(_vm.item.name) + "\n    ")
+        _vm._v("\n        " + _vm._s(_vm.item.name) + "\n        "),
+        _vm.$auth.user.id == _vm.item.id
+          ? _c("span", { staticClass: "red--text text--darken-4" }, [
+              _c("small", [_vm._v(" (You)")])
+            ])
+          : _vm._e()
       ],
       1
     ),
@@ -85338,8 +85346,8 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
       breadcrumb: 'Create account'
     }
   }, {
-    path: '/auth',
-    name: 'Auth',
+    path: '/tokens',
+    name: 'Tokens',
     component: _components_Auth_Auth__WEBPACK_IMPORTED_MODULE_5__["default"],
     meta: {
       forAuth: true,

@@ -7,10 +7,9 @@
                 <router-view></router-view>
             </v-container>
         </v-content>
-        <v-footer color="red darken-4" app>
+        <v-footer color="red darken-4" class="pa-3" app>
             <v-spacer></v-spacer>
             <span class="caption white--text"><strong>Cornholio</strong> &copy; {{ new Date().getFullYear() }}</span>
-            <v-spacer></v-spacer>
         </v-footer>
     </v-app>
 </template>

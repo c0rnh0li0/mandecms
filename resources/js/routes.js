@@ -47,8 +47,8 @@ const router = new VueRouter({
             },
         },
         {
-            path: '/auth',
-            name: 'Auth',
+            path: '/tokens',
+            name: 'Tokens',
             component: AuthClient,
             meta: {
                 forAuth: true,
