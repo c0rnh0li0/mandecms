@@ -5,11 +5,11 @@
         </span>
 
         <v-card>
-            <v-toolbar>
+            <v-toolbar color="red darken-4">
                 <v-btn icon @click="dialog = false;">
-                    <v-icon>close</v-icon>
+                    <v-icon color="white">close</v-icon>
                 </v-btn>
-                <v-toolbar-title>Create account</v-toolbar-title>
+                <v-toolbar-title class="white--text">Create account</v-toolbar-title>
             </v-toolbar>
             <v-form method="POST" v-on:submit.prevent="register">
                 <v-card-text>
@@ -33,7 +33,8 @@
                 <v-divider></v-divider>
 
                 <v-card-actions>
-                    <v-btn block color="red darken-4" @click="register">
+                    <v-spacer></v-spacer>
+                    <v-btn block color="red darken-4" class="white--text" @click="register">
                         Sign up
                     </v-btn>
                 </v-card-actions>

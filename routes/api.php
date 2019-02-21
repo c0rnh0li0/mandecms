@@ -24,31 +24,17 @@ Route::group([
     ], function() {
         Route::get('logout', 'AuthController@logout')->name('logout');
         Route::get('user', 'AuthController@user')->name('user');
-
-        //Route::resource('users', 'UsersController');
     });
 });
 
-//Route::resource('users', 'UsersController');
 Route::get('users', 'UsersController@index');
 Route::get('users/info', 'UsersController@info');
 Route::post('/users/store', 'UsersController@store');
 Route::put('/users/update/{user}', 'UsersController@update');
 Route::delete('/users/delete/{user}', 'UsersController@destroy');
 
-//Route::resource('users', 'UsersController');
-/*Route::get('users', 'UsersController@index');
-Route::get('users/info', 'UsersController@info');
-Route::get('users/userslist', 'UsersController@userslist');
-Route::get('users/create', 'UsersController@create');
-Route::get('users/edit', 'UsersController@edit');
-Route::post('users/store', 'UsersController@store');*/
-
-
 Route::get('roles', 'RolesController@index');
-/*Route::get('users/info', 'UsersController@info');
-Route::get('users/userslist', 'UsersController@userslist');
-Route::get('users/create', 'UsersController@create');
-Route::get('users/edit', 'UsersController@edit');
-Route::post('users/store', 'UsersController@store');
-Route::put('users/update', 'UsersController@update');*/
+Route::get('roles/info', 'RolesController@info');
+Route::post('/roles/store', 'RolesController@store');
+Route::put('/roles/update/{role}', 'RolesController@update');
+Route::delete('/roles/delete/{role}', 'RolesController@destroy');

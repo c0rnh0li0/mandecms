@@ -7,13 +7,10 @@ import Register from './components/Auth/Register';
 import AuthClient from './components/Auth/Auth';
 
 // users views
-import UserList from './components/users/Index.vue';
-import UserForm from './components/users/Form.vue';
-import UserView from './components/users/View.vue';
 import UsersCrud from './components/users/Crud.vue';
 
 // roles views
-import RoleList from './components/users/roles/Index.vue';
+import RolesCrud from './components/roles/Crud.vue';
 
 Vue.use(VueRouter);
 
@@ -61,35 +58,8 @@ const router = new VueRouter({
         // users section
         {
             path: '/people',
-            component: UserList,
-            name: 'Users',
-            meta: {
-                forAuth: true,
-                breadcrumb: 'Users',
-            },
-        },
-        {
-            path: '/users/form',
-            component: UserForm,
-            name: 'Add/Edit user',
-            meta: {
-                forAuth: true,
-                breadcrumb: 'Add/Edit user',
-            },
-        },
-        {
-            path: '/users/view',
-            component: UserView,
-            name: 'View user',
-            meta: {
-                forAuth: true,
-                breadcrumb: 'User',
-            },
-        },
-        {
-            path: '/people/crud',
             component: UsersCrud,
-            name: 'UsersCrud',
+            name: 'Users',
             meta: {
                 forAuth: true,
                 breadcrumb: 'Users',
@@ -98,7 +68,7 @@ const router = new VueRouter({
         // roles section
         {
             path: '/roles',
-            component: RoleList,
+            component: RolesCrud,
             name: 'Roles',
             meta: {
                 forAuth: true,
