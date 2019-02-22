@@ -12,6 +12,9 @@ import UsersCrud from './components/users/Crud.vue';
 // roles views
 import RolesCrud from './components/roles/Crud.vue';
 
+// policies views
+import PoliciesCrud from './components/policies/Crud.vue';
+
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -47,8 +50,8 @@ const router = new VueRouter({
             },
         },
         {
-            path: '/auth',
-            name: 'Auth',
+            path: '/tokens',
+            name: 'Tokens',
             component: AuthClient,
             meta: {
                 forAuth: true,
@@ -73,6 +76,16 @@ const router = new VueRouter({
             meta: {
                 forAuth: true,
                 breadcrumb: 'Roles',
+            },
+        },
+        // policies section
+        {
+            path: '/access-policies',
+            component: PoliciesCrud,
+            name: 'Policies',
+            meta: {
+                forAuth: true,
+                breadcrumb: 'Policies',
             },
         },
     ]

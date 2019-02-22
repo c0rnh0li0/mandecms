@@ -10,67 +10,69 @@
                     :timeout="3000"
                     :top="true"
                     :vertical="false">
-                {{ notification }}
-                <v-btn color="pink"
+                <span class="red--text lighten-4">{{ notification }}</span>
+                <v-btn color="white"
                        flat
                        @click="snackbar = false">
-                    <v-icon small class="mr-2">close</v-icon>
+                    <v-icon small class="mr-0">close</v-icon>
                 </v-btn>
             </v-snackbar>
 
-            <v-toolbar flat color="white">
-                <v-toolbar-title>{{ crudData.title }}</v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-text-field color="red darken-4"
-                              prepend-inner-icon="search"
-                              label="Search"
-                              v-model="search"
-                              clearable
-                              single-line
-                              hide-details></v-text-field>
-                <v-spacer></v-spacer>
-                <v-dialog v-model="form_dialog" max-width="500px">
-                    <v-btn slot="activator" flat color="red darken-4" @click="setDefaultItemData">New {{ crudData.singular }}</v-btn>
-                    <v-card>
-                        <v-card-title>
-                            <span class="headline">{{ formTitle }}</span>
-                            <v-label v-bind:text="errors.msg"></v-label>
-                        </v-card-title>
+            <v-card-text>
+                <v-toolbar flat color="white" class="mb-3">
+                    <v-toolbar-title>{{ crudData.title }}</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-text-field color="red darken-4"
+                                  prepend-inner-icon="search"
+                                  label="Search"
+                                  v-model="search"
+                                  clearable
+                                  single-line
+                                  hide-details></v-text-field>
+                    <v-spacer></v-spacer>
+                    <v-dialog v-model="form_dialog" max-width="500px">
+                        <v-btn slot="activator" flat color="red darken-4" @click="setDefaultItemData">New {{ crudData.singular }}</v-btn>
+                        <v-card>
+                            <v-card-title>
+                                <span class="headline">{{ formTitle }}</span>
+                                <v-label v-bind:text="errors.msg"></v-label>
+                            </v-card-title>
 
 
-                        <component :is="form"
-                                   ref="form"
-                                   :updateUrl="updateUrl"
-                                   :createUrl="createUrl"
-                                   :edited-item="editedItem"
-                                   :errors="errors"
-                                   :extras="crudData.extras"
-                                   @close="close"
-                                   @saved="itemCreated"
-                                   @updated="itemUpdated"
-                                   @notified="notify">
+                            <component :is="form"
+                                       ref="form"
+                                       :updateUrl="updateUrl"
+                                       :createUrl="createUrl"
+                                       :edited-item="editedItem"
+                                       :errors="errors"
+                                       :extras="crudData.extras"
+                                       @close="close"
+                                       @saved="itemCreated"
+                                       @updated="itemUpdated"
+                                       @notified="notify">
+                            </component>
+                        </v-card>
+                    </v-dialog>
+                </v-toolbar>
+
+                <v-data-table
+                        :headers="headers"
+                        :items="records"
+                        :rows-per-page-items="[-1]"
+                        :pagination.sync="pagination"
+                        :total-items="totalRecords"
+                        :loading="loading"
+                        class="elevation-1">
+                    <template slot="items" slot-scope="props">
+                        <component :is="list"
+                                   :key="props.item.id"
+                                   :list-item="props.item"
+                                   @showDeleteDialog="deleteItemDialog"
+                                   @showEditForm="editedItemDialog">
                         </component>
-                    </v-card>
-                </v-dialog>
-            </v-toolbar>
-
-            <v-data-table
-                    :headers="headers"
-                    :items="records"
-                    :rows-per-page-items="[-1]"
-                    :pagination.sync="pagination"
-                    :total-items="totalRecords"
-                    :loading="loading"
-                    class="elevation-1">
-                <template slot="items" slot-scope="props">
-                    <component :is="list"
-                               :key="props.item.id"
-                               :list-item="props.item"
-                               @showDeleteDialog="deleteItemDialog"
-                               @showEditForm="editedItemDialog">
-                    </component>
-                </template>
-            </v-data-table>
+                    </template>
+                </v-data-table>
+            </v-card-text>
 
             <v-dialog v-model="delete_dialog" persistent max-width="290">
                 <v-card>
@@ -139,7 +141,7 @@
         },
         mounted() {
             let that = this;
-            this.getData()
+            this.getData(this.buildPagingUrl())
                 .then(data => {
                     that.updateData(data.data);
                     that.loading = false;
@@ -281,7 +283,7 @@
                     if (response.data.success == true) {
                         that.notify(response.data.message);
 
-                        that.getData()
+                        that.getData(this.buildPagingUrl())
                             .then(function (data) {
                                 that.updateData(data.data);
                             })

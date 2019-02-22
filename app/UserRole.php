@@ -12,4 +12,8 @@ class UserRole extends Model
     public function users() {
         return $this->hasMany('App\User');
     }
+
+    public function role_policy() {
+        return $this->hasMany('App\RolePolict', 'role_id', 'id');
+    }
 }
