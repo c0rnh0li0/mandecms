@@ -76,10 +76,8 @@
 
                                         <v-spacer></v-spacer>
                                         <v-avatar :tile="false" :size="150">
-                                            <img :src="imageUrl" height="150" v-if="imageUrl"/>
-                                            <!-- <img v-bind:src="'/storage/user_avatars/' + userAvatar" /> -->
+                                            <img :src="imageUrl" height="150" v-if="imageUrl" @click.stop="pickFile"/>
                                         </v-avatar>
-
                                         <v-spacer></v-spacer>
                                     </v-container>
                                 </v-card-text>

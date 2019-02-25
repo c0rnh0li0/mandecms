@@ -2226,8 +2226,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -4289,6 +4287,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
 //
 //
 //
@@ -41955,6 +41955,12 @@ var render = function() {
                                                 attrs: {
                                                   src: _vm.imageUrl,
                                                   height: "150"
+                                                },
+                                                on: {
+                                                  click: function($event) {
+                                                    $event.stopPropagation()
+                                                    return _vm.pickFile($event)
+                                                  }
                                                 }
                                               })
                                             : _vm._e()
@@ -44501,12 +44507,6 @@ var render = function() {
                           messages: _vm.errors.user_avatar,
                           error: typeof _vm.errors.user_avatar != "undefined"
                         },
-                        on: {
-                          click: function($event) {
-                            $event.stopPropagation()
-                            return _vm.pickFile($event)
-                          }
-                        },
                         model: {
                           value: _vm.editedItem.user_avatar,
                           callback: function($$v) {
@@ -44529,11 +44529,19 @@ var render = function() {
                       _vm._v(" "),
                       _c("v-spacer"),
                       _vm._v(" "),
-                      _vm.imageUrl
-                        ? _c("img", {
-                            attrs: { src: _vm.imageUrl, height: "150" }
-                          })
-                        : _vm._e(),
+                      _c("v-avatar", { attrs: { tile: false, size: 150 } }, [
+                        _vm.imageUrl
+                          ? _c("img", {
+                              attrs: { src: _vm.imageUrl, height: "150" },
+                              on: {
+                                click: function($event) {
+                                  $event.stopPropagation()
+                                  return _vm.pickFile($event)
+                                }
+                              }
+                            })
+                          : _vm._e()
+                      ]),
                       _vm._v(" "),
                       _c("v-spacer")
                     ],

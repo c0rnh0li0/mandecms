@@ -36,7 +36,7 @@
                     </v-container>
                     <v-container grid-list-md>
                         <v-text-field label="Select Avatar"
-                                      @click.stop="pickFile"
+
                                       v-model='editedItem.user_avatar'
                                       prepend-icon='attach_file'
                                       color="red darken-4"
@@ -50,7 +50,9 @@
                                 accept="image/*"
                                 @change="onFilePicked">
                         <v-spacer></v-spacer>
-                        <img :src="imageUrl" height="150" v-if="imageUrl"/>
+                        <v-avatar :tile="false" :size="150">
+                            <img :src="imageUrl" height="150" v-if="imageUrl" @click.stop="pickFile"/>
+                        </v-avatar>
                         <v-spacer></v-spacer>
                     </v-container>
                 </v-layout>
