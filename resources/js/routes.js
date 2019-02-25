@@ -6,6 +6,9 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import AuthClient from './components/Auth/Auth';
 
+// profile
+import Profile from './components/Profile.vue';
+
 // users views
 import UsersCrud from './components/users/Crud.vue';
 
@@ -55,7 +58,16 @@ const router = new VueRouter({
             component: AuthClient,
             meta: {
                 forAuth: true,
-                breadcrumb: 'Auth',
+                breadcrumb: 'Tokens',
+            },
+        },
+        {
+            path: '/profile',
+            name: 'Profile',
+            component: Profile,
+            meta: {
+                forAuth: true,
+                breadcrumb: 'Profile',
             },
         },
         // users section

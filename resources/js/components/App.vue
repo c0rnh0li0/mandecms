@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <!-- <v-navigation-drawer app></v-navigation-drawer> -->
-        <navbar></navbar>
+        <navbar ref="nav"></navbar>
         <v-content>
             <v-container fluid>
                 <router-view></router-view>

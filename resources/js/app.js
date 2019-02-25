@@ -3,16 +3,18 @@ import Vue from 'vue';
 import Routes from './routes.js';
 import Auth from './AuthFunctions.js';
 import App from './components/App';
-import VueBreadcrumbs from 'vue-2-breadcrumbs';
+//import VueBreadcrumbs from 'vue-2-breadcrumbs';
 import Vuetify from 'vuetify';
+//import Vuex from 'vuex';
 
 Vue.component('passport-clients', require('./components/passport/Clients.vue').default);
 Vue.component('passport-authorized-clients', require('./components/passport/AuthorizedClients.vue').default);
 Vue.component('passport-personal-access-tokens', require('./components/passport/PersonalAccessTokens.vue').default);
 
-Vue.use(Auth);
-Vue.use(VueBreadcrumbs);
+//Vue.use(VueBreadcrumbs);
+//Vue.use(Vuex);
 Vue.use(Vuetify);
+Vue.use(Auth);
 
 axios.defaults.headers.common['X-CSRF-TOKEN'] = Laravel.csrfToken;
 axios.defaults.headers.common['Content-Type'] = 'application/json';

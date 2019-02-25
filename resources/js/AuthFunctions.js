@@ -82,6 +82,8 @@ export default function (Vue) {
             this.user.created_at = userData.data.created_at;
             this.user.user_avatar = userData.data.user_avatar;
             this.user.role = userData.data.role;
+
+            //this.$store.state.user = this.user;
         },
 
         getToken() {

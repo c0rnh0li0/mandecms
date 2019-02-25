@@ -2075,6 +2075,256 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Profile.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Profile.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      editedItem: {
+        id: '',
+        name: '',
+        user_role: '',
+        role_id: '',
+        user_avatar: 'default_avatar.png',
+        created_at: ''
+      },
+      errors: [],
+      // avatar section
+      imageUrl: '/storage/user_avatars/default_avatar.png',
+      imageFile: '',
+      oldPassword: '',
+      newPassword: '',
+      newPasswordConfirm: ''
+    };
+  },
+  mounted: function mounted() {
+    this.getUserData();
+  },
+  methods: {
+    getUserData: function getUserData() {
+      var that = this;
+      axios.get('/api/users/info').then(function (response) {
+        that.editedItem = response.data.data;
+        that.imageUrl = '/storage/user_avatars/' + that.editedItem.user_avatar;
+      }).catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+    },
+    saveProfile: function saveProfile(e) {
+      this.editedItem.method = 'PUT';
+      if (this.imageFile != null) this.editedItem.user_avatar = this.imageFile;else this.editedItem.user_avatar = null;
+      var formData = new FormData();
+
+      for (var property in this.editedItem) {
+        if (this.editedItem.hasOwnProperty(property)) {
+          if (property == 'user_avatar' && this.imageFile != null) formData.append(property, this.imageFile, this.imageFile.name);else formData.append(property, this.editedItem[property]);
+        }
+      }
+
+      if (!this.imageFile) {
+        formData.delete('user_avatar');
+      }
+
+      var that = this;
+      var requestOptions = {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      };
+      formData.append('_method', 'put');
+      axios.post('/api/users/update/' + this.editedItem.id, formData, requestOptions).then(function (response) {
+        Object.assign(that.editedItem, response.data.data);
+      }).catch(function (err) {
+        if (err && err.response && err.response.status === 422) {
+          that.errors = err.response.data.errors || {};
+          that.errors.msg = err.response.data.message;
+        }
+      });
+    },
+    changePassword: function changePassword(e) {},
+    pickFile: function pickFile() {
+      this.$refs.image.click();
+    },
+    onFilePicked: function onFilePicked(e) {
+      var _this = this;
+
+      var files = e.target.files;
+
+      if (files[0] !== undefined) {
+        //this.editedItem.user_avatar = files[0].name;
+
+        /*if(this.editedItem.user_avatar.lastIndexOf('.') <= 0) {
+            return;
+        }*/
+        var fr = new FileReader();
+        fr.readAsDataURL(files[0]);
+        fr.addEventListener('load', function () {
+          _this.imageUrl = fr.result;
+          _this.imageFile = files[0]; // this is an image file that can be sent to server...
+        });
+      } else {
+        this.editedItem.user_avatar = '';
+        this.imageFile = '';
+        this.imageUrl = '';
+      }
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/crud/Crud.vue?vue&type=script&lang=js&":
 /*!********************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/crud/Crud.vue?vue&type=script&lang=js& ***!
@@ -40905,26 +41155,6 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ "./node_modules/vue-2-breadcrumbs/lib/vue-2-breadcrumbs.js":
-/*!*****************************************************************!*\
-  !*** ./node_modules/vue-2-breadcrumbs/lib/vue-2-breadcrumbs.js ***!
-  \*****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(global,factory){if(true)!(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));else { var mod; }})(this,function(_exports){"use strict";Object.defineProperty(_exports,"__esModule",{value:!0}),_exports.default=void 0;var _default={install(Vue,options){Object.defineProperties(Vue.prototype,{$breadcrumbs:{get(){var _this=this,breadcrumbs=this.$route.matched.map(function(routeRecord){var path=0<routeRecord.path.length?routeRecord.path:"/",route=routeRecord;return Object.keys(_this.$route.params).forEach(function(param){path=path.replace(":"+param,_this.$route.params[param])},_this),route.path=path,route},this);return breadcrumbs}}});Vue.component("breadcrumbs",Object.assign({methods:{getBreadcrumb:function getBreadcrumb(bc){return"function"==typeof bc?bc.call(this,this.$route.params):bc}},template:`
-        <ol class="breadcrumb" v-if="$breadcrumbs.length">
-          <li class="breadcrumb-item" v-if="crumb.meta.breadcrumb" v-for="(crumb, i) in $breadcrumbs">
-            <router-link active-class="active" :to="{ path: crumb.path }" :tag="i != $breadcrumbs.length - 1 ? 'a' : 'span'">{{ getBreadcrumb(crumb.meta.breadcrumb) }}</router-link>
-          </li>
-        </ol>
-      `},options))}};_exports.default=_default});
-
-/***/ }),
-
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/App.vue?vue&type=template&id=332fccf4&scoped=true&":
 /*!******************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/App.vue?vue&type=template&id=332fccf4&scoped=true& ***!
@@ -40943,7 +41173,7 @@ var render = function() {
   return _c(
     "v-app",
     [
-      _c("navbar"),
+      _c("navbar", { ref: "nav" }),
       _vm._v(" "),
       _c(
         "v-content",
@@ -41441,6 +41671,512 @@ var render = function() {
       ]
     )
   ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Profile.vue?vue&type=template&id=3bd692e4&":
+/*!**********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Profile.vue?vue&type=template&id=3bd692e4& ***!
+  \**********************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "v-card",
+        [
+          _c(
+            "v-card-text",
+            [
+              _c(
+                "v-toolbar",
+                { staticClass: "mb-3", attrs: { flat: "", color: "white" } },
+                [
+                  _c("v-toolbar-title", [
+                    _vm._v("Hi " + _vm._s(_vm.editedItem.name) + "!")
+                  ]),
+                  _vm._v(" "),
+                  _c("v-spacer")
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-container",
+                { attrs: { "grid-list-md": "", "text-xs-center": "" } },
+                [
+                  _c(
+                    "v-layout",
+                    { attrs: { row: "", wrap: "" } },
+                    [
+                      _c(
+                        "v-flex",
+                        { attrs: { xs4: "" } },
+                        [
+                          _c(
+                            "v-card",
+                            { staticClass: "elevation-1" },
+                            [
+                              _c("v-card-title", [
+                                _c("h4", [_vm._v("Your info")])
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-text",
+                                { staticClass: "px-0" },
+                                [
+                                  _c(
+                                    "v-form",
+                                    {
+                                      attrs: { method: "POST" },
+                                      on: {
+                                        submit: function($event) {
+                                          $event.preventDefault()
+                                          return _vm.saveProfile($event)
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "v-layout",
+                                        { attrs: { wrap: "" } },
+                                        [
+                                          _c("v-input", {
+                                            attrs: {
+                                              type: "hidden",
+                                              name: "id"
+                                            },
+                                            model: {
+                                              value: _vm.editedItem.id,
+                                              callback: function($$v) {
+                                                _vm.$set(
+                                                  _vm.editedItem,
+                                                  "id",
+                                                  $$v
+                                                )
+                                              },
+                                              expression: "editedItem.id"
+                                            }
+                                          }),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-container",
+                                            { attrs: { "grid-list-md": "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  label: "Name",
+                                                  color: "red darken-4",
+                                                  messages: _vm.errors.name,
+                                                  error:
+                                                    typeof _vm.errors.name !=
+                                                    "undefined"
+                                                },
+                                                model: {
+                                                  value: _vm.editedItem.name,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.editedItem,
+                                                      "name",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression: "editedItem.name"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-container",
+                                            { attrs: { "grid-list-md": "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  label: "Email",
+                                                  color: "red darken-4",
+                                                  messages: _vm.errors.email,
+                                                  error:
+                                                    typeof _vm.errors.email !=
+                                                    "undefined"
+                                                },
+                                                model: {
+                                                  value: _vm.editedItem.email,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.editedItem,
+                                                      "email",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression: "editedItem.email"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-container",
+                                            { attrs: { "grid-list-md": "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  value:
+                                                    _vm.editedItem.user_role,
+                                                  label: "Role",
+                                                  color: "red darken-4",
+                                                  readonly: ""
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-actions",
+                                [
+                                  _c("v-spacer"),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: {
+                                        color: "red darken-4",
+                                        flat: ""
+                                      },
+                                      on: { click: _vm.saveProfile }
+                                    },
+                                    [_vm._v("Save")]
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-flex",
+                        { attrs: { xs4: "" } },
+                        [
+                          _c(
+                            "v-card",
+                            { staticClass: "elevation-1" },
+                            [
+                              _c("v-card-title", [
+                                _c("h4", [_vm._v("Your avatar")])
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-text",
+                                { staticClass: "px-0" },
+                                [
+                                  _c(
+                                    "v-container",
+                                    { attrs: { "grid-list-md": "" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          label: "Select Avatar",
+                                          "prepend-icon": "attach_file",
+                                          color: "red darken-4",
+                                          messages: _vm.errors.user_avatar,
+                                          error:
+                                            typeof _vm.errors.user_avatar !=
+                                            "undefined"
+                                        },
+                                        on: {
+                                          click: function($event) {
+                                            $event.stopPropagation()
+                                            return _vm.pickFile($event)
+                                          }
+                                        },
+                                        model: {
+                                          value: _vm.editedItem.user_avatar,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.editedItem,
+                                              "user_avatar",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "editedItem.user_avatar"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        ref: "image",
+                                        staticStyle: { display: "none" },
+                                        attrs: {
+                                          type: "file",
+                                          name: "user_avatar",
+                                          accept: "image/*"
+                                        },
+                                        on: { change: _vm.onFilePicked }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-spacer"),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-avatar",
+                                        { attrs: { tile: false, size: 150 } },
+                                        [
+                                          _vm.imageUrl
+                                            ? _c("img", {
+                                                attrs: {
+                                                  src: _vm.imageUrl,
+                                                  height: "150"
+                                                }
+                                              })
+                                            : _vm._e()
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("v-spacer")
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-actions",
+                                [
+                                  _c("v-spacer"),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: {
+                                        color: "red darken-4",
+                                        flat: ""
+                                      },
+                                      on: { click: _vm.saveProfile }
+                                    },
+                                    [_vm._v("Save")]
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-flex",
+                        { attrs: { xs4: "" } },
+                        [
+                          _c(
+                            "v-card",
+                            { staticClass: "elevation-1" },
+                            [
+                              _c("v-card-title", [
+                                _c("h4", [_vm._v("Change your password")])
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-text",
+                                { staticClass: "px-0" },
+                                [
+                                  _c(
+                                    "v-form",
+                                    {
+                                      attrs: { method: "POST" },
+                                      on: {
+                                        submit: function($event) {
+                                          $event.preventDefault()
+                                          return _vm.changePassword($event)
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "v-layout",
+                                        { attrs: { wrap: "" } },
+                                        [
+                                          _c("v-input", {
+                                            attrs: {
+                                              type: "hidden",
+                                              name: "id"
+                                            },
+                                            model: {
+                                              value: _vm.editedItem.id,
+                                              callback: function($$v) {
+                                                _vm.$set(
+                                                  _vm.editedItem,
+                                                  "id",
+                                                  $$v
+                                                )
+                                              },
+                                              expression: "editedItem.id"
+                                            }
+                                          }),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-container",
+                                            { attrs: { "grid-list-md": "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  label: "Old password",
+                                                  color: "red darken-4",
+                                                  messages:
+                                                    _vm.errors.oldPassword,
+                                                  error:
+                                                    typeof _vm.errors
+                                                      .oldPassword !=
+                                                    "undefined"
+                                                },
+                                                model: {
+                                                  value: _vm.oldPassword,
+                                                  callback: function($$v) {
+                                                    _vm.oldPassword = $$v
+                                                  },
+                                                  expression: "oldPassword"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-container",
+                                            { attrs: { "grid-list-md": "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  label: "New password",
+                                                  color: "red darken-4",
+                                                  messages:
+                                                    _vm.errors.newPassword,
+                                                  error:
+                                                    typeof _vm.errors
+                                                      .newPassword !=
+                                                    "undefined"
+                                                },
+                                                model: {
+                                                  value: _vm.newPassword,
+                                                  callback: function($$v) {
+                                                    _vm.newPassword = $$v
+                                                  },
+                                                  expression: "newPassword"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-container",
+                                            { attrs: { "grid-list-md": "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  label: "Confirm new password",
+                                                  color: "red darken-4",
+                                                  messages:
+                                                    _vm.errors
+                                                      .newPasswordConfirm,
+                                                  error:
+                                                    typeof _vm.errors
+                                                      .newPasswordConfirm !=
+                                                    "undefined"
+                                                },
+                                                model: {
+                                                  value: _vm.newPasswordConfirm,
+                                                  callback: function($$v) {
+                                                    _vm.newPasswordConfirm = $$v
+                                                  },
+                                                  expression:
+                                                    "newPasswordConfirm"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-actions",
+                                [
+                                  _c("v-spacer"),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: {
+                                        color: "red darken-4",
+                                        flat: ""
+                                      },
+                                      on: { click: _vm.changePassword }
+                                    },
+                                    [_vm._v("Save")]
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -46684,7 +47420,7 @@ if (inBrowser && window.Vue) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global, setImmediate) {/*!
- * Vue.js v2.6.7
+ * Vue.js v2.6.6
  * (c) 2014-2019 Evan You
  * Released under the MIT License.
  */
@@ -48506,30 +49242,23 @@ function isBoolean () {
 /*  */
 
 function handleError (err, vm, info) {
-  // Deactivate deps tracking while processing error handler to avoid possible infinite rendering.
-  // See: https://github.com/vuejs/vuex/issues/1505
-  pushTarget();
-  try {
-    if (vm) {
-      var cur = vm;
-      while ((cur = cur.$parent)) {
-        var hooks = cur.$options.errorCaptured;
-        if (hooks) {
-          for (var i = 0; i < hooks.length; i++) {
-            try {
-              var capture = hooks[i].call(cur, err, vm, info) === false;
-              if (capture) { return }
-            } catch (e) {
-              globalHandleError(e, cur, 'errorCaptured hook');
-            }
+  if (vm) {
+    var cur = vm;
+    while ((cur = cur.$parent)) {
+      var hooks = cur.$options.errorCaptured;
+      if (hooks) {
+        for (var i = 0; i < hooks.length; i++) {
+          try {
+            var capture = hooks[i].call(cur, err, vm, info) === false;
+            if (capture) { return }
+          } catch (e) {
+            globalHandleError(e, cur, 'errorCaptured hook');
           }
         }
       }
     }
-    globalHandleError(err, vm, info);
-  } finally {
-    popTarget();
   }
+  globalHandleError(err, vm, info);
 }
 
 function invokeWithErrorHandling (
@@ -48543,9 +49272,7 @@ function invokeWithErrorHandling (
   try {
     res = args ? handler.apply(context, args) : handler.call(context);
     if (res && !res._isVue && isPromise(res)) {
-      // issue #9511
-      // reassign to res to avoid catch triggering multiple times when nested calls
-      res = res.catch(function (e) { return handleError(e, vm, info + " (Promise/async)"); });
+      res.catch(function (e) { return handleError(e, vm, info + " (Promise/async)"); });
     }
   } catch (e) {
     handleError(e, vm, info);
@@ -49228,18 +49955,15 @@ function normalizeScopedSlots (
   prevSlots
 ) {
   var res;
-  var isStable = slots ? !!slots.$stable : true;
-  var key = slots && slots.$key;
   if (!slots) {
     res = {};
   } else if (slots._normalized) {
     // fast path 1: child component re-render only, parent did not change
     return slots._normalized
   } else if (
-    isStable &&
+    slots.$stable &&
     prevSlots &&
     prevSlots !== emptyObject &&
-    key === prevSlots.$key &&
     Object.keys(normalSlots).length === 0
   ) {
     // fast path 2: stable scoped slots w/ no normal slots to proxy,
@@ -49247,16 +49971,16 @@ function normalizeScopedSlots (
     return prevSlots
   } else {
     res = {};
-    for (var key$1 in slots) {
-      if (slots[key$1] && key$1[0] !== '$') {
-        res[key$1] = normalizeScopedSlot(normalSlots, key$1, slots[key$1]);
+    for (var key in slots) {
+      if (slots[key] && key[0] !== '$') {
+        res[key] = normalizeScopedSlot(normalSlots, key, slots[key]);
       }
     }
   }
   // expose normal slots on scopedSlots
-  for (var key$2 in normalSlots) {
-    if (!(key$2 in res)) {
-      res[key$2] = proxyNormalSlot(normalSlots, key$2);
+  for (var key$1 in normalSlots) {
+    if (!(key$1 in res)) {
+      res[key$1] = proxyNormalSlot(normalSlots, key$1);
     }
   }
   // avoriaz seems to mock a non-extensible $scopedSlots object
@@ -49264,8 +49988,7 @@ function normalizeScopedSlots (
   if (slots && Object.isExtensible(slots)) {
     (slots)._normalized = res;
   }
-  def(res, '$stable', isStable);
-  def(res, '$key', key);
+  def(res, '$stable', slots ? !!slots.$stable : true);
   return res
 }
 
@@ -49560,16 +50283,14 @@ function bindObjectListeners (data, value) {
 
 function resolveScopedSlots (
   fns, // see flow/vnode
-  res,
-  // the following are added in 2.6
   hasDynamicKeys,
-  contentHashKey
+  res
 ) {
   res = res || { $stable: !hasDynamicKeys };
   for (var i = 0; i < fns.length; i++) {
     var slot = fns[i];
     if (Array.isArray(slot)) {
-      resolveScopedSlots(slot, res, hasDynamicKeys);
+      resolveScopedSlots(slot, hasDynamicKeys, res);
     } else if (slot) {
       // marker for reverse proxying v-slot without scope on this.$slots
       if (slot.proxy) {
@@ -49577,9 +50298,6 @@ function resolveScopedSlots (
       }
       res[slot.key] = slot.fn;
     }
-  }
-  if (contentHashKey) {
-    (res).$key = contentHashKey;
   }
   return res
 }
@@ -50758,12 +51476,9 @@ function updateChildComponent (
   // check if there are dynamic scopedSlots (hand-written or compiled but with
   // dynamic slot names). Static scoped slots compiled from template has the
   // "$stable" marker.
-  var newScopedSlots = parentVnode.data.scopedSlots;
-  var oldScopedSlots = vm.$scopedSlots;
   var hasDynamicScopedSlot = !!(
-    (newScopedSlots && !newScopedSlots.$stable) ||
-    (oldScopedSlots !== emptyObject && !oldScopedSlots.$stable) ||
-    (newScopedSlots && vm.$scopedSlots.$key !== newScopedSlots.$key)
+    (parentVnode.data.scopedSlots && !parentVnode.data.scopedSlots.$stable) ||
+    (vm.$scopedSlots !== emptyObject && !vm.$scopedSlots.$stable)
   );
 
   // Any static slot children from the parent may have changed during parent's
@@ -52085,7 +52800,7 @@ Object.defineProperty(Vue, 'FunctionalRenderContext', {
   value: FunctionalRenderContext
 });
 
-Vue.version = '2.6.7';
+Vue.version = '2.6.6';
 
 /*  */
 
@@ -54264,7 +54979,15 @@ function updateDOMProps (oldVnode, vnode) {
       }
     }
 
-    if (key === 'value' && elm.tagName !== 'PROGRESS') {
+    // skip the update if old and new VDOM state is the same.
+    // the only exception is `value` where the DOM value may be temporarily
+    // out of sync with VDOM state due to focus, composition and modifiers.
+    // This also covers #4521 by skipping the unnecesarry `checked` update.
+    if (key !== 'value' && cur === oldProps[key]) {
+      continue
+    }
+
+    if (key === 'value') {
       // store value as _value as well since
       // non-string values will be stringified
       elm._value = cur;
@@ -54284,18 +55007,8 @@ function updateDOMProps (oldVnode, vnode) {
       while (svg.firstChild) {
         elm.appendChild(svg.firstChild);
       }
-    } else if (
-      // skip the update if old and new VDOM state is the same.
-      // `value` is handled separately because the DOM value may be temporarily
-      // out of sync with VDOM state due to focus, composition and modifiers.
-      // This  #4521 by skipping the unnecesarry `checked` update.
-      cur !== oldProps[key]
-    ) {
-      // some property updates can throw
-      // e.g. `value` on <progress> w/ non-finite value
-      try {
-        elm[key] = cur;
-      } catch (e) {}
+    } else {
+      elm[key] = cur;
     }
   }
 }
@@ -57875,49 +58588,22 @@ function genScopedSlots (
       containsSlotChild(slot) // is passing down slot from parent which may be dynamic
     )
   });
-
-  // #9534: if a component with scoped slots is inside a conditional branch,
-  // it's possible for the same component to be reused but with different
-  // compiled slot content. To avoid that, we generate a unique key based on
-  // the generated code of all the slot contents.
-  var needsKey = !!el.if;
-
-  // OR when it is inside another scoped slot or v-for (the reactivity may be
-  // disconnected due to the intermediate scope variable)
-  // #9438, #9506
-  // TODO: this can be further optimized by properly analyzing in-scope bindings
-  // and skip force updating ones that do not actually use scope variables.
+  // OR when it is inside another scoped slot (the reactivity is disconnected)
+  // #9438
   if (!needsForceUpdate) {
     var parent = el.parent;
     while (parent) {
-      if (
-        (parent.slotScope && parent.slotScope !== emptySlotScopeToken) ||
-        parent.for
-      ) {
+      if (parent.slotScope && parent.slotScope !== emptySlotScopeToken) {
         needsForceUpdate = true;
         break
-      }
-      if (parent.if) {
-        needsKey = true;
       }
       parent = parent.parent;
     }
   }
 
-  var generatedSlots = Object.keys(slots)
-    .map(function (key) { return genScopedSlot(slots[key], state); })
-    .join(',');
-
-  return ("scopedSlots:_u([" + generatedSlots + "]" + (needsForceUpdate ? ",null,true" : "") + (!needsForceUpdate && needsKey ? (",null,false," + (hash(generatedSlots))) : "") + ")")
-}
-
-function hash(str) {
-  var hash = 5381;
-  var i = str.length;
-  while(i) {
-    hash = (hash * 33) ^ str.charCodeAt(--i);
-  }
-  return hash >>> 0
+  return ("scopedSlots:_u([" + (Object.keys(slots).map(function (key) {
+      return genScopedSlot(slots[key], state)
+    }).join(',')) + "]" + (needsForceUpdate ? ",true" : "") + ")")
 }
 
 function containsSlotChild (el) {
@@ -58252,13 +58938,11 @@ function generateCodeFrame (
 
 function repeat$1 (str, n) {
   var result = '';
-  if (n > 0) {
-    while (true) { // eslint-disable-line
-      if (n & 1) { result += str; }
-      n >>>= 1;
-      if (n <= 0) { break }
-      str += str;
-    }
+  while (true) { // eslint-disable-line
+    if (n & 1) { result += str; }
+    n >>>= 1;
+    if (n <= 0) { break }
+    str += str;
   }
   return result
 }
@@ -84723,7 +85407,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.user.email = userData.data.email;
       this.user.created_at = userData.data.created_at;
       this.user.user_avatar = userData.data.user_avatar;
-      this.user.role = userData.data.role;
+      this.user.role = userData.data.role; //this.$store.state.user = this.user;
     },
     getToken: function getToken() {
       var userData = this.getData();
@@ -84781,25 +85465,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _routes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./routes.js */ "./resources/js/routes.js");
 /* harmony import */ var _AuthFunctions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./AuthFunctions.js */ "./resources/js/AuthFunctions.js");
 /* harmony import */ var _components_App__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/App */ "./resources/js/components/App.vue");
-/* harmony import */ var vue_2_breadcrumbs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-2-breadcrumbs */ "./node_modules/vue-2-breadcrumbs/lib/vue-2-breadcrumbs.js");
-/* harmony import */ var vue_2_breadcrumbs__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue_2_breadcrumbs__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify */ "./node_modules/vuetify/dist/vuetify.js");
-/* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(vuetify__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/dist/vuetify.min.css */ "./node_modules/vuetify/dist/vuetify.min.css");
-/* harmony import */ var vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify */ "./node_modules/vuetify/dist/vuetify.js");
+/* harmony import */ var vuetify__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vuetify__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/dist/vuetify.min.css */ "./node_modules/vuetify/dist/vuetify.min.css");
+/* harmony import */ var vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(vuetify_dist_vuetify_min_css__WEBPACK_IMPORTED_MODULE_6__);
 
 
 
 
+ //import VueBreadcrumbs from 'vue-2-breadcrumbs';
 
-
+ //import Vuex from 'vuex';
 
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.component('passport-clients', __webpack_require__(/*! ./components/passport/Clients.vue */ "./resources/js/components/passport/Clients.vue").default);
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.component('passport-authorized-clients', __webpack_require__(/*! ./components/passport/AuthorizedClients.vue */ "./resources/js/components/passport/AuthorizedClients.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_1___default.a.component('passport-personal-access-tokens', __webpack_require__(/*! ./components/passport/PersonalAccessTokens.vue */ "./resources/js/components/passport/PersonalAccessTokens.vue").default);
+vue__WEBPACK_IMPORTED_MODULE_1___default.a.component('passport-personal-access-tokens', __webpack_require__(/*! ./components/passport/PersonalAccessTokens.vue */ "./resources/js/components/passport/PersonalAccessTokens.vue").default); //Vue.use(VueBreadcrumbs);
+//Vue.use(Vuex);
+
+vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vuetify__WEBPACK_IMPORTED_MODULE_5___default.a);
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(_AuthFunctions_js__WEBPACK_IMPORTED_MODULE_3__["default"]);
-vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vue_2_breadcrumbs__WEBPACK_IMPORTED_MODULE_5___default.a);
-vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vuetify__WEBPACK_IMPORTED_MODULE_6___default.a);
 axios.defaults.headers.common['X-CSRF-TOKEN'] = Laravel.csrfToken;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -85216,6 +85900,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_template_id_f2b6376c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_template_id_f2b6376c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Profile.vue":
+/*!*********************************************!*\
+  !*** ./resources/js/components/Profile.vue ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Profile_vue_vue_type_template_id_3bd692e4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Profile.vue?vue&type=template&id=3bd692e4& */ "./resources/js/components/Profile.vue?vue&type=template&id=3bd692e4&");
+/* harmony import */ var _Profile_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Profile.vue?vue&type=script&lang=js& */ "./resources/js/components/Profile.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Profile_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Profile_vue_vue_type_template_id_3bd692e4___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Profile_vue_vue_type_template_id_3bd692e4___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Profile.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Profile.vue?vue&type=script&lang=js&":
+/*!**********************************************************************!*\
+  !*** ./resources/js/components/Profile.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Profile_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Profile.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Profile.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Profile_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Profile.vue?vue&type=template&id=3bd692e4&":
+/*!****************************************************************************!*\
+  !*** ./resources/js/components/Profile.vue?vue&type=template&id=3bd692e4& ***!
+  \****************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Profile_vue_vue_type_template_id_3bd692e4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Profile.vue?vue&type=template&id=3bd692e4& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Profile.vue?vue&type=template&id=3bd692e4&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Profile_vue_vue_type_template_id_3bd692e4___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Profile_vue_vue_type_template_id_3bd692e4___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -86257,13 +87010,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Auth_Login__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/Auth/Login */ "./resources/js/components/Auth/Login.vue");
 /* harmony import */ var _components_Auth_Register__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/Auth/Register */ "./resources/js/components/Auth/Register.vue");
 /* harmony import */ var _components_Auth_Auth__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/Auth/Auth */ "./resources/js/components/Auth/Auth.vue");
-/* harmony import */ var _components_users_Crud_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/users/Crud.vue */ "./resources/js/components/users/Crud.vue");
-/* harmony import */ var _components_roles_Crud_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/roles/Crud.vue */ "./resources/js/components/roles/Crud.vue");
-/* harmony import */ var _components_policies_Crud_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/policies/Crud.vue */ "./resources/js/components/policies/Crud.vue");
+/* harmony import */ var _components_Profile_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/Profile.vue */ "./resources/js/components/Profile.vue");
+/* harmony import */ var _components_users_Crud_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/users/Crud.vue */ "./resources/js/components/users/Crud.vue");
+/* harmony import */ var _components_roles_Crud_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/roles/Crud.vue */ "./resources/js/components/roles/Crud.vue");
+/* harmony import */ var _components_policies_Crud_vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/policies/Crud.vue */ "./resources/js/components/policies/Crud.vue");
 
 
 
 
+
+ // profile
 
  // users views
 
@@ -86306,12 +87062,20 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
     component: _components_Auth_Auth__WEBPACK_IMPORTED_MODULE_5__["default"],
     meta: {
       forAuth: true,
-      breadcrumb: 'Auth'
+      breadcrumb: 'Tokens'
+    }
+  }, {
+    path: '/profile',
+    name: 'Profile',
+    component: _components_Profile_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
+    meta: {
+      forAuth: true,
+      breadcrumb: 'Profile'
     }
   }, // users section
   {
     path: '/people',
-    component: _components_users_Crud_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
+    component: _components_users_Crud_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
     name: 'Users',
     meta: {
       forAuth: true,
@@ -86320,7 +87084,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   }, // roles section
   {
     path: '/roles',
-    component: _components_roles_Crud_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    component: _components_roles_Crud_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     name: 'Roles',
     meta: {
       forAuth: true,
@@ -86329,7 +87093,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   }, // policies section
   {
     path: '/access-policies',
-    component: _components_policies_Crud_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
+    component: _components_policies_Crud_vue__WEBPACK_IMPORTED_MODULE_9__["default"],
     name: 'Policies',
     meta: {
       forAuth: true,

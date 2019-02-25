@@ -37,7 +37,6 @@ class UsersController extends Controller
     }
 
     public function info() {
-        dd(auth('api'));
         $user = User::findOrFail(auth('api')->user()->id);
 
         return new UserResource($user);
@@ -169,12 +168,15 @@ class UsersController extends Controller
             $fileNameToStore = $filename . '_' . time() . '.' . $extension;
             // upload
             $path = $request->file('user_avatar')->storeAs('public/user_avatars', $fileNameToStore);
+
+            $user->user_avatar = $fileNameToStore;
         }
         else {
-            $fileNameToStore = 'default_avatar.png';
+            if ($user->user_avatar == '' || $user->user_avatar == null) {
+                $fileNameToStore = 'default_avatar.png';
+                $user->user_avatar = $fileNameToStore;
+            }
         }
-
-        $user->user_avatar = $fileNameToStore;
 
         if ($user->save())
         {
