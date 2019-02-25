@@ -12,7 +12,9 @@ Vue.component('passport-personal-access-tokens', require('./components/passport/
 
 Vue.use(Auth);
 Vue.use(VueBreadcrumbs);
-Vue.use(Vuetify);
+Vue.use(Vuetify, {
+    //iconfont: 'mdi',
+});
 
 axios.defaults.headers.common['X-CSRF-TOKEN'] = Laravel.csrfToken;
 axios.defaults.headers.common['Content-Type'] = 'application/json';

@@ -2186,7 +2186,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     crudData: {
@@ -2204,6 +2203,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       baseUrl: this.crudData.crud_url,
       form: this.crudData.form,
       list: this.crudData.list,
+      expand: this.crudData.expand,
       form_dialog: false,
       delete_dialog: false,
       snackbar: false,
@@ -2289,7 +2289,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.delete_dialog = true;
     },
     editedItemDialog: function editedItemDialog(item) {
-      this.editedItem = item;
+      this.editedItem = Object.assign({}, item);
       this.editedIndex = this.findWithAttr(this.records, 'id', item.id);
       this.formTitle = 'Edit ' + this.crudData.singular + ' \'' + this.editedItem.name + '\'';
       this.$refs.form.setData(this.editedItem);
@@ -2356,7 +2356,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     setDefaultItemData: function setDefaultItemData() {
       this.editedIndex = -1;
       this.formTitle = 'New ' + this.crudData.singular;
-      this.$refs.form.setData(this.crudData.defaultItem);
+      this.crudData.editedItem = Object.assign({}, this.crudData.defaultItem);
+      this.$refs.form.setData(this.crudData.editedItem);
     },
     deleteItem: function deleteItem(item) {
       var that = this;
@@ -2408,7 +2409,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     itemUpdated: function itemUpdated(data) {
       console.log('item updated', data);
-      Object.assign(this.records[this.editedIndex], data);
+      Object.assign(this.records[this.editedIndex], data); //this.$set(this.records, this.editedIndex, data);
+      //this.$refs.datatable.items = (this, 'records', this.records);
+
+      console.log(this.records);
       this.notify('\'' + data.name + '\' sucessfully saved!');
       this.form_dialog = false;
     },
@@ -3385,6 +3389,7 @@ __webpack_require__.r(__webpack_exports__);
           sortable: false
         }],
         crud_url: '/api/policies',
+        expand: false,
         editedItem: {
           id: '',
           name: '',
@@ -3568,6 +3573,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     listItem: {
@@ -3590,6 +3596,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     deleteItem: function deleteItem(item) {
       this.$emit('showDeleteDialog', item);
+    },
+    rolesAccess: function rolesAccess(item) {
+      console.log('item access', item);
     }
   }
 });
@@ -3649,14 +3658,18 @@ __webpack_require__.r(__webpack_exports__);
         editedItem: {
           id: '',
           name: '',
+          policies: [],
           created_at: ''
         },
         defaultItem: {
           id: '',
           name: '',
+          policies: [],
           created_at: ''
         },
-        extras: {}
+        extras: {
+          policies_url: '/api/policies/all'
+        }
       }
     };
   },
@@ -3674,6 +3687,35 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3733,9 +3775,20 @@ __webpack_require__.r(__webpack_exports__);
     return {
       userCreateUrl: this.createUrl,
       userUpdateUrl: this.updateUrl,
+      policiesUrl: this.extras.policies_url,
       editedItem: {},
+      role_policies: [],
+      policies: [],
       errors: []
     };
+  },
+  mounted: function mounted() {
+    var that = this;
+    this.getPolicies().then(function (response) {
+      that.policies = response.data.data;
+    }).catch(function (err) {
+      that.$emit('notified', err.message);
+    });
   },
   methods: {
     save: function save(e) {
@@ -3746,6 +3799,7 @@ __webpack_require__.r(__webpack_exports__);
         formData.append(property, this.editedItem[property]);
       }
 
+      formData.append('policies', this.role_policies);
       var that = this;
       var requestOptions = {
         headers: {
@@ -3782,11 +3836,41 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
     },
+    getPolicies: function () {
+      var _getPolicies = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return axios.get(this.policiesUrl);
+
+              case 2:
+                return _context.abrupt("return", _context.sent);
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function getPolicies() {
+        return _getPolicies.apply(this, arguments);
+      }
+
+      return getPolicies;
+    }(),
     close: function close() {
       this.$emit('close');
     },
     setData: function setData(roleData) {
       this.editedItem = roleData;
+      this.role_policies = _.map(this.editedItem.policies, 'id');
+      console.log('role policies: ', this.role_policies);
       this.errors = [];
     }
   }
@@ -41528,7 +41612,7 @@ var render = function() {
                 attrs: {
                   headers: _vm.headers,
                   items: _vm.records,
-                  "rows-per-page-items": [-1],
+                  "rows-per-page-items": [],
                   pagination: _vm.pagination,
                   "total-items": _vm.totalRecords,
                   loading: _vm.loading
@@ -41544,7 +41628,6 @@ var render = function() {
                     fn: function(props) {
                       return [
                         _c(_vm.list, {
-                          key: props.item.id,
                           tag: "component",
                           attrs: { "list-item": props.item },
                           on: {
@@ -43184,6 +43267,20 @@ var render = function() {
             attrs: { small: "" },
             on: {
               click: function($event) {
+                return _vm.rolesAccess(_vm.item)
+              }
+            }
+          },
+          [_vm._v("lock")]
+        ),
+        _vm._v(" "),
+        _c(
+          "v-icon",
+          {
+            staticClass: "mr-2",
+            attrs: { small: "" },
+            on: {
+              click: function($event) {
                 return _vm.editItem(_vm.item)
               }
             }
@@ -43307,6 +43404,96 @@ var render = function() {
                           expression: "editedItem.name"
                         }
                       })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-card",
+                    [
+                      _c("v-card-title", { attrs: { "primary-title": "" } }, [
+                        _c("div", [
+                          _c("h5", { staticClass: "headline mb-0" }, [
+                            _vm._v("Manage access")
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "v-card-text",
+                        [
+                          _c(
+                            "v-container",
+                            { attrs: { fluid: "" } },
+                            [
+                              _c(
+                                "v-layout",
+                                { attrs: { row: "", wrap: "" } },
+                                _vm._l(_vm.policies, function(policy) {
+                                  return _c(
+                                    "v-flex",
+                                    { key: policy.id, attrs: { xs6: "" } },
+                                    [
+                                      _c(
+                                        "v-tooltip",
+                                        {
+                                          attrs: {
+                                            top: "",
+                                            color: "red darken-4"
+                                          },
+                                          scopedSlots: _vm._u([
+                                            {
+                                              key: "activator",
+                                              fn: function(data) {
+                                                return [
+                                                  _c(
+                                                    "v-switch",
+                                                    _vm._g(
+                                                      {
+                                                        attrs: {
+                                                          value: policy.id,
+                                                          label: policy.name,
+                                                          color: "red darken-4"
+                                                        },
+                                                        model: {
+                                                          value:
+                                                            _vm.role_policies,
+                                                          callback: function(
+                                                            $$v
+                                                          ) {
+                                                            _vm.role_policies = $$v
+                                                          },
+                                                          expression:
+                                                            "role_policies"
+                                                        }
+                                                      },
+                                                      data.on
+                                                    )
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ])
+                                        },
+                                        [
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(_vm._s(policy.description))
+                                          ])
+                                        ]
+                                      )
+                                    ],
+                                    1
+                                  )
+                                }),
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
                     ],
                     1
                   )
@@ -46496,7 +46683,7 @@ if (inBrowser && window.Vue) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global, setImmediate) {/*!
- * Vue.js v2.6.6
+ * Vue.js v2.6.7
  * (c) 2014-2019 Evan You
  * Released under the MIT License.
  */
@@ -48318,23 +48505,30 @@ function isBoolean () {
 /*  */
 
 function handleError (err, vm, info) {
-  if (vm) {
-    var cur = vm;
-    while ((cur = cur.$parent)) {
-      var hooks = cur.$options.errorCaptured;
-      if (hooks) {
-        for (var i = 0; i < hooks.length; i++) {
-          try {
-            var capture = hooks[i].call(cur, err, vm, info) === false;
-            if (capture) { return }
-          } catch (e) {
-            globalHandleError(e, cur, 'errorCaptured hook');
+  // Deactivate deps tracking while processing error handler to avoid possible infinite rendering.
+  // See: https://github.com/vuejs/vuex/issues/1505
+  pushTarget();
+  try {
+    if (vm) {
+      var cur = vm;
+      while ((cur = cur.$parent)) {
+        var hooks = cur.$options.errorCaptured;
+        if (hooks) {
+          for (var i = 0; i < hooks.length; i++) {
+            try {
+              var capture = hooks[i].call(cur, err, vm, info) === false;
+              if (capture) { return }
+            } catch (e) {
+              globalHandleError(e, cur, 'errorCaptured hook');
+            }
           }
         }
       }
     }
+    globalHandleError(err, vm, info);
+  } finally {
+    popTarget();
   }
-  globalHandleError(err, vm, info);
 }
 
 function invokeWithErrorHandling (
@@ -48348,7 +48542,9 @@ function invokeWithErrorHandling (
   try {
     res = args ? handler.apply(context, args) : handler.call(context);
     if (res && !res._isVue && isPromise(res)) {
-      res.catch(function (e) { return handleError(e, vm, info + " (Promise/async)"); });
+      // issue #9511
+      // reassign to res to avoid catch triggering multiple times when nested calls
+      res = res.catch(function (e) { return handleError(e, vm, info + " (Promise/async)"); });
     }
   } catch (e) {
     handleError(e, vm, info);
@@ -49031,15 +49227,18 @@ function normalizeScopedSlots (
   prevSlots
 ) {
   var res;
+  var isStable = slots ? !!slots.$stable : true;
+  var key = slots && slots.$key;
   if (!slots) {
     res = {};
   } else if (slots._normalized) {
     // fast path 1: child component re-render only, parent did not change
     return slots._normalized
   } else if (
-    slots.$stable &&
+    isStable &&
     prevSlots &&
     prevSlots !== emptyObject &&
+    key === prevSlots.$key &&
     Object.keys(normalSlots).length === 0
   ) {
     // fast path 2: stable scoped slots w/ no normal slots to proxy,
@@ -49047,16 +49246,16 @@ function normalizeScopedSlots (
     return prevSlots
   } else {
     res = {};
-    for (var key in slots) {
-      if (slots[key] && key[0] !== '$') {
-        res[key] = normalizeScopedSlot(normalSlots, key, slots[key]);
+    for (var key$1 in slots) {
+      if (slots[key$1] && key$1[0] !== '$') {
+        res[key$1] = normalizeScopedSlot(normalSlots, key$1, slots[key$1]);
       }
     }
   }
   // expose normal slots on scopedSlots
-  for (var key$1 in normalSlots) {
-    if (!(key$1 in res)) {
-      res[key$1] = proxyNormalSlot(normalSlots, key$1);
+  for (var key$2 in normalSlots) {
+    if (!(key$2 in res)) {
+      res[key$2] = proxyNormalSlot(normalSlots, key$2);
     }
   }
   // avoriaz seems to mock a non-extensible $scopedSlots object
@@ -49064,7 +49263,8 @@ function normalizeScopedSlots (
   if (slots && Object.isExtensible(slots)) {
     (slots)._normalized = res;
   }
-  def(res, '$stable', slots ? !!slots.$stable : true);
+  def(res, '$stable', isStable);
+  def(res, '$key', key);
   return res
 }
 
@@ -49359,14 +49559,16 @@ function bindObjectListeners (data, value) {
 
 function resolveScopedSlots (
   fns, // see flow/vnode
+  res,
+  // the following are added in 2.6
   hasDynamicKeys,
-  res
+  contentHashKey
 ) {
   res = res || { $stable: !hasDynamicKeys };
   for (var i = 0; i < fns.length; i++) {
     var slot = fns[i];
     if (Array.isArray(slot)) {
-      resolveScopedSlots(slot, hasDynamicKeys, res);
+      resolveScopedSlots(slot, res, hasDynamicKeys);
     } else if (slot) {
       // marker for reverse proxying v-slot without scope on this.$slots
       if (slot.proxy) {
@@ -49374,6 +49576,9 @@ function resolveScopedSlots (
       }
       res[slot.key] = slot.fn;
     }
+  }
+  if (contentHashKey) {
+    (res).$key = contentHashKey;
   }
   return res
 }
@@ -50552,9 +50757,12 @@ function updateChildComponent (
   // check if there are dynamic scopedSlots (hand-written or compiled but with
   // dynamic slot names). Static scoped slots compiled from template has the
   // "$stable" marker.
+  var newScopedSlots = parentVnode.data.scopedSlots;
+  var oldScopedSlots = vm.$scopedSlots;
   var hasDynamicScopedSlot = !!(
-    (parentVnode.data.scopedSlots && !parentVnode.data.scopedSlots.$stable) ||
-    (vm.$scopedSlots !== emptyObject && !vm.$scopedSlots.$stable)
+    (newScopedSlots && !newScopedSlots.$stable) ||
+    (oldScopedSlots !== emptyObject && !oldScopedSlots.$stable) ||
+    (newScopedSlots && vm.$scopedSlots.$key !== newScopedSlots.$key)
   );
 
   // Any static slot children from the parent may have changed during parent's
@@ -51876,7 +52084,7 @@ Object.defineProperty(Vue, 'FunctionalRenderContext', {
   value: FunctionalRenderContext
 });
 
-Vue.version = '2.6.6';
+Vue.version = '2.6.7';
 
 /*  */
 
@@ -54055,15 +54263,7 @@ function updateDOMProps (oldVnode, vnode) {
       }
     }
 
-    // skip the update if old and new VDOM state is the same.
-    // the only exception is `value` where the DOM value may be temporarily
-    // out of sync with VDOM state due to focus, composition and modifiers.
-    // This also covers #4521 by skipping the unnecesarry `checked` update.
-    if (key !== 'value' && cur === oldProps[key]) {
-      continue
-    }
-
-    if (key === 'value') {
+    if (key === 'value' && elm.tagName !== 'PROGRESS') {
       // store value as _value as well since
       // non-string values will be stringified
       elm._value = cur;
@@ -54083,8 +54283,18 @@ function updateDOMProps (oldVnode, vnode) {
       while (svg.firstChild) {
         elm.appendChild(svg.firstChild);
       }
-    } else {
-      elm[key] = cur;
+    } else if (
+      // skip the update if old and new VDOM state is the same.
+      // `value` is handled separately because the DOM value may be temporarily
+      // out of sync with VDOM state due to focus, composition and modifiers.
+      // This  #4521 by skipping the unnecesarry `checked` update.
+      cur !== oldProps[key]
+    ) {
+      // some property updates can throw
+      // e.g. `value` on <progress> w/ non-finite value
+      try {
+        elm[key] = cur;
+      } catch (e) {}
     }
   }
 }
@@ -57664,22 +57874,49 @@ function genScopedSlots (
       containsSlotChild(slot) // is passing down slot from parent which may be dynamic
     )
   });
-  // OR when it is inside another scoped slot (the reactivity is disconnected)
-  // #9438
+
+  // #9534: if a component with scoped slots is inside a conditional branch,
+  // it's possible for the same component to be reused but with different
+  // compiled slot content. To avoid that, we generate a unique key based on
+  // the generated code of all the slot contents.
+  var needsKey = !!el.if;
+
+  // OR when it is inside another scoped slot or v-for (the reactivity may be
+  // disconnected due to the intermediate scope variable)
+  // #9438, #9506
+  // TODO: this can be further optimized by properly analyzing in-scope bindings
+  // and skip force updating ones that do not actually use scope variables.
   if (!needsForceUpdate) {
     var parent = el.parent;
     while (parent) {
-      if (parent.slotScope && parent.slotScope !== emptySlotScopeToken) {
+      if (
+        (parent.slotScope && parent.slotScope !== emptySlotScopeToken) ||
+        parent.for
+      ) {
         needsForceUpdate = true;
         break
+      }
+      if (parent.if) {
+        needsKey = true;
       }
       parent = parent.parent;
     }
   }
 
-  return ("scopedSlots:_u([" + (Object.keys(slots).map(function (key) {
-      return genScopedSlot(slots[key], state)
-    }).join(',')) + "]" + (needsForceUpdate ? ",true" : "") + ")")
+  var generatedSlots = Object.keys(slots)
+    .map(function (key) { return genScopedSlot(slots[key], state); })
+    .join(',');
+
+  return ("scopedSlots:_u([" + generatedSlots + "]" + (needsForceUpdate ? ",null,true" : "") + (!needsForceUpdate && needsKey ? (",null,false," + (hash(generatedSlots))) : "") + ")")
+}
+
+function hash(str) {
+  var hash = 5381;
+  var i = str.length;
+  while(i) {
+    hash = (hash * 33) ^ str.charCodeAt(--i);
+  }
+  return hash >>> 0
 }
 
 function containsSlotChild (el) {
@@ -58014,11 +58251,13 @@ function generateCodeFrame (
 
 function repeat$1 (str, n) {
   var result = '';
-  while (true) { // eslint-disable-line
-    if (n & 1) { result += str; }
-    n >>>= 1;
-    if (n <= 0) { break }
-    str += str;
+  if (n > 0) {
+    while (true) { // eslint-disable-line
+      if (n & 1) { result += str; }
+      n >>>= 1;
+      if (n <= 0) { break }
+      str += str;
+    }
   }
   return result
 }
@@ -84559,7 +84798,8 @@ vue__WEBPACK_IMPORTED_MODULE_1___default.a.component('passport-authorized-client
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.component('passport-personal-access-tokens', __webpack_require__(/*! ./components/passport/PersonalAccessTokens.vue */ "./resources/js/components/passport/PersonalAccessTokens.vue").default);
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(_AuthFunctions_js__WEBPACK_IMPORTED_MODULE_3__["default"]);
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vue_2_breadcrumbs__WEBPACK_IMPORTED_MODULE_5___default.a);
-vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vuetify__WEBPACK_IMPORTED_MODULE_6___default.a);
+vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vuetify__WEBPACK_IMPORTED_MODULE_6___default.a, {//iconfont: 'mdi',
+});
 axios.defaults.headers.common['X-CSRF-TOKEN'] = Laravel.csrfToken;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -86172,8 +86412,8 @@ secret: xmoah81trlgdEoLLRvTx5mHy9lpmWZIbMlQNotPu
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! G:\wamp64\www\mandecms\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! G:\wamp64\www\mandecms\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! E:\wamp\www\mandecms\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! E:\wamp\www\mandecms\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

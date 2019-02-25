@@ -64,6 +64,8 @@ class RolesController extends Controller
         $role->name = $request->input('name');
 
         if ($role->save()) {
+            $role->policies()->sync(explode(',', $request->input('policies')));
+
             return response()->json([
                 'success' => true,
                 'message' => 'Successfully created role!'
@@ -117,8 +119,11 @@ class RolesController extends Controller
         $role = UserRole::findOrFail($id);
 
         $role->name = $request->input('name');
+        $saved =  $role->save();
 
-        if ($role->save())
+        $role->policies()->sync(explode(',', $request->input('policies')));
+
+        if ($saved)
         {
             return new RoleResource($role);
         }

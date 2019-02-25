@@ -18,7 +18,9 @@
                 item: this.listItem,
             }
         },
-        mounted() {},
+        mounted() {
+
+        },
         methods: {
             editItem(item) {
                 this.$emit('showEditForm', item);

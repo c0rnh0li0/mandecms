@@ -58,14 +58,13 @@
                 <v-data-table
                         :headers="headers"
                         :items="records"
-                        :rows-per-page-items="[-1]"
+                        :rows-per-page-items="[]"
                         :pagination.sync="pagination"
                         :total-items="totalRecords"
                         :loading="loading"
                         class="elevation-1">
                     <template slot="items" slot-scope="props">
                         <component :is="list"
-                                   :key="props.item.id"
                                    :list-item="props.item"
                                    @showDeleteDialog="deleteItemDialog"
                                    @showEditForm="editedItemDialog">
@@ -105,7 +104,9 @@
                 baseUrl: this.crudData.crud_url,
 
                 form: this.crudData.form,
+
                 list: this.crudData.list,
+                expand: this.crudData.expand,
 
                 form_dialog: false,
                 delete_dialog: false,
@@ -118,11 +119,10 @@
                 loading: true,
                 pagination: {
                     sortBy: 'created_at',
-                    value: 0
+                    value: 0,
                 },
 
                 headers: this.crudData.dt_headers,
-
                 itemToDelete: {},
                 // add/edit section
                 editedIndex: -1,
@@ -207,7 +207,7 @@
                 this.delete_dialog = true;
             },
             editedItemDialog(item) {
-                this.editedItem = item;
+                this.editedItem = Object.assign({}, item);
                 this.editedIndex = this.findWithAttr(this.records, 'id', item.id);
 
                 this.formTitle = 'Edit ' + this.crudData.singular + ' \'' + this.editedItem.name + '\'';
@@ -270,7 +270,8 @@
             setDefaultItemData() {
                 this.editedIndex = -1;
                 this.formTitle = 'New ' + this.crudData.singular;
-                this.$refs.form.setData(this.crudData.defaultItem);
+                this.crudData.editedItem = Object.assign({}, this.crudData.defaultItem);
+                this.$refs.form.setData(this.crudData.editedItem);
             },
 
             deleteItem (item) {
@@ -339,6 +340,10 @@
                 console.log('item updated', data);
 
                 Object.assign(this.records[this.editedIndex], data);
+                //this.$set(this.records, this.editedIndex, data);
+                //this.$refs.datatable.items = (this, 'records', this.records);
+
+                console.log(this.records);
                 this.notify('\'' + data.name + '\' sucessfully saved!');
                 this.form_dialog = false;
             },
