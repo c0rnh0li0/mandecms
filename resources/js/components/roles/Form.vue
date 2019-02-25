@@ -13,6 +13,27 @@
                                 :error="typeof errors.name != 'undefined'">
                         </v-text-field>
                     </v-container>
+                    <v-card>
+                        <v-card-title primary-title>
+                            <div>
+                                <h5 class="headline mb-0">Manage access</h5>
+                            </div>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container fluid>
+                                <v-layout row wrap>
+                                    <v-flex xs6 v-for="policy in policies" :key="policy.id">
+                                        <v-tooltip top color="red darken-4">
+                                            <template #activator="tooltip">
+                                                <v-switch v-model="role_policies" :value="policy.id" :label="policy.name" color="red darken-4" v-on="tooltip.on"></v-switch>
+                                            </template>
+                                            <span>{{ policy.description }}</span>
+                                        </v-tooltip>
+                                    </v-flex>
+                                </v-layout>
+                            </v-container>
+                        </v-card-text>
+                    </v-card>
                 </v-layout>
             </v-form>
         </v-card-text>
@@ -36,11 +57,30 @@
             return {
                 userCreateUrl: this.createUrl,
                 userUpdateUrl: this.updateUrl,
+                policiesUrl: this.extras.policies_url,
 
                 editedItem: {},
+                role_policies: [],
+                policies: [],
 
                 errors: [],
             }
+        },
+        watch: {
+            role_policies: function (val) {
+                this.editedItem.policies = this.attachPolicies(val);
+            },
+        },
+        mounted() {
+            let that = this;
+
+            this.getPolicies()
+                .then(function (response) {
+                    that.policies = response.data.data;
+                })
+                .catch(function (err) {
+                    that.$emit('notified', err.message);
+                });
         },
         methods: {
             save (e) {
@@ -50,6 +90,8 @@
                 for (var property in this.editedItem) {
                     formData.append(property, this.editedItem[property]);
                 }
+
+                formData.append('policies', this.role_policies);
 
                 let that = this;
                 let requestOptions = {
@@ -62,7 +104,6 @@
                     formData.append('_method', 'put');
 
                     axios.post(this.updateUrl + this.editedItem.id, formData, requestOptions).then(function (response) {
-                        //Object.assign(that.records[that.editedIndex], response.data.data);
                         that.$emit('updated', response.data.data);
                     }).catch(function(err) {
                         if (err && err.response && err.response.status === 422) {
@@ -74,9 +115,8 @@
                     this.editedItem.method = 'POST';
 
                     axios.post(this.createUrl, formData, requestOptions).then(function (response) {
-                        if (response.data.success == true) {
+                        if (response.data.success == true)
                             that.$emit('saved');
-                        }
 
                         that.$emit('notified', response.data.message);
                     }).catch(function(err) {
@@ -97,7 +137,29 @@
 
             setData(roleData) {
                 this.editedItem = roleData;
+                this.role_policies = _.map(this.editedItem.policies, 'id');
                 this.errors = [];
+            },
+
+            async getPolicies() {
+                return await axios.get(this.policiesUrl);
+            },
+
+            attachPolicies(val) {
+                if (val.length == 0)
+                    return [];
+
+                let polArr = [];
+                for (let i = 0; i < val.length; i++) {
+                    let p = this.policies.find(function(policy) {
+                        return policy.id == val[i];
+                    });
+
+                    if (p)
+                        polArr.push(p);
+                }
+
+                return polArr;
             }
         }
     }

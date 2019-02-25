@@ -36,6 +36,11 @@ class PoliciesController extends Controller
         return PolicyResource::collection($policies);
     }
 
+    public function all()
+    {
+        return PolicyResource::collection(Policy::all());
+    }
+
     /**
      * Show the form for creating a new resource.
      *

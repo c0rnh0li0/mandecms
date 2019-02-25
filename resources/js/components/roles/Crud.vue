@@ -39,7 +39,7 @@
                         created_at: ''
                     },
                     extras: {
-
+                        policies_url: '/api/policies/all'
                     },
                 },
             }

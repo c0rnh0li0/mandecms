@@ -3656,7 +3656,9 @@ __webpack_require__.r(__webpack_exports__);
           name: '',
           created_at: ''
         },
-        extras: {}
+        extras: {
+          policies_url: '/api/policies/all'
+        }
       }
     };
   },
@@ -3674,6 +3676,35 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3733,9 +3764,25 @@ __webpack_require__.r(__webpack_exports__);
     return {
       userCreateUrl: this.createUrl,
       userUpdateUrl: this.updateUrl,
+      policiesUrl: this.extras.policies_url,
       editedItem: {},
+      role_policies: [],
+      policies: [],
       errors: []
     };
+  },
+  watch: {
+    role_policies: function role_policies(val) {
+      this.editedItem.policies = this.attachPolicies(val);
+    }
+  },
+  mounted: function mounted() {
+    var that = this;
+    this.getPolicies().then(function (response) {
+      that.policies = response.data.data;
+    }).catch(function (err) {
+      that.$emit('notified', err.message);
+    });
   },
   methods: {
     save: function save(e) {
@@ -3746,6 +3793,7 @@ __webpack_require__.r(__webpack_exports__);
         formData.append(property, this.editedItem[property]);
       }
 
+      formData.append('policies', this.role_policies);
       var that = this;
       var requestOptions = {
         headers: {
@@ -3756,7 +3804,6 @@ __webpack_require__.r(__webpack_exports__);
       if (this.editedItem.id != '') {
         formData.append('_method', 'put');
         axios.post(this.updateUrl + this.editedItem.id, formData, requestOptions).then(function (response) {
-          //Object.assign(that.records[that.editedIndex], response.data.data);
           that.$emit('updated', response.data.data);
         }).catch(function (err) {
           if (err && err.response && err.response.status === 422) {
@@ -3767,10 +3814,7 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         this.editedItem.method = 'POST';
         axios.post(this.createUrl, formData, requestOptions).then(function (response) {
-          if (response.data.success == true) {
-            that.$emit('saved');
-          }
-
+          if (response.data.success == true) that.$emit('saved');
           that.$emit('notified', response.data.message);
         }).catch(function (err) {
           if (err && err.response && err.response.status === 422) {
@@ -3787,7 +3831,56 @@ __webpack_require__.r(__webpack_exports__);
     },
     setData: function setData(roleData) {
       this.editedItem = roleData;
+      this.role_policies = _.map(this.editedItem.policies, 'id');
       this.errors = [];
+    },
+    getPolicies: function () {
+      var _getPolicies = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return axios.get(this.policiesUrl);
+
+              case 2:
+                return _context.abrupt("return", _context.sent);
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function getPolicies() {
+        return _getPolicies.apply(this, arguments);
+      }
+
+      return getPolicies;
+    }(),
+    attachPolicies: function attachPolicies(val) {
+      var _this = this;
+
+      if (val.length == 0) return [];
+      var polArr = [];
+
+      var _loop = function _loop(i) {
+        var p = _this.policies.find(function (policy) {
+          return policy.id == val[i];
+        });
+
+        if (p) polArr.push(p);
+      };
+
+      for (var i = 0; i < val.length; i++) {
+        _loop(i);
+      }
+
+      return polArr;
     }
   }
 });
@@ -43307,6 +43400,101 @@ var render = function() {
                           expression: "editedItem.name"
                         }
                       })
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-card",
+                    [
+                      _c("v-card-title", { attrs: { "primary-title": "" } }, [
+                        _c("div", [
+                          _c("h5", { staticClass: "headline mb-0" }, [
+                            _vm._v("Manage access")
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "v-card-text",
+                        [
+                          _c(
+                            "v-container",
+                            { attrs: { fluid: "" } },
+                            [
+                              _c(
+                                "v-layout",
+                                { attrs: { row: "", wrap: "" } },
+                                _vm._l(_vm.policies, function(policy) {
+                                  return _c(
+                                    "v-flex",
+                                    { key: policy.id, attrs: { xs6: "" } },
+                                    [
+                                      _c(
+                                        "v-tooltip",
+                                        {
+                                          attrs: {
+                                            top: "",
+                                            color: "red darken-4"
+                                          },
+                                          scopedSlots: _vm._u(
+                                            [
+                                              {
+                                                key: "activator",
+                                                fn: function(tooltip) {
+                                                  return [
+                                                    _c(
+                                                      "v-switch",
+                                                      _vm._g(
+                                                        {
+                                                          attrs: {
+                                                            value: policy.id,
+                                                            label: policy.name,
+                                                            color:
+                                                              "red darken-4"
+                                                          },
+                                                          model: {
+                                                            value:
+                                                              _vm.role_policies,
+                                                            callback: function(
+                                                              $$v
+                                                            ) {
+                                                              _vm.role_policies = $$v
+                                                            },
+                                                            expression:
+                                                              "role_policies"
+                                                          }
+                                                        },
+                                                        tooltip.on
+                                                      )
+                                                    )
+                                                  ]
+                                                }
+                                              }
+                                            ],
+                                            null,
+                                            true
+                                          )
+                                        },
+                                        [
+                                          _vm._v(" "),
+                                          _c("span", [
+                                            _vm._v(_vm._s(policy.description))
+                                          ])
+                                        ]
+                                      )
+                                    ],
+                                    1
+                                  )
+                                }),
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
                     ],
                     1
                   )

@@ -64,6 +64,10 @@ class RolesController extends Controller
         $role->name = $request->input('name');
 
         if ($role->save()) {
+            if ($request->has('policies') && $request->input('policies') != '') {
+                $role->policies()->sync(explode(',', $request->input('policies')));
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Successfully created role!'
@@ -118,7 +122,13 @@ class RolesController extends Controller
 
         $role->name = $request->input('name');
 
-        if ($role->save())
+        $saved =  $role->save();
+
+        if ($request->has('policies') && $request->input('policies') != '') {
+            $role->policies()->sync(explode(',', $request->input('policies')));
+        }
+
+        if ($saved)
         {
             return new RoleResource($role);
         }
