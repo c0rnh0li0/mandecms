@@ -16,9 +16,6 @@ class PoliciesController extends Controller
      */
     public function index()
     {
-        //$policy = Policy::findOrFail(1);
-        //dd($policy->roles);
-
         $sort = FacadesRequest::get('sort');
         $dir = FacadesRequest::get('direction');
 
@@ -39,10 +36,6 @@ class PoliciesController extends Controller
         return PolicyResource::collection($policies);
     }
 
-    public function all()
-    {
-        return PolicyResource::collection(Policy::all());
-    }
     /**
      * Show the form for creating a new resource.
      *

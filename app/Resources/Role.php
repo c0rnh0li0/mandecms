@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Policy;
 
 class Role extends JsonResource
 {
@@ -19,7 +18,6 @@ class Role extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'policies' => $this->policies,
             'created_at' => $this->created_at->format('d.m.Y'),
         ];
     }

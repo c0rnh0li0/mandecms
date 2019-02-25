@@ -12,6 +12,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <!-- <script src="{{ asset('js/mdb/mdb.min.js') }}" defer></script> -->
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -23,8 +24,22 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- <link href="{{ asset('css/mdb/mdb.min.css') }}" rel="stylesheet"> -->
 </head>
 <body>
     <div id="app"></div>
 </body>
 </html>
+
+<?php
+
+      /*
+       Encryption keys generated successfully.
+        Personal access client created successfully.
+        Client ID: 3
+        Client secret: YEonT5GXLrhHUepQPDmoMt0yOm5jZEFmcEcCWSeH
+        Password grant client created successfully.
+        Client ID: 4
+        Client secret: HzZZM0kUwFTOriLGMAxRRpWEhnMCkq8DiW1VQfTj
+*/
+?>

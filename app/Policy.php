@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Policy extends Model
 {
-    public function roles() {
-        return $this->belongsToMany(UserRole::class);
+    public function role_policy() {
+        return $this->hasMany('App\RolePolicy', 'policy_id', 'id');
     }
 }

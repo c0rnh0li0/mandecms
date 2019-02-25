@@ -4,7 +4,6 @@
         <td class="text-xs-left">{{ item.description }}</td>
         <td class="text-xs-right">{{ item.created_at }}</td>
         <td class="justify-end layout px-0">
-            <v-icon small class="mr-2" @click="rolesAccess(item)">lock</v-icon>
             <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
             <v-icon small class="mr-2" @click="deleteItem(item)">delete</v-icon>
         </td>
@@ -28,9 +27,6 @@
             deleteItem(item) {
                 this.$emit('showDeleteDialog', item);
             },
-            rolesAccess(item) {
-                console.log('item access', item);
-            }
         }
     }
 </script>

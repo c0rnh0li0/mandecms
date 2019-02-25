@@ -28,7 +28,7 @@
                         { text: '', align: 'center', value: 'name', sortable: false }
                     ],
                     crud_url: '/api/policies',
-                    expand: false,
+
                     editedItem: {
                         id: '',
                         name: '',

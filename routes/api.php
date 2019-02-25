@@ -40,7 +40,6 @@ Route::put('/roles/update/{role}', 'RolesController@update');
 Route::delete('/roles/delete/{role}', 'RolesController@destroy');
 
 Route::get('policies', 'PoliciesController@index');
-Route::get('policies/all', 'PoliciesController@all');
 Route::get('policies/info', 'PoliciesController@info');
 Route::post('/policies/store', 'PoliciesController@store');
 Route::put('/policies/update/{policy}', 'PoliciesController@update');

@@ -2186,6 +2186,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     crudData: {
@@ -2203,7 +2204,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       baseUrl: this.crudData.crud_url,
       form: this.crudData.form,
       list: this.crudData.list,
-      expand: this.crudData.expand,
       form_dialog: false,
       delete_dialog: false,
       snackbar: false,
@@ -2289,7 +2289,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.delete_dialog = true;
     },
     editedItemDialog: function editedItemDialog(item) {
-      this.editedItem = Object.assign({}, item);
+      this.editedItem = item;
       this.editedIndex = this.findWithAttr(this.records, 'id', item.id);
       this.formTitle = 'Edit ' + this.crudData.singular + ' \'' + this.editedItem.name + '\'';
       this.$refs.form.setData(this.editedItem);
@@ -2356,8 +2356,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     setDefaultItemData: function setDefaultItemData() {
       this.editedIndex = -1;
       this.formTitle = 'New ' + this.crudData.singular;
-      this.crudData.editedItem = Object.assign({}, this.crudData.defaultItem);
-      this.$refs.form.setData(this.crudData.editedItem);
+      this.$refs.form.setData(this.crudData.defaultItem);
     },
     deleteItem: function deleteItem(item) {
       var that = this;
@@ -2409,10 +2408,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     itemUpdated: function itemUpdated(data) {
       console.log('item updated', data);
-      Object.assign(this.records[this.editedIndex], data); //this.$set(this.records, this.editedIndex, data);
-      //this.$refs.datatable.items = (this, 'records', this.records);
-
-      console.log(this.records);
+      Object.assign(this.records[this.editedIndex], data);
       this.notify('\'' + data.name + '\' sucessfully saved!');
       this.form_dialog = false;
     },
@@ -3389,7 +3385,6 @@ __webpack_require__.r(__webpack_exports__);
           sortable: false
         }],
         crud_url: '/api/policies',
-        expand: false,
         editedItem: {
           id: '',
           name: '',
@@ -3573,7 +3568,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     listItem: {
@@ -3596,9 +3590,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     deleteItem: function deleteItem(item) {
       this.$emit('showDeleteDialog', item);
-    },
-    rolesAccess: function rolesAccess(item) {
-      console.log('item access', item);
     }
   }
 });
@@ -3658,18 +3649,14 @@ __webpack_require__.r(__webpack_exports__);
         editedItem: {
           id: '',
           name: '',
-          policies: [],
           created_at: ''
         },
         defaultItem: {
           id: '',
           name: '',
-          policies: [],
           created_at: ''
         },
-        extras: {
-          policies_url: '/api/policies/all'
-        }
+        extras: {}
       }
     };
   },
@@ -3687,35 +3674,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -3775,20 +3733,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     return {
       userCreateUrl: this.createUrl,
       userUpdateUrl: this.updateUrl,
-      policiesUrl: this.extras.policies_url,
       editedItem: {},
-      role_policies: [],
-      policies: [],
       errors: []
     };
-  },
-  mounted: function mounted() {
-    var that = this;
-    this.getPolicies().then(function (response) {
-      that.policies = response.data.data;
-    }).catch(function (err) {
-      that.$emit('notified', err.message);
-    });
   },
   methods: {
     save: function save(e) {
@@ -3799,7 +3746,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         formData.append(property, this.editedItem[property]);
       }
 
-      formData.append('policies', this.role_policies);
       var that = this;
       var requestOptions = {
         headers: {
@@ -3836,41 +3782,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
       }
     },
-    getPolicies: function () {
-      var _getPolicies = _asyncToGenerator(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.next = 2;
-                return axios.get(this.policiesUrl);
-
-              case 2:
-                return _context.abrupt("return", _context.sent);
-
-              case 3:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function getPolicies() {
-        return _getPolicies.apply(this, arguments);
-      }
-
-      return getPolicies;
-    }(),
     close: function close() {
       this.$emit('close');
     },
     setData: function setData(roleData) {
       this.editedItem = roleData;
-      this.role_policies = _.map(this.editedItem.policies, 'id');
-      console.log('role policies: ', this.role_policies);
       this.errors = [];
     }
   }
@@ -41612,7 +41528,7 @@ var render = function() {
                 attrs: {
                   headers: _vm.headers,
                   items: _vm.records,
-                  "rows-per-page-items": [],
+                  "rows-per-page-items": [-1],
                   pagination: _vm.pagination,
                   "total-items": _vm.totalRecords,
                   loading: _vm.loading
@@ -41628,6 +41544,7 @@ var render = function() {
                     fn: function(props) {
                       return [
                         _c(_vm.list, {
+                          key: props.item.id,
                           tag: "component",
                           attrs: { "list-item": props.item },
                           on: {
@@ -43267,20 +43184,6 @@ var render = function() {
             attrs: { small: "" },
             on: {
               click: function($event) {
-                return _vm.rolesAccess(_vm.item)
-              }
-            }
-          },
-          [_vm._v("lock")]
-        ),
-        _vm._v(" "),
-        _c(
-          "v-icon",
-          {
-            staticClass: "mr-2",
-            attrs: { small: "" },
-            on: {
-              click: function($event) {
                 return _vm.editItem(_vm.item)
               }
             }
@@ -43404,96 +43307,6 @@ var render = function() {
                           expression: "editedItem.name"
                         }
                       })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-card",
-                    [
-                      _c("v-card-title", { attrs: { "primary-title": "" } }, [
-                        _c("div", [
-                          _c("h5", { staticClass: "headline mb-0" }, [
-                            _vm._v("Manage access")
-                          ])
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "v-card-text",
-                        [
-                          _c(
-                            "v-container",
-                            { attrs: { fluid: "" } },
-                            [
-                              _c(
-                                "v-layout",
-                                { attrs: { row: "", wrap: "" } },
-                                _vm._l(_vm.policies, function(policy) {
-                                  return _c(
-                                    "v-flex",
-                                    { key: policy.id, attrs: { xs6: "" } },
-                                    [
-                                      _c(
-                                        "v-tooltip",
-                                        {
-                                          attrs: {
-                                            top: "",
-                                            color: "red darken-4"
-                                          },
-                                          scopedSlots: _vm._u([
-                                            {
-                                              key: "activator",
-                                              fn: function(data) {
-                                                return [
-                                                  _c(
-                                                    "v-switch",
-                                                    _vm._g(
-                                                      {
-                                                        attrs: {
-                                                          value: policy.id,
-                                                          label: policy.name,
-                                                          color: "red darken-4"
-                                                        },
-                                                        model: {
-                                                          value:
-                                                            _vm.role_policies,
-                                                          callback: function(
-                                                            $$v
-                                                          ) {
-                                                            _vm.role_policies = $$v
-                                                          },
-                                                          expression:
-                                                            "role_policies"
-                                                        }
-                                                      },
-                                                      data.on
-                                                    )
-                                                  )
-                                                ]
-                                              }
-                                            }
-                                          ])
-                                        },
-                                        [
-                                          _vm._v(" "),
-                                          _c("span", [
-                                            _vm._v(_vm._s(policy.description))
-                                          ])
-                                        ]
-                                      )
-                                    ],
-                                    1
-                                  )
-                                }),
-                                1
-                              )
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      )
                     ],
                     1
                   )
@@ -84798,8 +84611,7 @@ vue__WEBPACK_IMPORTED_MODULE_1___default.a.component('passport-authorized-client
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.component('passport-personal-access-tokens', __webpack_require__(/*! ./components/passport/PersonalAccessTokens.vue */ "./resources/js/components/passport/PersonalAccessTokens.vue").default);
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(_AuthFunctions_js__WEBPACK_IMPORTED_MODULE_3__["default"]);
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vue_2_breadcrumbs__WEBPACK_IMPORTED_MODULE_5___default.a);
-vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vuetify__WEBPACK_IMPORTED_MODULE_6___default.a, {//iconfont: 'mdi',
-});
+vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vuetify__WEBPACK_IMPORTED_MODULE_6___default.a);
 axios.defaults.headers.common['X-CSRF-TOKEN'] = Laravel.csrfToken;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -86412,8 +86224,8 @@ secret: xmoah81trlgdEoLLRvTx5mHy9lpmWZIbMlQNotPu
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\wamp\www\mandecms\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\wamp\www\mandecms\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! G:\wamp64\www\mandecms\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! G:\wamp64\www\mandecms\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

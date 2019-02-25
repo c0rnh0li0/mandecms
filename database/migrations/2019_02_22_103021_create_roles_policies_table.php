@@ -13,11 +13,11 @@ class CreateRolesPoliciesTable extends Migration
      */
     public function up()
     {
-        Schema::create('policy_user_role', function (Blueprint $table) {
-            $table->integer('user_role_id')->unsigned()->index();
-            $table->integer('policy_id')->unsigned()->index();
+        Schema::create('roles_policies', function (Blueprint $table) {
+            $table->integer('role_id');
+            $table->integer('policy_id');
 
-            $table->foreign('user_role_id')->references('id')->on('user_roles')->onDelete('cascade');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->foreign('policy_id')->references('id')->on('policies')->onDelete('cascade');
 
             $table->timestamps();
@@ -31,6 +31,6 @@ class CreateRolesPoliciesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('policy_user_role');
+        Schema::dropIfExists('roles_policies');
     }
 }

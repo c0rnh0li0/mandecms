@@ -31,17 +31,15 @@
                     editedItem: {
                         id: '',
                         name: '',
-                        policies: [],
-                        created_at: '',
+                        created_at: ''
                     },
                     defaultItem: {
                         id: '',
                         name: '',
-                        policies: [],
-                        created_at: '',
+                        created_at: ''
                     },
                     extras: {
-                        policies_url: '/api/policies/all'
+
                     },
                 },
             }

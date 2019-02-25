@@ -13,7 +13,7 @@ class UserRole extends Model
         return $this->hasMany('App\User');
     }
 
-    public function policies() {
-        return $this->belongsToMany(Policy::class);
+    public function role_policy() {
+        return $this->hasMany('App\RolePolict', 'role_id', 'id');
     }
 }
