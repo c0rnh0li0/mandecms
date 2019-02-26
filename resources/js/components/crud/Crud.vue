@@ -30,7 +30,7 @@
                                   single-line
                                   hide-details></v-text-field>
                     <v-spacer></v-spacer>
-                    <v-dialog v-model="form_dialog" max-width="500px">
+                    <v-dialog v-model="form_dialog" :max-width="formMaxWidth">
                         <v-btn slot="activator" flat color="red darken-4" @click="setDefaultItemData">New {{ crudData.singular }}</v-btn>
                         <v-card>
                             <v-card-title>
@@ -139,9 +139,13 @@
                 selected: [],
 
                 formTitle: '',
+                formMaxWidth: '500px',
             }
         },
         mounted() {
+            if (typeof this.crudData.formMaxWidth != 'undefined') {
+                this.formMaxWidth = this.crudData.formMaxWidth;
+            }
             /*let that = this;
             this.getData(this.buildPagingUrl())
                 .then(data => {

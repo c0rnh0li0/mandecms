@@ -24,8 +24,11 @@
         "vue-template-compiler": "^2.6.6"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^11.2.0",
+        "@ckeditor/ckeditor5-vue": "^1.0.0-beta.1",
         "vue-2-breadcrumbs": "^0.5.0",
         "vue-router": "^3.0.2",
-        "vuetify": "^1.5.2"
+        "vuetify": "^1.5.3",
+        "vuex": "^3.1.0"
     }
 }

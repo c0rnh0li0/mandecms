@@ -91,6 +91,15 @@
         data() {
             return {
                 editedItem: {},
+                defaultItem: {
+                    id: '',
+                    name: '',
+                    description: '',
+                    thumb: '',
+                    file: '',
+                    sections: [],
+                    created_at: ''
+                },
 
                 errors: [],
 
@@ -129,7 +138,7 @@
                     formData.append('_method', 'put');
 
                     axios.post(this.updateUrl + this.editedItem.id, formData, requestOptions).then(function (response) {
-                        //Object.assign(that.records[that.editedIndex], response.data.data);
+                        that.editedItem = that.defaultItem;
                         that.$emit('updated', response.data.data);
                     }).catch(function(err) {
                         if (err && err.response && err.response.status === 422) {
@@ -142,6 +151,7 @@
 
                     axios.post(this.createUrl, formData, requestOptions).then(function (response) {
                         if (response.data.success == true) {
+                            that.editedItem = that.defaultItem;
                             that.$emit('saved');
                         }
 
@@ -184,6 +194,10 @@
 
             setData(templateData) {
                 this.editedItem = templateData;
+
+                this.thumbUrl = '/storage/template_thumbs/' + (this.editedItem.id != '' ? this.editedItem.thumb : 'default_thumb.png');
+                this.thumbFile = null;
+                this.thumbName = this.editedItem.thumb;
                 this.errors = [];
             }
         }

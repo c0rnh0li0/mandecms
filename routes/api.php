@@ -53,3 +53,10 @@ Route::get('templates/info', 'TemplatesController@info');
 Route::post('/templates/store', 'TemplatesController@store');
 Route::put('/templates/update/{template}', 'TemplatesController@update');
 Route::delete('/templates/delete/{template}', 'TemplatesController@destroy');
+
+Route::get('pages', 'PagesController@index');
+Route::get('pages/all', 'PagesController@all');
+Route::get('pages/info', 'PagesController@info');
+Route::post('/pages/store', 'PagesController@store');
+Route::put('/pages/update/{page}', 'PagesController@update');
+Route::delete('/pages/delete/{page}', 'PagesController@destroy');

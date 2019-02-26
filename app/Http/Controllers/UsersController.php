@@ -99,7 +99,11 @@ class UsersController extends Controller
         $user->user_avatar = $fileNameToStore;
 
         // TODO: implement send password email with password
+        /*Mail::send('emails.reminder', ['user' => $user], function ($m) use ($user) {
+            $m->from('aaaaaag@hotmail.com', 'a Your Application');
 
+            $m->to($user->email, $user->name)->subject('Your Reminder!');
+        });*/
         if ($user->save()) {
             return response()->json([
                 'success' => true,

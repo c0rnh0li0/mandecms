@@ -9,7 +9,7 @@ use App\Http\Resources\Template as TemplateResource;
 
 class TemplatesController extends Controller
 {
-    private $thumbs_path = 'public/user_avatars';
+    private $thumbs_path = 'public/template_thumbs';
     private $default_thumb = 'default_thumb.png';
 
     /**

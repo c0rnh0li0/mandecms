@@ -3,16 +3,14 @@ import Vue from 'vue';
 import Routes from './routes.js';
 import Auth from './AuthFunctions.js';
 import App from './components/App';
-//import VueBreadcrumbs from 'vue-2-breadcrumbs';
 import Vuetify from 'vuetify';
-//import Vuex from 'vuex';
+import Vuex from 'vuex';
 
 Vue.component('passport-clients', require('./components/passport/Clients.vue').default);
 Vue.component('passport-authorized-clients', require('./components/passport/AuthorizedClients.vue').default);
 Vue.component('passport-personal-access-tokens', require('./components/passport/PersonalAccessTokens.vue').default);
 
-//Vue.use(VueBreadcrumbs);
-//Vue.use(Vuex);
+Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(Auth);
 
@@ -25,8 +23,32 @@ Vue.component('App', App);
 
 import 'vuetify/dist/vuetify.min.css';
 
+const store = new Vuex.Store({
+    state: {
+        policies: []
+    },
+    getters: {
+        hasAccess: (state) => (id) => {
+            // const MANAGE_USERS = 2;
+            // store.getters.hasAccess(MANAGE_USERS);
+            return state.policies.find(policy => policy.id === id);
+        }
+    },
+    mutations: {
+        // store.commit('addPolicy', { /* policyobject */ })
+        // in components: this.$store.commit('addPolicy')
+        addPolicy (state, policy) {
+            state.policies.push(policy);
+        },
+        addPolicies (state, policies) {
+            state.policies = policies;
+        },
+    }
+});
+
 const app = new Vue({
     el: '#app',
+    store,
     router: Routes,
     render: h => h(App),
     mounted() {
