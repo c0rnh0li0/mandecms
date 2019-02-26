@@ -18,6 +18,9 @@ import RolesCrud from './components/roles/Crud.vue';
 // policies views
 import PoliciesCrud from './components/policies/Crud.vue';
 
+// templates views
+import TemplatesCrud from './components/templates/Crud.vue';
+
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -98,6 +101,16 @@ const router = new VueRouter({
             meta: {
                 forAuth: true,
                 breadcrumb: 'Policies',
+            },
+        },
+        // templates section
+        {
+            path: '/templates',
+            component: TemplatesCrud,
+            name: 'Templates',
+            meta: {
+                forAuth: true,
+                breadcrumb: 'Templates',
             },
         },
     ]

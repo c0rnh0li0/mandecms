@@ -14,19 +14,44 @@
             <v-form method="POST" v-on:submit.prevent="register">
                 <v-card-text>
                         <v-container grid-list-md>
-                            <v-text-field color="red darken-4" label="Your name" name="name" v-model="fields.name" :messages="errors.name"></v-text-field>
+                            <v-text-field color="red darken-4"
+                                          label="Your name"
+                                          name="name"
+                                          v-model="fields.name"
+                                          :messages="errors.name"
+                                          :rules="[rules.required]">
+                            </v-text-field>
                         </v-container>
 
                         <v-container grid-list-md>
-                            <v-text-field color="red darken-4" label="Your email" name="email" v-model="fields.email" :messages="errors.email"></v-text-field>
+                            <v-text-field color="red darken-4"
+                                          label="Your email"
+                                          name="email"
+                                          :rules="[rules.required, rules.email]"
+                                          v-model="fields.email"
+                                          :messages="errors.email">
+                            </v-text-field>
                         </v-container>
 
                         <v-container grid-list-md>
-                            <v-text-field color="red darken-4" label="Your password" type="password" name="password" v-model="fields.password" :messages="errors.password"></v-text-field>
+                            <v-text-field color="red darken-4"
+                                          label="Your password"
+                                          type="password"
+                                          name="password"
+                                          v-model="fields.password"
+                                          :messages="errors.password">
+                            </v-text-field>
                         </v-container>
 
                         <v-container grid-list-md>
-                            <v-text-field color="red darken-4" label="Confirm your password" type="password" name="password_confirmation" v-model="fields.password_confirmation" :messages="errors.password_confirmation"></v-text-field>
+                            <v-text-field color="red darken-4"
+                                          label="Confirm your password"
+                                          type="password"
+                                          :rules="[rules.required, rules.passwordMatch]"
+                                          name="password_confirmation"
+                                          v-model="fields.password_confirmation"
+                                          :messages="errors.password_confirmation">
+                            </v-text-field>
                         </v-container>
                 </v-card-text>
 
@@ -56,7 +81,17 @@
                     password_confirmation: '',
                     '_token': window.Laravel.csrfToken
                 },
-                errors: {}
+                errors: {},
+                rules: {
+                    required: value => !!value || 'Required.',
+                    passwordMatch: value => {
+                        return this.fields.password_confirmation == value || 'Passwords doesn\'t match';
+                    },
+                    email: value => {
+                        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                        return pattern.test(value) || 'Invalid e-mail.';
+                    }
+                },
             }
         },
         methods: {
@@ -68,7 +103,7 @@
 
                 this.$auth.register(this.fields).then(function (response) {
                     if (response.data.success == true) {
-                        this.dialog = false;
+                        that.dialog = false;
                         that.$router.go({ name: 'Login' });
                     }
                 }).catch(function (err) {

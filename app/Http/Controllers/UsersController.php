@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use App\Http\Resources\User as UserResource;
+use Illuminate\Support\Facades\Hash;
 use App\User;
 
 class UsersController extends Controller
@@ -77,7 +78,7 @@ class UsersController extends Controller
 
 
         $password = str_random(10);
-        $user->password = bcrypt($password);
+        $user->password = Hash::make($password);
 
 
         // handle file upload
@@ -96,6 +97,8 @@ class UsersController extends Controller
         }
 
         $user->user_avatar = $fileNameToStore;
+
+        // TODO: implement send password email with password
 
         if ($user->save()) {
             return response()->json([
@@ -181,6 +184,43 @@ class UsersController extends Controller
         if ($user->save())
         {
             return new UserResource($user);
+        }
+    }
+
+    public function password(Request $request, $id) {
+        $user = User::findOrFail($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'errors' => [
+                    'oldPassword' => 'You are not logged in'
+                ]
+            ], 422);
+        }
+
+        if (!Hash::check($request->oldPassword, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'errors' => [
+                    'oldPassword' => 'Incorrect password'
+                ]
+            ], 422);
+        }
+        else {
+            $user->password = Hash::make($request->newPassword);
+            if ($user->save()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Password successfully changed'
+                ], 201);
+            }
+            else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error updating password'
+                ], 201);
+            }
         }
     }
 

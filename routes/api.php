@@ -29,6 +29,7 @@ Route::group([
 
 Route::get('users', 'UsersController@index');
 Route::get('users/info', 'UsersController@info');
+Route::post('/users/password/{user}', 'UsersController@password');
 Route::post('/users/store', 'UsersController@store');
 Route::put('/users/update/{user}', 'UsersController@update');
 Route::delete('/users/delete/{user}', 'UsersController@destroy');
@@ -45,3 +46,10 @@ Route::get('policies/info', 'PoliciesController@info');
 Route::post('/policies/store', 'PoliciesController@store');
 Route::put('/policies/update/{policy}', 'PoliciesController@update');
 Route::delete('/policies/delete/{policy}', 'PoliciesController@destroy');
+
+Route::get('templates', 'TemplatesController@index');
+Route::get('templates/all', 'TemplatesController@all');
+Route::get('templates/info', 'TemplatesController@info');
+Route::post('/templates/store', 'TemplatesController@store');
+Route::put('/templates/update/{template}', 'TemplatesController@update');
+Route::delete('/templates/delete/{template}', 'TemplatesController@destroy');

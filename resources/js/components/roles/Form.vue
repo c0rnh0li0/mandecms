@@ -24,8 +24,8 @@
                                 <v-layout row wrap>
                                     <v-flex xs6 v-for="policy in policies" :key="policy.id">
                                         <v-tooltip top color="red darken-4">
-                                            <template #activator="tooltip">
-                                                <v-switch v-model="role_policies" :value="policy.id" :label="policy.name" color="red darken-4" v-on="tooltip.on"></v-switch>
+                                            <template #activator="data">
+                                                <v-switch v-on="data.on" v-model="role_policies" :value="policy.id" :label="policy.name" color="red darken-4"></v-switch>
                                             </template>
                                             <span>{{ policy.description }}</span>
                                         </v-tooltip>

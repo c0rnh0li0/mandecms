@@ -47,9 +47,6 @@
         },
         data() {
             return {
-                userCreateUrl: this.createUrl,
-                userUpdateUrl: this.updateUrl,
-
                 editedItem: {},
 
                 errors: [],

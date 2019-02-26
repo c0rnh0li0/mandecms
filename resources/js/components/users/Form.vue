@@ -35,25 +35,26 @@
                         </v-combobox>
                     </v-container>
                     <v-container grid-list-md>
-                        <v-text-field label="Select Avatar"
-
+                        <span>Avatar</span>
+                        <span class="red--text text--darken-4"><small>(Click to change)</small></span>
+                        <!-- <v-text-field label="Select Avatar"
                                       v-model='editedItem.user_avatar'
                                       prepend-icon='attach_file'
                                       color="red darken-4"
                                       :messages="errors.user_avatar"
-                                      :error="typeof errors.user_avatar != 'undefined'"></v-text-field>
-                        <input
-                                type="file"
-                                style="display: none"
-                                name="user_avatar"
-                                ref="image"
-                                accept="image/*"
-                                @change="onFilePicked">
+                                      :error="typeof errors.user_avatar != 'undefined'"></v-text-field> -->
+                        <input type="file"
+                               style="display: none"
+                               name="user_avatar"
+                               ref="image"
+                               accept="image/*"
+                               @change="onFilePicked">
                         <v-spacer></v-spacer>
                         <v-avatar :tile="false" :size="150">
                             <img :src="imageUrl" height="150" v-if="imageUrl" @click.stop="pickFile"/>
                         </v-avatar>
                         <v-spacer></v-spacer>
+                        <span v-if="typeof errors.user_avatar != 'undefined'" color="red--text text--darken-4">{{ errors.user_avatar }}</span>
                     </v-container>
                 </v-layout>
             </v-form>

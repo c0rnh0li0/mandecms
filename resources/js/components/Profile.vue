@@ -1,5 +1,21 @@
 <template>
     <div>
+        <v-snackbar
+                v-model="snackbar"
+                :bottom="false"
+                :left="false"
+                :multi-line="false"
+                :right="false"
+                :timeout="3000"
+                :top="true"
+                :vertical="false">
+            <span class="red--text lighten-4">{{ notification }}</span>
+            <v-btn color="white"
+                   flat
+                   @click="snackbar = false">
+                <v-icon small class="mr-0">close</v-icon>
+            </v-btn>
+        </v-snackbar>
         <v-card>
             <v-card-text>
                 <v-toolbar flat color="white" class="mb-3">
@@ -23,6 +39,7 @@
                                                         label="Name"
                                                         color="red darken-4"
                                                         :messages="errors.name"
+                                                        :rules="[rules.required]"
                                                         :error="typeof errors.name != 'undefined'">
                                                 </v-text-field>
                                             </v-container>
@@ -30,6 +47,7 @@
                                                 <v-text-field
                                                         v-model="editedItem.email"
                                                         label="Email"
+                                                        :rules="[rules.required, rules.email]"
                                                         color="red darken-4"
                                                         :messages="errors.email"
                                                         :error="typeof errors.email != 'undefined'">
@@ -58,27 +76,21 @@
                                     <h4>Your avatar</h4>
                                 </v-card-title>
                                 <v-card-text class="px-0">
+                                    <span class="red--text text--darken-4"><small>(Click to change)</small></span>
                                     <v-container grid-list-md>
-                                        <v-text-field label="Select Avatar"
-                                                      @click.stop="pickFile"
-                                                      v-model='editedItem.user_avatar'
-                                                      prepend-icon='attach_file'
-                                                      color="red darken-4"
-                                                      :messages="errors.user_avatar"
-                                                      :error="typeof errors.user_avatar != 'undefined'"></v-text-field>
-                                        <input
-                                                type="file"
-                                                style="display: none"
-                                                name="user_avatar"
-                                                ref="image"
-                                                accept="image/*"
-                                                @change="onFilePicked">
+                                        <input type="file"
+                                               style="display: none"
+                                               name="user_avatar"
+                                               ref="image"
+                                               accept="image/*"
+                                               @change="onFilePicked">
 
                                         <v-spacer></v-spacer>
-                                        <v-avatar :tile="false" :size="150">
+                                        <v-avatar :tile="false" :size="150" style="cursor: pointer;">
                                             <img :src="imageUrl" height="150" v-if="imageUrl" @click.stop="pickFile"/>
                                         </v-avatar>
                                         <v-spacer></v-spacer>
+                                        <span v-if="typeof errors.user_avatar != 'undefined'" color="red--text text--darken-4">{{ errors.user_avatar[0] }}</span>
                                     </v-container>
                                 </v-card-text>
                                 <v-card-actions>
@@ -100,6 +112,7 @@
                                                 <v-text-field
                                                         v-model="oldPassword"
                                                         label="Old password"
+                                                        type="password"
                                                         color="red darken-4"
                                                         :messages="errors.oldPassword"
                                                         :error="typeof errors.oldPassword != 'undefined'">
@@ -109,6 +122,7 @@
                                                 <v-text-field
                                                         v-model="newPassword"
                                                         label="New password"
+                                                        type="password"
                                                         color="red darken-4"
                                                         :messages="errors.newPassword"
                                                         :error="typeof errors.newPassword != 'undefined'">
@@ -118,8 +132,10 @@
                                                 <v-text-field
                                                         v-model="newPasswordConfirm"
                                                         label="Confirm new password"
+                                                        type="password"
+                                                            :rules="[rules.required, rules.passwordMatch]"
                                                         color="red darken-4"
-                                                        :messages="errors.newPasswordConfirm"
+                                                        :error-messages="errors.newPasswordConfirm"
                                                         :error="typeof errors.newPasswordConfirm != 'undefined'">
                                                 </v-text-field>
                                             </v-container>
@@ -144,6 +160,17 @@
     export default {
         data() {
             return {
+                rules: {
+                    required: value => !!value || 'Required.',
+                    passwordMatch: value => {
+                        return this.newPassword == value || 'Passwords doesn\'t match';
+                    },
+                    email: value => {
+                        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                        return pattern.test(value) || 'Invalid e-mail.';
+                    }
+                },
+
                 editedItem: {
                     id: '',
                     name: '',
@@ -161,6 +188,9 @@
                 oldPassword: '',
                 newPassword: '',
                 newPasswordConfirm: '',
+
+                snackbar: false,
+                notification: '',
             }
         },
         mounted() {
@@ -222,7 +252,29 @@
             },
 
             changePassword(e) {
+                if (this.newPassword != this.newPasswordConfirm) {
+                    this.errors = [
+                        { newPasswordConfirm: 'Your passwords doesn\'t match' },
+                    ];
+                    return;
+                }
 
+                let that = this;
+                let formData = new FormData();
+                formData.append('_method', 'post');
+                formData.append('oldPassword', this.oldPassword);
+                formData.append('newPassword', this.newPassword);
+
+                axios.post('/api/users/password/' + this.editedItem.id, formData).then(function (response) {
+                    if (response.data.success == true) {
+                        that.notify(response.data.message);
+                    }
+                }).catch(function(err) {
+                    if (err && err.response && err.response.status === 422) {
+                        that.errors = err.response.data.errors || {};
+                        that.errors.msg = err.response.data.message;
+                    }
+                });
             },
 
             pickFile () {
@@ -247,6 +299,11 @@
                     this.imageFile = '';
                     this.imageUrl = '';
                 }
+            },
+
+            notify(text) {
+                this.notification = text;
+                this.snackbar = true;
             },
         }
     }

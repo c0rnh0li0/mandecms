@@ -61,6 +61,7 @@
                         :rows-per-page-items="[-1]"
                         :pagination.sync="pagination"
                         :total-items="totalRecords"
+                        :no-data-text="noDataText"
                         :loading="loading"
                         class="elevation-1">
                     <template slot="items" slot-scope="props">
@@ -106,6 +107,7 @@
 
                 form: this.crudData.form,
                 list: this.crudData.list,
+                noDataText: 'No ' + this.crudData.plural + ' found',
 
                 form_dialog: false,
                 delete_dialog: false,
@@ -140,7 +142,7 @@
             }
         },
         mounted() {
-            let that = this;
+            /*let that = this;
             this.getData(this.buildPagingUrl())
                 .then(data => {
                     that.updateData(data.data);
@@ -148,7 +150,7 @@
                 })
                 .catch(error => {
                     that.notify(error);
-                });
+                });*/
 
             if (this.crudData.onMounted != null && typeof this.crudData.onMounted == 'function') {
                 this.crudData.onMounted();

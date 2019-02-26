@@ -107,7 +107,7 @@
                     if (response.data.success == true) {
                         that.isLoggedIn = false;
                         that.$auth.destroyData();
-                        that.$router.go('/');
+                        that.$router.go('');
                     }
                 })
                     .catch(function (error) {
