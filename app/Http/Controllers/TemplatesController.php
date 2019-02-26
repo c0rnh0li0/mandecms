@@ -9,6 +9,9 @@ use App\Http\Resources\Template as TemplateResource;
 
 class TemplatesController extends Controller
 {
+    private $thumbs_path = 'public/user_avatars';
+    private $default_thumb = 'default_thumb.png';
+
     /**
      * Display a listing of the resource.
      *
@@ -72,7 +75,12 @@ class TemplatesController extends Controller
 
         $template->name = $request->input('name');
         $template->description = $request->input('description');
-        $template->thumb = $request->input('thumb');
+
+        // check for template thumb
+        $thmb = $this->uploadFileName($request, 'thumb', $this->thumbs_path, $this->default_thumb, $template->thumb);
+        if ($thmb)
+            $template->thumb = $thmb;
+
         $template->file = $request->input('file');
 
         if ($template->save()) {
@@ -130,14 +138,16 @@ class TemplatesController extends Controller
 
         $template->name = $request->input('name');
         $template->description = $request->input('description');
-        $template->thumb = $request->input('thumb');
+
+        // check for template thumb
+        $thmb = $this->uploadFileName($request, 'thumb', $this->thumbs_path, $this->default_thumb, $template->thumb);
+        if ($thmb)
+            $template->thumb = $thmb;
+
         $template->file = $request->input('file');
 
         if ($template->save()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Successfully updated template!'
-            ], 201);
+            return new TemplateResource($template);
         }
         else {
             return response()->json([
@@ -169,5 +179,29 @@ class TemplatesController extends Controller
                 'message' => 'Error deleting template!'
             ], 201);
         }
+    }
+
+    private function uploadFileName(Request $request, $name, $path, $defaultValue, $prop) {
+        // handle file upload
+        if ($request->hasFile($name) && $request->file($name) != null) {
+            // get just filename
+            $filename = pathinfo($request->file($name)->getClientOriginalName(), PATHINFO_FILENAME);
+            // get just extension
+            $extension = $request->file($name)->getClientOriginalExtension();
+            // filename to store
+            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+            // upload
+            $filepath = $request->file($name)->storeAs($path, $fileNameToStore);
+
+            return $fileNameToStore;
+        }
+        else {
+            if ($prop == '' || $prop == null) {
+                $fileNameToStore = $defaultValue;
+                return $fileNameToStore;
+            }
+        }
+
+        return null;
     }
 }

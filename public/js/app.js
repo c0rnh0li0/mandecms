@@ -2714,7 +2714,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       axios.post(this.deleteUrl + item.id, formData).then(function (response) {
         if (response.data.success == true) {
           that.notify(response.data.message);
-          that.getData(this.buildPagingUrl()).then(function (data) {
+          that.getData(that.buildPagingUrl()).then(function (data) {
             that.updateData(data.data);
           }).catch(function (error) {
             that.notify(error);
@@ -2722,7 +2722,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           that.delete_dialog = false;
         }
       }).catch(function (err) {
-        that.notify(error);
+        that.notify(err);
       });
     },
     close: function close() {
@@ -4431,6 +4431,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     itemToEdit: {
@@ -4463,7 +4486,11 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       editedItem: {},
-      errors: []
+      errors: [],
+      // avatar section
+      thumbUrl: '/storage/template_thumbs/default_thumb.png',
+      thumbFile: '',
+      thumbName: ''
     };
   },
   methods: {
@@ -4472,7 +4499,13 @@ __webpack_require__.r(__webpack_exports__);
       var formData = new FormData();
 
       for (var property in this.editedItem) {
-        formData.append(property, this.editedItem[property]);
+        if (this.editedItem.hasOwnProperty(property)) {
+          if (property == 'thumb' && this.thumbFile != null) formData.append(property, this.thumbFile, this.thumbFile.name);else formData.append(property, this.editedItem[property]);
+        }
+      }
+
+      if (!this.thumbFile) {
+        formData.delete('thumb');
       }
 
       var that = this;
@@ -4509,6 +4542,28 @@ __webpack_require__.r(__webpack_exports__);
             that.$emit('notified', err.message);
           }
         });
+      }
+    },
+    pickThumb: function pickThumb() {
+      this.$refs.thumb.click();
+    },
+    onThumbPicked: function onThumbPicked(e) {
+      var _this = this;
+
+      var files = e.target.files;
+
+      if (files[0] !== undefined) {
+        var fr = new FileReader();
+        fr.readAsDataURL(files[0]);
+        fr.addEventListener('load', function () {
+          _this.thumbUrl = fr.result;
+          _this.thumbFile = files[0]; // this is an image file that can be sent to server...
+
+          _this.thumbName = _this.thumbFile.name;
+        });
+      } else {
+        this.thumbFile = '';
+        this.thumbUrl = '';
       }
     },
     close: function close() {
@@ -4776,8 +4831,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      userCreateUrl: this.createUrl,
-      userUpdateUrl: this.updateUrl,
       editedItem: {},
       errors: [],
       role_select: '',
@@ -44927,21 +44980,78 @@ var render = function() {
                     "v-container",
                     { attrs: { "grid-list-md": "" } },
                     [
-                      _c("v-text-field", {
-                        attrs: {
-                          label: "Thumb",
-                          color: "red darken-4",
-                          messages: _vm.errors.thumb,
-                          error: typeof _vm.errors.thumb != "undefined"
-                        },
-                        model: {
-                          value: _vm.editedItem.thumb,
-                          callback: function($$v) {
-                            _vm.$set(_vm.editedItem, "thumb", $$v)
-                          },
-                          expression: "editedItem.thumb"
-                        }
-                      })
+                      _c(
+                        "v-layout",
+                        { attrs: { row: "", wrap: "" } },
+                        [
+                          _c(
+                            "v-flex",
+                            { attrs: { grow: "", "pa-1": "" } },
+                            [
+                              _c(
+                                "v-card-text",
+                                { staticClass: "px-0" },
+                                [
+                                  _c("v-text-field", {
+                                    ref: "thumbref",
+                                    attrs: {
+                                      readonly: "",
+                                      label: "Thumb",
+                                      "prepend-icon": "attach_file",
+                                      color: "red darken-4",
+                                      messages: _vm.errors.thumb,
+                                      error:
+                                        typeof _vm.errors.thumb != "undefined"
+                                    },
+                                    on: {
+                                      click: function($event) {
+                                        $event.stopPropagation()
+                                        return _vm.pickThumb($event)
+                                      }
+                                    },
+                                    model: {
+                                      value: _vm.thumbName,
+                                      callback: function($$v) {
+                                        _vm.thumbName = $$v
+                                      },
+                                      expression: "thumbName"
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    ref: "thumb",
+                                    staticStyle: { display: "none" },
+                                    attrs: {
+                                      type: "file",
+                                      name: "thumb",
+                                      accept: "image/*"
+                                    },
+                                    on: { change: _vm.onThumbPicked }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-flex",
+                            { attrs: { shrink: "", "pa-1": "" } },
+                            [
+                              _c("v-card-text", { staticClass: "px-0" }, [
+                                _vm.thumbUrl
+                                  ? _c("img", {
+                                      attrs: { src: _vm.thumbUrl, height: "50" }
+                                    })
+                                  : _vm._e()
+                              ])
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
                     ],
                     1
                   ),
@@ -44952,7 +45062,8 @@ var render = function() {
                     [
                       _c("v-text-field", {
                         attrs: {
-                          label: "File",
+                          label: "Template file",
+                          "prepend-icon": "attach_file",
                           color: "red darken-4",
                           messages: _vm.errors.file,
                           error: typeof _vm.errors.file != "undefined"

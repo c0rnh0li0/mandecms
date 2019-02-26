@@ -28,19 +28,42 @@
                     </v-container>
 
                     <v-container grid-list-md>
-                        <v-text-field
-                                v-model="editedItem.thumb"
-                                label="Thumb"
-                                color="red darken-4"
-                                :messages="errors.thumb"
-                                :error="typeof errors.thumb != 'undefined'">
-                        </v-text-field>
+
+                            <v-layout row wrap>
+                                <v-flex grow pa-1>
+                                    <v-card-text class="px-0">
+                                        <v-text-field
+                                                readonly
+                                                v-model="thumbName"
+                                                label="Thumb"
+                                                ref="thumbref"
+                                                prepend-icon='attach_file'
+                                                color="red darken-4"
+                                                :messages="errors.thumb"
+                                                @click.stop="pickThumb"
+                                                :error="typeof errors.thumb != 'undefined'">
+                                        </v-text-field>
+                                        <input type="file"
+                                               style="display: none"
+                                               name="thumb"
+                                               ref="thumb"
+                                               accept="image/*"
+                                               @change="onThumbPicked">
+                                    </v-card-text>
+                                </v-flex>
+                                <v-flex shrink pa-1>
+                                    <v-card-text class="px-0">
+                                        <img :src="thumbUrl" height="50" v-if="thumbUrl" />
+                                    </v-card-text>
+                                </v-flex>
+                            </v-layout>
                     </v-container>
 
                     <v-container grid-list-md>
                         <v-text-field
                                 v-model="editedItem.file"
-                                label="File"
+                                label="Template file"
+                                prepend-icon='attach_file'
                                 color="red darken-4"
                                 :messages="errors.file"
                                 :error="typeof errors.file != 'undefined'">
@@ -70,6 +93,11 @@
                 editedItem: {},
 
                 errors: [],
+
+                // avatar section
+                thumbUrl: '/storage/template_thumbs/default_thumb.png',
+                thumbFile: '',
+                thumbName: ''
             }
         },
         methods: {
@@ -78,7 +106,16 @@
                 let formData = new FormData();
 
                 for (var property in this.editedItem) {
-                    formData.append(property, this.editedItem[property]);
+                    if (this.editedItem.hasOwnProperty(property)) {
+                        if (property == 'thumb' && this.thumbFile != null)
+                            formData.append(property, this.thumbFile, this.thumbFile.name);
+                        else
+                            formData.append(property, this.editedItem[property]);
+                    }
+                }
+
+                if (!this.thumbFile) {
+                    formData.delete('thumb');
                 }
 
                 let that = this;
@@ -118,6 +155,26 @@
                             that.$emit('notified', err.message);
                         }
                     });
+                }
+            },
+
+            pickThumb () {
+                this.$refs.thumb.click();
+            },
+
+            onThumbPicked (e) {
+                const files = e.target.files;
+                if(files[0] !== undefined) {
+                    const fr = new FileReader ();
+                    fr.readAsDataURL(files[0]);
+                    fr.addEventListener('load', () => {
+                        this.thumbUrl = fr.result;
+                        this.thumbFile = files[0]; // this is an image file that can be sent to server...
+                        this.thumbName = this.thumbFile.name;
+                    });
+                } else {
+                    this.thumbFile = '';
+                    this.thumbUrl = '';
                 }
             },
 

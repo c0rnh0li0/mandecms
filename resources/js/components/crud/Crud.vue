@@ -285,7 +285,7 @@
                     if (response.data.success == true) {
                         that.notify(response.data.message);
 
-                        that.getData(this.buildPagingUrl())
+                        that.getData(that.buildPagingUrl())
                             .then(function (data) {
                                 that.updateData(data.data);
                             })
@@ -296,7 +296,7 @@
                         that.delete_dialog = false;
                     }
                 }).catch(function(err) {
-                    that.notify(error);
+                    that.notify(err);
                 });
             },
 
