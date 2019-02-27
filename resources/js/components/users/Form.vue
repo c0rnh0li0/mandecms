@@ -213,7 +213,7 @@
 
                 if (this.editedItem.id == '') {
                     this.imageFile = '';
-                    this.imageUrl = '';
+                    this.imageUrl = '/storage/user_avatars/default_avatar.png';
                 }
                 else {
                     this.edited_role = this.user_roles[this.user_roles.findIndex(f => f.id === this.editedItem.role_id)];
