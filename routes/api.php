@@ -60,3 +60,10 @@ Route::get('pages/info', 'PagesController@info');
 Route::post('/pages/store', 'PagesController@store');
 Route::put('/pages/update/{page}', 'PagesController@update');
 Route::delete('/pages/delete/{page}', 'PagesController@destroy');
+
+Route::get('categories', 'CategoriesController@index');
+Route::get('categories/all', 'CategoriesController@all');
+Route::get('categories/info', 'CategoriesController@info');
+Route::post('/categories/store', 'CategoriesController@store');
+Route::put('/categories/update/{category}', 'CategoriesController@update');
+Route::delete('/categories/delete/{category}', 'CategoriesController@destroy');

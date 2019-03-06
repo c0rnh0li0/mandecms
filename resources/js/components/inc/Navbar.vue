@@ -24,7 +24,24 @@
                 </v-list>
             </v-menu>
 
-            <v-btn flat small @click="navigate('/pages')">Pages</v-btn>
+            <v-menu>
+                <v-btn flat slot="activator">
+                    <span>CMS</span>
+                    <v-icon dark>arrow_drop_down</v-icon>
+                </v-btn>
+                <v-list>
+                    <v-list-tile @click="navigate('/pages')">
+                        <v-list-tile-title>Pages</v-list-tile-title>
+                    </v-list-tile>
+                    <v-list-tile @click="navigate('/categories')">
+                        <v-list-tile-title>Categories</v-list-tile-title>
+                    </v-list-tile>
+                    <v-list-tile @click="navigate('/tags')">
+                        <v-list-tile-title>Tags</v-list-tile-title>
+                    </v-list-tile>
+                </v-list>
+            </v-menu>
+
             <v-btn flat small @click="navigate('/images')">Images</v-btn>
             <v-btn flat small @click="navigate('/menu')">Menu</v-btn>
             <v-btn flat small @click="navigate('/templates')">Templates</v-btn>

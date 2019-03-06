@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FacadesRequest;
-use App\Http\Resources\Page as PageResource;
+use App\Http\Resources\Category as CategoryResource;
+use App\Category;
 
-class PagesController extends Controller
+class CategoriesController extends Controller
 {
-    private $hero_path = 'public/hero_images';
     /**
      * Display a listing of the resource.
      *
@@ -25,16 +24,21 @@ class PagesController extends Controller
 
         $search = FacadesRequest::get('q');
         if ($search != '') {
-            $users = Page::where('name', 'LIKE', '%' . $search . '%')
+            $categories = Category::where('name', 'LIKE', '%' . $search . '%')
                 ->orWhere('description', 'LIKE', '%' . $search . '%')
                 ->orderBy($sort, $dir)->paginate(10);
         }
         else {
-            $users = Page::orderBy($sort, $dir)->paginate(10);
+            $categories = Category::orderBy($sort, $dir)->paginate(10);
         }
 
 
-        return PageResource::collection($users);
+        return CategoryResource::collection($categories);
+    }
+
+    public function all()
+    {
+        return CategoryResource::collection(Category::all());
     }
 
     /**
@@ -57,32 +61,28 @@ class PagesController extends Controller
     {
         $rules = [
             'title' => 'required',
-            'body' => 'required',
+            'url' => 'required',
         ];
 
         $this->validate($request, $rules);
 
-        $page = new Page();
+        $category = new Category();
 
-        $page->title = $request->input('title');
-        $page->description = $request->input('description');
-        $page->body = $request->input('body');
-        $page->template_id = $request->input('template_id');
-        $page->category_id = $request->input('category_id');
-        $page->created_by = $request->user('api')->id;
-        $page->url = $request->input('url');
-        $page->hero_image = $this->uploadFileName($request, 'hero_image', $this->hero_path, $page->hero_image);
+        $category->title = $request->input('title');
+        $category->description = $request->input('description');
+        $category->url = $request->input('url');
+        $category->created_by = $request->user('api')->id;
 
-        if ($page->save()) {
+        if ($category->save()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Successfully created page!'
+                'message' => 'Successfully created category!'
             ], 201);
         }
         else {
             return response()->json([
                 'success' => false,
-                'message' => 'Error creating page!'
+                'message' => 'Error creating category!'
             ], 201);
         }
     }
@@ -120,31 +120,27 @@ class PagesController extends Controller
     {
         $rules = [
             'title' => 'required',
-            'body' => 'required',
+            'url' => 'required',
         ];
 
         $this->validate($request, $rules);
 
-        $page = Page::findOrFail($id);
+        $category = Category::findOrFail($id);
 
-        $page->title = $request->input('title');
-        $page->description = $request->input('description');
-        $page->body = $request->input('body');
-        $page->template_id = $request->input('template_id');
-        $page->category_id = $request->input('category_id');
-        $page->url = $request->input('url');
-        $page->hero_image = $this->uploadFileName($request, 'hero_image', $this->hero_path, $page->hero_image);
+        $category->title = $request->input('title');
+        $category->description = $request->input('description');
+        $category->url = $request->input('url');
 
-        if ($page->save()) {
+        if ($category->save()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Successfully updated page!'
+                'message' => 'Successfully updated category!'
             ], 201);
         }
         else {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating page!'
+                'message' => 'Error updating category!'
             ], 201);
         }
     }
@@ -157,42 +153,19 @@ class PagesController extends Controller
      */
     public function destroy($id)
     {
-        $page = Page::findOrFail($id);
+        $category = Category::findOrFail($id);
 
-        if ($page->delete()) {
+        if ($category->delete()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Successfully deleted page!'
+                'message' => 'Successfully deleted category!'
             ], 201);
         }
         else {
             return response()->json([
                 'success' => false,
-                'message' => 'Error deleting page!'
+                'message' => 'Error deleting category!'
             ], 201);
-        }
-    }
-
-    private function uploadFileName(Request $request, $name, $path, $prop) {
-        // handle file upload
-        if ($request->hasFile($name) && $request->file($name) != null) {
-            // get just filename
-            $filename = pathinfo($request->file($name)->getClientOriginalName(), PATHINFO_FILENAME);
-            // get just extension
-            $extension = $request->file($name)->getClientOriginalExtension();
-            // filename to store
-            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
-            // upload
-            $filepath = $request->file($name)->storeAs($path, $fileNameToStore);
-
-            return $fileNameToStore;
-        }
-        else {
-            if ($prop == '' || $prop == null) {
-                return null;
-            }
-            else
-                return $prop;
         }
     }
 }

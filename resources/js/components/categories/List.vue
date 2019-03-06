@@ -1,7 +1,7 @@
 <template>
     <tr>
         <td class="text-xs-left">{{ item.title }}</td>
-        <td class="text-xs-left">{{ item.template_name }}</td>
+        <td class="text-xs-left">{{ item.description }}</td>
         <td class="text-xs-left">{{ item.url }}</td>
         <td class="text-xs-left">{{ item.owner_name }}</td>
         <td class="text-xs-right">{{ item.created_at }}</td>

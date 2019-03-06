@@ -24,6 +24,9 @@ import TemplatesCrud from './components/templates/Crud.vue';
 // pages views
 import PagesCrud from './components/pages/Crud.vue';
 
+// categories views
+import CategoriesCrud from './components/categories/Crud.vue';
+
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -125,6 +128,17 @@ const router = new VueRouter({
             meta: {
                 forAuth: true,
                 breadcrumb: 'Pages',
+            },
+        },
+
+        // categories section
+        {
+            path: '/categories',
+            component: CategoriesCrud,
+            name: 'Categories',
+            meta: {
+                forAuth: true,
+                breadcrumb: 'Categories',
             },
         },
     ]

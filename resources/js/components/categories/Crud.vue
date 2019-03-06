@@ -1,6 +1,6 @@
 <template>
     <div>
-        <crud :crud-data="pages_crud"></crud>
+        <crud :crud-data="categories_crud"></crud>
     </div>
 </template>
 
@@ -15,50 +15,40 @@
         },
         data() {
             return {
-                pages_crud: {
-                    title: 'Pages',
-                    singular: 'page',
-                    plural: 'pages',
+                categories_crud: {
+                    title: 'Categories',
+                    singular: 'category',
+                    plural: 'categories',
                     form: Form,
                     list: List,
                     dt_headers: [
                         { text: 'Title', align: 'left', sortable: true, value: 'title' },
-                        { text: 'Template', align: 'left', sortable: false, value: 'template_name' },
+                        { text: 'Description', align: 'left', sortable: false, value: 'description' },
                         { text: 'Slug', align: 'left', sortable: false, value: 'url' },
                         { text: 'Owner', align: 'left', sortable: false, value: 'owner_name' },
                         { text: 'Created at', align: 'right', value: 'created_at', sortable: true },
                         { text: '', align: 'center', value: 'name', sortable: false }
                     ],
-                    crud_url: '/api/pages',
+                    crud_url: '/api/categories',
 
                     editedItem: {
                         id: '',
                         title: '',
                         description: '',
-                        body: '',
-                        hero_image: '',
-                        template: {},
-                        category: {},
-                        owner: {},
                         url: '',
+                        owner: {},
                         created_at: ''
                     },
                     defaultItem: {
                         id: '',
                         title: '',
                         description: '',
-                        body: '',
-                        hero_image: '',
-                        template: {},
-                        category: {},
-                        owner: {},
                         url: '',
+                        owner: {},
                         created_at: ''
                     },
-                    formMaxWidth: '900px',
                     extras: {
-                        templates_url: '/api/templates/all',
-                        categories_url: '/api/categories/all',
+
                     },
                 },
             }
