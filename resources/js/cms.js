@@ -2,7 +2,7 @@ import './bootstrap';
 import Vue from 'vue';
 import Routes from './routes.js';
 import Auth from './AuthFunctions.js';
-import App from './components/dashboard/App';
+import Page from './components/Page';
 import Vuetify from 'vuetify';
 import Vuex from 'vuex';
 
@@ -19,7 +19,7 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 axios.defaults.headers.common['Authorization'] = 'Bearer ' + Vue.auth.getToken();
 
-Vue.component('App', App);
+Vue.component('Page', Page);
 
 import 'vuetify/dist/vuetify.min.css';
 
@@ -46,14 +46,14 @@ const store = new Vuex.Store({
     }
 });
 
-const app = new Vue({
-    el: '#app',
+const cms = new Vue({
+    el: '#cms',
     store,
     router: Routes,
-    render: h => h(App),
+    render: h => h(Page),
     mounted() {
 
     }
 });
 
-export default app;
+export default cms;

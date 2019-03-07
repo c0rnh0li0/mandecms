@@ -5,7 +5,7 @@
 </template>
 
 <script>
-    import Crud from './../crud/Crud.vue';
+    import Crud from '../crud/Crud.vue';
     import Form from './Form.vue';
     import List from './List.vue';
 

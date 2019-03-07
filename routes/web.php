@@ -13,6 +13,9 @@
 
 //Auth::routes();
 
+Route::get('/dashboard', 'DashboardController@dashboard'); //->where('any', '.*');
+Route::get('/dashboard/{any}', 'DashboardController@dashboard')->where('any', '.*');
 Route::get('/{any}', 'DashboardController@index')->where('any', '.*');
+
 
 //Route::get('/dashboard', 'DashboardController@index');

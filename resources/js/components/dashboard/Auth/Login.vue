@@ -62,7 +62,7 @@
                 this.$auth.login(this.fields).then(function (response) {
                     that.dialog = false;
                     that.$auth.setData(response.data);
-                    that.$router.go({ name: 'Home' });
+                    that.$router.go('/dashboard');
 
                 }).catch(function (err) {
                     if (err && err.response && err.response.status === 422) {

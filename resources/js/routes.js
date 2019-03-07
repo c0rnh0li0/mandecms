@@ -1,31 +1,37 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import Home from './components/Home';
-import Login from './components/Auth/Login';
-import Register from './components/Auth/Register';
-import AuthClient from './components/Auth/Auth';
+import Home from './components/dashboard/Home';
+import Login from './components/dashboard/Auth/Login';
+import Register from './components/dashboard/Auth/Register';
+import AuthClient from './components/dashboard/Auth/Auth';
 
 // profile
-import Profile from './components/Profile.vue';
+import Profile from './components/dashboard/Profile.vue';
 
 // users views
-import UsersCrud from './components/users/Crud.vue';
+import UsersCrud from './components/dashboard/users/Crud.vue';
 
 // roles views
-import RolesCrud from './components/roles/Crud.vue';
+import RolesCrud from './components/dashboard/roles/Crud.vue';
 
 // policies views
-import PoliciesCrud from './components/policies/Crud.vue';
+import PoliciesCrud from './components/dashboard/policies/Crud.vue';
 
 // templates views
-import TemplatesCrud from './components/templates/Crud.vue';
+import TemplatesCrud from './components/dashboard/templates/Crud.vue';
 
 // pages views
-import PagesCrud from './components/pages/Crud.vue';
+import PagesCrud from './components/dashboard/pages/Crud.vue';
 
 // categories views
-import CategoriesCrud from './components/categories/Crud.vue';
+import CategoriesCrud from './components/dashboard/categories/Crud.vue';
+
+// menus views
+import MenusCrud from './components/dashboard/menus/Crud.vue';
+
+// frontend page view
+import Page from './components/Page.vue';
 
 Vue.use(VueRouter);
 
@@ -34,17 +40,15 @@ const router = new VueRouter({
     linkActiveClass: 'active',
     routes: [
         {
-            path: '/',
+            path: '/dashboard',
             name: '',
-            component: Home
+            component: Home,
+            meta: {
+                breadcrumb: 'Home',
+            },
         },
         {
-            path: '/home',
-            name: 'Home',
-            component: Home
-        },
-        {
-            path: '/login',
+            path: '/dashboard/login',
             name: 'Login',
             component: Login,
             meta: {
@@ -53,7 +57,7 @@ const router = new VueRouter({
             },
         },
         {
-            path: '/register',
+            path: '/dashboard/register',
             name: 'Register',
             component: Register,
             meta: {
@@ -62,7 +66,7 @@ const router = new VueRouter({
             },
         },
         {
-            path: '/tokens',
+            path: '/dashboard/profile/tokens',
             name: 'Tokens',
             component: AuthClient,
             meta: {
@@ -71,7 +75,7 @@ const router = new VueRouter({
             },
         },
         {
-            path: '/profile',
+            path: '/dashboard/profile',
             name: 'Profile',
             component: Profile,
             meta: {
@@ -79,9 +83,19 @@ const router = new VueRouter({
                 breadcrumb: 'Profile',
             },
         },
+        // menus section
+        {
+            path: '/dashboard/menus',
+            component: MenusCrud,
+            name: 'Menus',
+            meta: {
+                forAuth: true,
+                breadcrumb: 'Menus',
+            },
+        },
         // users section
         {
-            path: '/people',
+            path: '/dashboard/people',
             component: UsersCrud,
             name: 'Users',
             meta: {
@@ -91,7 +105,7 @@ const router = new VueRouter({
         },
         // roles section
         {
-            path: '/roles',
+            path: '/dashboard/people/roles',
             component: RolesCrud,
             name: 'Roles',
             meta: {
@@ -101,7 +115,7 @@ const router = new VueRouter({
         },
         // policies section
         {
-            path: '/access-policies',
+            path: '/dashboard/people/access-policies',
             component: PoliciesCrud,
             name: 'Policies',
             meta: {
@@ -109,20 +123,10 @@ const router = new VueRouter({
                 breadcrumb: 'Policies',
             },
         },
-        // templates section
-        {
-            path: '/templates',
-            component: TemplatesCrud,
-            name: 'Templates',
-            meta: {
-                forAuth: true,
-                breadcrumb: 'Templates',
-            },
-        },
 
         // pages section
         {
-            path: '/pages',
+            path: '/dashboard/cms/pages',
             component: PagesCrud,
             name: 'Pages',
             meta: {
@@ -133,12 +137,32 @@ const router = new VueRouter({
 
         // categories section
         {
-            path: '/categories',
+            path: '/dashboard/cms/categories',
             component: CategoriesCrud,
             name: 'Categories',
             meta: {
                 forAuth: true,
                 breadcrumb: 'Categories',
+            },
+        },
+
+        // templates section
+        {
+            path: '/dashboard/cms/templates',
+            component: TemplatesCrud,
+            name: 'Templates',
+            meta: {
+                forAuth: true,
+                breadcrumb: 'Templates',
+            },
+        },
+
+        // frontend section
+        {
+            path: '*',
+            component: Page,
+            meta: {
+                forVisitors: true,
             },
         },
     ]
@@ -155,6 +179,7 @@ router.beforeEach((to, from, next) => {
     else if (to.matched.some(record => record.meta.forAuth)) {
         if (!Vue.auth.isAuthenticated()) {
             next({
+                path: '/dashboard/login',
                 name: 'Login'
             })
         } else next()

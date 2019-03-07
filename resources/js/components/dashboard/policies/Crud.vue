@@ -1,11 +1,11 @@
 <template>
     <div>
-        <crud :crud-data="templates_crud"></crud>
+        <crud :crud-data="policies_crud"></crud>
     </div>
 </template>
 
 <script>
-    import Crud from './../crud/Crud.vue';
+    import Crud from '../crud/Crud.vue';
     import Form from './Form.vue';
     import List from './List.vue';
 
@@ -15,10 +15,10 @@
         },
         data() {
             return {
-                templates_crud: {
-                    title: 'Templates',
-                    singular: 'template',
-                    plural: 'templates',
+                policies_crud: {
+                    title: 'Policies',
+                    singular: 'policy',
+                    plural: 'policies',
                     form: Form,
                     list: List,
                     dt_headers: [
@@ -27,24 +27,18 @@
                         { text: 'Created at', align: 'right', value: 'created_at', sortable: true },
                         { text: '', align: 'center', value: 'name', sortable: false }
                     ],
-                    crud_url: '/api/templates',
+                    crud_url: '/api/policies',
 
                     editedItem: {
                         id: '',
                         name: '',
                         description: '',
-                        thumb: '',
-                        file: '',
-                        sections: [],
                         created_at: ''
                     },
                     defaultItem: {
                         id: '',
                         name: '',
                         description: '',
-                        thumb: '',
-                        file: '',
-                        sections: [],
                         created_at: ''
                     },
                     extras: {

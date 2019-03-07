@@ -17,7 +17,7 @@
                                         @click.stop="pickFile"></v-text-field>
 
                                 <input type="file"
-                                       style="display: none"
+                                       style="display: none;"
                                        name="hero_image"
                                        ref="image"
                                        accept="image/*"
@@ -26,7 +26,6 @@
                                 <v-spacer></v-spacer>
                                 <img :src="heroUrl" height="200" v-if="heroUrl" @click.stop="pickFile"/>
                                 <v-spacer></v-spacer>
-                                <span v-if="typeof errors.hero_image != 'undefined'" color="red--text text--darken-4">{{ errors.hero_image[0] }}</span>
                             </v-flex>
                         </v-layout>
                     </v-container>
@@ -53,7 +52,6 @@
                                         label="Category"
                                         color="red darken-4">
                                 </v-combobox>
-
                             </v-flex>
                         </v-layout>
                     </v-container>

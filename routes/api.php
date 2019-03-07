@@ -67,3 +67,10 @@ Route::get('categories/info', 'CategoriesController@info');
 Route::post('/categories/store', 'CategoriesController@store');
 Route::put('/categories/update/{category}', 'CategoriesController@update');
 Route::delete('/categories/delete/{category}', 'CategoriesController@destroy');
+
+Route::get('menus', 'MenusController@index');
+Route::get('menus/all', 'MenusController@all');
+Route::get('menus/info', 'MenusController@info');
+Route::post('/menus/store', 'MenusController@store');
+Route::put('/menus/update/{menu}', 'MenusController@update');
+Route::delete('/menus/delete/{menu}', 'MenusController@destroy');

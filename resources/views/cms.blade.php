@@ -11,7 +11,7 @@
     <title>{{ config('app.name', 'MandeCMS') }}</title>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/cms.js') }}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -22,21 +22,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/cms.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div id="app"></div>
+    <div id="cms"></div>
 </body>
 </html>
-
-<?php
-      /*
-       Encryption keys generated successfully.
-        Personal access client created successfully.
-        Client ID: 3
-        Client secret: YEonT5GXLrhHUepQPDmoMt0yOm5jZEFmcEcCWSeH
-        Password grant client created successfully.
-        Client ID: 4
-        Client secret: HzZZM0kUwFTOriLGMAxRRpWEhnMCkq8DiW1VQfTj
-*/
-?>

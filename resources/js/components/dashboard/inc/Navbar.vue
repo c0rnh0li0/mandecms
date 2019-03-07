@@ -1,8 +1,10 @@
 <template>
     <v-toolbar app color="red darken-4" dark clipped-right dense>
         <v-toolbar-side-icon class="hidden-md-and-up" @click="drawer = !drawer"></v-toolbar-side-icon>
-        <v-toolbar-title @click="navigate('/')">
-            <span>MandeCMS</span>
+        <v-toolbar-title>
+            <router-link tag="div" to="/dashboard">
+                <span>MandeCMS</span>
+            </router-link>
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items v-if="isLoggedIn">
@@ -12,15 +14,15 @@
                     <v-icon dark>arrow_drop_down</v-icon>
                 </v-btn>
                 <v-list>
-                    <v-list-tile @click="navigate('/people')">
+                    <router-link tag="v-list-tile" to="/dashboard/people">
                         <v-list-tile-title>People</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile @click="navigate('/roles')">
+                    </router-link>
+                    <router-link tag="v-list-tile" to="/dashboard/people/roles">
                         <v-list-tile-title>Roles</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile @click="navigate('/access-policies')">
+                    </router-link>
+                    <router-link tag="v-list-tile" to="/dashboard/people/access-policies">
                         <v-list-tile-title>Policies</v-list-tile-title>
-                    </v-list-tile>
+                    </router-link>
                 </v-list>
             </v-menu>
 
@@ -30,21 +32,23 @@
                     <v-icon dark>arrow_drop_down</v-icon>
                 </v-btn>
                 <v-list>
-                    <v-list-tile @click="navigate('/pages')">
+                    <router-link tag="v-list-tile" to="/dashboard/cms/pages">
                         <v-list-tile-title>Pages</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile @click="navigate('/categories')">
+                    </router-link>
+                    <router-link tag="v-list-tile" to="/dashboard/cms/categories">
                         <v-list-tile-title>Categories</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile @click="navigate('/tags')">
+                    </router-link>
+                    <router-link tag="v-list-tile" to="/dashboard/cms/templates">
+                        <v-list-tile-title>Templates</v-list-tile-title>
+                    </router-link>
+                    <router-link tag="v-list-tile" to="/dashboard/cms/tags">
                         <v-list-tile-title>Tags</v-list-tile-title>
-                    </v-list-tile>
+                    </router-link>
                 </v-list>
             </v-menu>
 
-            <v-btn flat small @click="navigate('/images')">Images</v-btn>
-            <v-btn flat small @click="navigate('/menu')">Menu</v-btn>
-            <v-btn flat small @click="navigate('/templates')">Templates</v-btn>
+            <v-btn flat small @click="navigate('/dashboard/images')">Images</v-btn>
+            <v-btn flat small @click="navigate('/dashboard/menus')">Menu</v-btn>
 
             <v-menu>
                 <v-btn flat small slot="activator">
@@ -54,12 +58,12 @@
                     <span class="white--text">&nbsp;&nbsp;Hi {{ userName }}</span>
                 </v-btn>
                 <v-list>
-                    <v-list-tile @click="navigate('/profile')">
+                    <router-link tag="v-list-tile" to="/dashboard/profile">
                         <v-list-tile-title>Profile</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile @click="navigate('/tokens')">
+                    </router-link>
+                    <router-link tag="v-list-tile" to="/dashboard/profile/tokens">
                         <v-list-tile-title>Tokens</v-list-tile-title>
-                    </v-list-tile>
+                    </router-link>
                     <v-list-tile @click="logout">
                         <v-list-tile-title>Logout</v-list-tile-title>
                     </v-list-tile>
@@ -74,8 +78,8 @@
 </template>
 
 <script>
-    import Register from './../Auth/Register.vue';
-    import Login from './../Auth/Login.vue';
+    import Register from '../Auth/Register.vue';
+    import Login from '../Auth/Login.vue';
 
     export default {
         props: [

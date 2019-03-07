@@ -25,16 +25,21 @@ class PagesController extends Controller
 
         $search = FacadesRequest::get('q');
         if ($search != '') {
-            $users = Page::where('name', 'LIKE', '%' . $search . '%')
+            $pages = Page::where('name', 'LIKE', '%' . $search . '%')
                 ->orWhere('description', 'LIKE', '%' . $search . '%')
                 ->orderBy($sort, $dir)->paginate(10);
         }
         else {
-            $users = Page::orderBy($sort, $dir)->paginate(10);
+            $pages = Page::orderBy($sort, $dir)->paginate(10);
         }
 
 
-        return PageResource::collection($users);
+        return PageResource::collection($pages);
+    }
+
+    public function all()
+    {
+        return PageResource::collection(Page::all());
     }
 
     /**
