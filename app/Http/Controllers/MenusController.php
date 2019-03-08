@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FacadesRequest;
-use App\Http\Resources\Page as MenuResource;
+use App\Http\Resources\Menu as MenuResource;
 use App\Menu;
 
 class MenusController extends Controller
@@ -25,7 +25,6 @@ class MenusController extends Controller
         $search = FacadesRequest::get('q');
         if ($search != '') {
             $menus = Menu::where('name', 'LIKE', '%' . $search . '%')
-                ->orWhere('description', 'LIKE', '%' . $search . '%')
                 ->orderBy($sort, $dir)->paginate(10);
         }
         else {
@@ -33,7 +32,7 @@ class MenusController extends Controller
         }
 
 
-        return MenuResource::collection($menus);
+        return MenuResource::collection(Menu::all());
     }
 
     public function all()
@@ -122,7 +121,36 @@ class MenusController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $rules = [
+            'name' => 'required',
+            'slug' => 'required',
+            'visible' => 'required',
+        ];
+
+        $this->validate($request, $rules);
+
+        $menu = Menu::findOrFail($id);
+
+        $menu->name = $request->input('name');
+        $menu->parent_id = $request->input('parent_id');
+        //$menu->order = $request->input('order');
+        $menu->slug = $request->input('slug');
+        $menu->visible = $request->input('visible') == true ? 1 : 0;
+        $menu->page_id = $request->input('page_id');
+        $menu->category_id = $request->input('category_id');
+
+        if ($menu->save()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Successfully updated menu item!'
+            ], 201);
+        }
+        else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating menu item!'
+            ], 201);
+        }
     }
 
     /**
@@ -133,15 +161,32 @@ class MenusController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $menu = Menu::findOrFail($id);
+
+        if ($menu->delete()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Successfully deleted menu item!'
+            ], 201);
+        }
+        else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting menu item!'
+            ], 201);
+        }
     }
 
     private function getNextOrder($parent) {
         $currentMax = Menu::where('parent_id', '=', $parent)->max('order');
+        var_dump($currentMax);
+        die;
 
-        if (!$currentMax)
+
+        if ($currentMax == null)
             return 0;
 
+        $currentMax = (int)$currentMax;
         return $currentMax + 1;
     }
 }

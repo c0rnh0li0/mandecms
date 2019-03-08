@@ -11,7 +11,8 @@ class Menu extends Model
     }
 
     public function page() {
-        return $this->belongsTo('App\Page', 'page_id', 'id');
+        return $this->hasOne('App\Page', 'id', 'page_id');
+        //return $this->belongsTo('App\Page', 'page_id', 'id');
     }
 
     public function category() {

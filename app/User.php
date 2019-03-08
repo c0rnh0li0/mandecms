@@ -51,4 +51,8 @@ class User extends Authenticatable
     public function role() {
         return $this->belongsTo('App\UserRole', 'role_id');
     }
+
+    public function pages() {
+        return $this->hasMany(Page::class);
+    }
 }
