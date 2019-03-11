@@ -29,6 +29,8 @@
                     ],
                     crud_url: '/api/menus',
 
+                    dataDisplay: 'sortable',
+
                     editedItem: {
                         id: '',
                         parent_id: '',
@@ -65,6 +67,10 @@
                         pages_url: '/api/pages/all',
                         categories_url: '/api/categories/all',
                     },
+
+                    onMounted() {
+
+                    }
                 },
             }
         },

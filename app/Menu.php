@@ -10,6 +10,10 @@ class Menu extends Model
         return $this->belongsTo('App\Menu', 'parent_id', 'id');
     }
 
+    public function children() {
+        return $this->hasMany('App\Menu', 'parent_id', 'id');
+    }
+
     public function page() {
         return $this->hasOne('App\Page', 'id', 'page_id');
         //return $this->belongsTo('App\Page', 'page_id', 'id');

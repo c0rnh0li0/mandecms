@@ -30,7 +30,7 @@
                         { text: '', align: 'center', value: 'name', sortable: false }
                     ],
                     crud_url: '/api/categories',
-
+                    dataDisplay: 'list',
                     editedItem: {
                         id: '',
                         title: '',

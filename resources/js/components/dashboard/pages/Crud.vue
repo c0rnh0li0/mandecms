@@ -31,6 +31,8 @@
                     ],
                     crud_url: '/api/pages',
 
+                    dataDisplay: 'list',
+
                     editedItem: {
                         id: '',
                         title: '',

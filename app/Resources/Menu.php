@@ -23,6 +23,7 @@ class Menu extends JsonResource
             'visible' => $this->visible,
             'page_id' => $this->page_id,
             'page' => $this->page,
+            'children' => $this->children,
             'category_id' => $this->category_id,
             'category' => $this->category,
             'created_at' => $this->created_at->format('d.m.Y'),

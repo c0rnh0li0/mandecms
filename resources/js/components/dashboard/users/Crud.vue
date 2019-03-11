@@ -29,7 +29,7 @@
                         { text: '', align: 'center', value: 'name', sortable: false }
                     ],
                     crud_url: '/api/users',
-
+                    dataDisplay: 'list',
                     editedItem: {
                         id: '',
                         name: '',

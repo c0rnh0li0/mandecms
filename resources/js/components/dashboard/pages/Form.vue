@@ -44,6 +44,7 @@
                                 <v-combobox
                                         v-model="pageCategory"
                                         :items="categories"
+                                        clearable
                                         ref="category"
                                         :messages="errors.category_id"
                                         :error="typeof errors.category_id != 'undefined'"
@@ -72,6 +73,7 @@
                                         v-model="pageTemplate"
                                         :items="templates"
                                         ref="template"
+                                        clearable
                                         :messages="errors.template"
                                         :error="typeof errors.template != 'undefined'"
                                         item-text="name"
@@ -164,11 +166,18 @@
                 if (val) {
                     this.editedItem.template_id = val.id;
                 }
+                else {
+                    this.editedItem.template_id = '';
+                }
             },
             pageCategory(val) {
                 if (val) {
                     this.editedItem.category_id = val.id;
                     this.pageCategorySlug = val.url;
+                }
+                else {
+                    this.editedItem.category_id = '';
+                    this.pageCategorySlug = '';
                 }
 
                 this.editedItem.url = this.pageCategorySlug + this.slugify(this.pageTitle);

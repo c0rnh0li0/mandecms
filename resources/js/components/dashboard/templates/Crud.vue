@@ -28,7 +28,7 @@
                         { text: '', align: 'center', value: 'name', sortable: false }
                     ],
                     crud_url: '/api/templates',
-
+                    dataDisplay: 'list',
                     editedItem: {
                         id: '',
                         name: '',

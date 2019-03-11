@@ -1,25 +1,26 @@
 <template>
-    <tr>
-        <td class="text-xs-left">{{ item.name }}</td>
-        <td class="text-xs-left">{{ item.slug }}</td>
-        <td class="text-xs-right">{{ item.created_at }}</td>
-        <td class="justify-end layout px-0">
-            <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
-            <v-icon small class="mr-2" @click="deleteItem(item)">delete</v-icon>
-        </td>
-    </tr>
+    <div>
+        <nested-draggable flat :menus="records" />
+    </div>
 </template>
 <script>
+    import nestedDraggable from "./Nested.vue";
+
     export default {
+        components: {
+            nestedDraggable
+        },
         props: {
-            listItem: {type: Object, required: false, default: function () { return {}; }},
+            records: {type: Array, required: false, default: function () { return []; }},
         },
         data() {
             return {
-                item: this.listItem,
+                //items: this.records,
             }
         },
-        mounted() {},
+        mounted() {
+            console.log('records in list', this.records);
+        },
         methods: {
             editItem(item) {
                 this.$emit('showEditForm', item);

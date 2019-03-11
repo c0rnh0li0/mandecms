@@ -74,7 +74,7 @@ class PagesController extends Controller
         $page->body = $request->input('body');
         $page->template_id = $request->input('template_id');
         $page->category_id = $request->input('category_id');
-        $page->created_by = $request->user('api')->id;
+        $page->user_id = $request->user('api')->id;
         $page->url = $request->input('url');
         $page->hero_image = $this->uploadFileName($request, 'hero_image', $this->hero_path, $page->hero_image);
 

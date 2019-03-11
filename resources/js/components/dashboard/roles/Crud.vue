@@ -27,7 +27,7 @@
                         { text: '', align: 'center', value: 'name', sortable: false }
                     ],
                     crud_url: '/api/roles',
-
+                    dataDisplay: 'list',
                     editedItem: {
                         id: '',
                         name: '',

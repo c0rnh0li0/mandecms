@@ -22,7 +22,8 @@
                 <v-toolbar flat color="white" class="mb-3">
                     <v-toolbar-title>{{ crudData.title }}</v-toolbar-title>
                     <v-spacer></v-spacer>
-                    <v-text-field color="red darken-4"
+                    <v-text-field v-if="dataDisplay == 'list'"
+                                  color="red darken-4"
                                   prepend-inner-icon="search"
                                   label="Search"
                                   v-model="search"
@@ -55,7 +56,7 @@
                     </v-dialog>
                 </v-toolbar>
 
-                <v-data-table
+                <v-data-table v-if="dataDisplay == 'list'"
                         :headers="headers"
                         :items="records"
                         :rows-per-page-items="[-1]"
@@ -73,6 +74,18 @@
                         </component>
                     </template>
                 </v-data-table>
+                <v-card v-else>
+                    <v-card-text>
+                        <component :is="list"
+                                   :records="records"
+                                   class="elevation-1"
+                                   @showDeleteDialog="deleteItemDialog"
+                                   @showEditForm="editedItemDialog">
+                        </component>
+                    </v-card-text>
+                </v-card>
+
+
             </v-card-text>
 
             <v-dialog v-model="delete_dialog" persistent max-width="290">
@@ -123,6 +136,8 @@
                     value: 0
                 },
 
+                dataDisplay: this.crudData.dataDisplay,
+
                 headers: this.crudData.dt_headers,
 
                 itemToDelete: {},
@@ -142,10 +157,29 @@
                 formMaxWidth: '500px',
             }
         },
+        created() {
+            if (this.dataDisplay == 'sortable') {
+                let pageUrl = this.crudData.crud_url;
+                let that = this;
+                this.getData(pageUrl)
+                    .then(data => {
+                        that.records = data.data.data;
+                        console.log(that.records);
+
+                    })
+                    .catch(error => {
+                        that.notify(error);
+                    });
+            }
+        },
         mounted() {
+            this.dataDisplay = this.crudData.dataDisplay;
+
             if (typeof this.crudData.formMaxWidth != 'undefined') {
                 this.formMaxWidth = this.crudData.formMaxWidth;
             }
+
+
             /*let that = this;
             this.getData(this.buildPagingUrl())
                 .then(data => {

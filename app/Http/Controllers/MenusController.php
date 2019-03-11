@@ -179,14 +179,14 @@ class MenusController extends Controller
 
     private function getNextOrder($parent) {
         $currentMax = Menu::where('parent_id', '=', $parent)->max('order');
-        var_dump($currentMax);
-        die;
+        //var_dump($currentMax);
+        //die;
 
 
         if ($currentMax == null)
             return 0;
 
-        $currentMax = (int)$currentMax;
-        return $currentMax + 1;
+        //$currentMax = (int)$currentMax;
+        return (int) $currentMax + 1;
     }
 }
