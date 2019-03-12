@@ -4,7 +4,12 @@
             <v-btn @click="saveList" flat color="red darken-4">Save</v-btn>
         </v-card-title>
         <v-card-text>
-            <nested-draggable ref="menusortable" flat :menus="records" @sort="sort" />
+            <nested-draggable ref="menusortable"
+                              flat
+                              :menus="records"
+                              @sort="sort"
+                              @editItem="editItem"
+                              @deleteItem="deleteItem" />
         </v-card-text>
     </div>
 </template>

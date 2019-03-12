@@ -9,10 +9,24 @@
                    @start="dragStart" @end="dragEnd"
                    handle=".handle">
             <li v-for="el in menus" :key="el.id">
-                <p>
-                    <i class="fa fa-align-justify handle"></i>
-                    <span class="menuname">{{ el.name }}</span>
-                </p>
+
+
+                        <div class="text-xs-start">
+                            <span class="menuname">
+                                <i class="fa fa-align-justify handle"></i>
+                                {{ el.name }}
+                            </span>
+                            <small>
+                                ({{ el.slug }})
+                            </small>
+                        </div>
+                        <div class="menu-actions pa-3">
+                            <v-icon small class="mr-2" @click="editItem(el)">edit</v-icon>
+                            <v-icon small class="mr-2" @click="deleteItem(el)">delete</v-icon>
+                        </div>
+
+
+
                 <nested-draggable :menus="el.children" />
             </li>
         </draggable>
@@ -48,6 +62,12 @@
         },
         mounted() {},
         methods: {
+            editItem(item) {
+                this.$emit('editItem', item);
+            },
+            deleteItem(item) {
+                this.$emit('deleteItem', item);
+            },
             dragStart() {
                 this.isDragging = true;
             },
@@ -79,12 +99,17 @@
         border: 1px solid #efaeae;
     }
 
+    .dragArea li {
+        padding: 10px 0 0 0;
+    }
+
     .dragArea * ul.dragArea {
         border-right: none;
     }
 
-    .menuname {
-        padding: 10px 0 10px 0;
+    .menu-actions {
+        display: inline-block;
+        position: relative;
     }
 
     .handle {

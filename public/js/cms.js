@@ -3546,6 +3546,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -3638,6 +3643,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "nested-draggable",
@@ -3675,6 +3694,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {},
   methods: {
+    editItem: function editItem(item) {
+      this.$emit('editItem', item);
+    },
+    deleteItem: function deleteItem(item) {
+      this.$emit('deleteItem', item);
+    },
     dragStart: function dragStart() {
       this.isDragging = true;
     },
@@ -10865,7 +10890,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.dragArea[data-v-1e4d61b8] {\n    min-height: 50px;\n    list-style: none;\n    border: 1px solid #efaeae;\n}\n.dragArea * ul.dragArea[data-v-1e4d61b8] {\n    border-right: none;\n}\n.menuname[data-v-1e4d61b8] {\n    padding: 10px 0 10px 0;\n}\n.handle[data-v-1e4d61b8] {\n    cursor: move;\n}\n", ""]);
+exports.push([module.i, "\n.dragArea[data-v-1e4d61b8] {\n    min-height: 50px;\n    list-style: none;\n    border: 1px solid #efaeae;\n}\n.dragArea li[data-v-1e4d61b8] {\n    padding: 10px 0 0 0;\n}\n.dragArea * ul.dragArea[data-v-1e4d61b8] {\n    border-right: none;\n}\n.menu-actions[data-v-1e4d61b8] {\n    display: inline-block;\n    position: relative;\n}\n.handle[data-v-1e4d61b8] {\n    cursor: move;\n}\n", ""]);
 
 // exports
 
@@ -47348,7 +47373,11 @@ var render = function() {
           _c("nested-draggable", {
             ref: "menusortable",
             attrs: { flat: "", menus: _vm.records },
-            on: { sort: _vm.sort }
+            on: {
+              sort: _vm.sort,
+              editItem: _vm.editItem,
+              deleteItem: _vm.deleteItem
+            }
           })
         ],
         1
@@ -47401,13 +47430,59 @@ var render = function() {
             "li",
             { key: el.id },
             [
-              _c("p", [
-                _c("i", { staticClass: "fa fa-align-justify handle" }),
-                _vm._v(" "),
+              _c("div", { staticClass: "text-xs-start" }, [
                 _c("span", { staticClass: "menuname" }, [
-                  _vm._v(_vm._s(el.name))
+                  _c("i", { staticClass: "fa fa-align-justify handle" }),
+                  _vm._v(
+                    "\n                            " +
+                      _vm._s(el.name) +
+                      "\n                        "
+                  )
+                ]),
+                _vm._v(" "),
+                _c("small", [
+                  _vm._v(
+                    "\n                            (" +
+                      _vm._s(el.slug) +
+                      ")\n                        "
+                  )
                 ])
               ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "menu-actions pa-3" },
+                [
+                  _c(
+                    "v-icon",
+                    {
+                      staticClass: "mr-2",
+                      attrs: { small: "" },
+                      on: {
+                        click: function($event) {
+                          return _vm.editItem(el)
+                        }
+                      }
+                    },
+                    [_vm._v("edit")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-icon",
+                    {
+                      staticClass: "mr-2",
+                      attrs: { small: "" },
+                      on: {
+                        click: function($event) {
+                          return _vm.deleteItem(el)
+                        }
+                      }
+                    },
+                    [_vm._v("delete")]
+                  )
+                ],
+                1
+              ),
               _vm._v(" "),
               _c("nested-draggable", { attrs: { menus: el.children } })
             ],
