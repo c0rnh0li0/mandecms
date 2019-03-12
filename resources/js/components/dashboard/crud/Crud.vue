@@ -75,14 +75,13 @@
                     </template>
                 </v-data-table>
                 <v-card v-else>
-                    <v-card-text>
-                        <component :is="list"
-                                   :records="records"
-                                   class="elevation-1"
-                                   @showDeleteDialog="deleteItemDialog"
-                                   @showEditForm="editedItemDialog">
-                        </component>
-                    </v-card-text>
+                    <component :is="list"
+                               :records="records"
+                               :sort-url="crudData.crud_sort_url"
+                               class="elevation-1"
+                               @showDeleteDialog="deleteItemDialog"
+                               @showEditForm="editedItemDialog">
+                    </component>
                 </v-card>
 
 
@@ -159,13 +158,11 @@
         },
         created() {
             if (this.dataDisplay == 'sortable') {
-                let pageUrl = this.crudData.crud_url;
+                let pageUrl = this.crudData.crud_builder_url;
                 let that = this;
                 this.getData(pageUrl)
                     .then(data => {
                         that.records = data.data.data;
-                        console.log(that.records);
-
                     })
                     .catch(error => {
                         that.notify(error);

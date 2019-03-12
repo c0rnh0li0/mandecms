@@ -1,10 +1,22 @@
 <template>
-    <draggable flat class="dragArea" tag="ul" :list="menus" :group="{ name: 'g1' }">
-        <li v-for="el in menus" :key="el.name">
-            <p>{{ el.name }}</p>
-            <nested-draggable :menus="el.children" />
-        </li>
-    </draggable>
+    <div>
+        <draggable class="dragArea"
+                   ref="soratblemenu"
+                   tag="ul"
+                   :list="menus"
+                   :group="{ name: 'menuitems' }"
+                   :move="onMove"
+                   @start="dragStart" @end="dragEnd"
+                   handle=".handle">
+            <li v-for="el in menus" :key="el.id">
+                <p>
+                    <i class="fa fa-align-justify handle"></i>
+                    <span class="menuname">{{ el.name }}</span>
+                </p>
+                <nested-draggable :menus="el.children" />
+            </li>
+        </draggable>
+    </div>
 </template>
 <script>
     import draggable from 'vuedraggable';
@@ -14,11 +26,49 @@
         props: {
             menus: {type: Array, required: false, default: function () { return []; }},
         },
+        data() {
+            return {
+                isDragging: false,
+                delayedDragging: false,
+            }
+        },
         components: {
             draggable
         },
-        mounted() {
-            console.log('menus in nested', this.menus);
+        watch: {
+            isDragging(newValue) {
+                if (newValue) {
+                    this.delayedDragging = true;
+                    return;
+                }
+                this.$nextTick(() => {
+                    this.delayedDragging = false;
+                });
+            }
+        },
+        mounted() {},
+        methods: {
+            dragStart() {
+                this.isDragging = true;
+            },
+            dragEnd() {
+                this.isDragging = false;
+            },
+            serialize() {
+                this.$emit('sort', JSON.stringify(this.menus, null, 2));
+            },
+            orderList() {
+                this.menus = this.menus.sort((one, two) => {
+                    return one.order - two.order;
+                });
+            },
+            onMove({ relatedContext, draggedContext }) {
+                const relatedElement = relatedContext.element;
+                const draggedElement = draggedContext.element;
+                return (
+                    (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
+                );
+            }
         }
     };
 </script>
@@ -26,23 +76,18 @@
     .dragArea {
         min-height: 50px;
         list-style: none;
-        margin: 0;
-        padding: 0;
-        outline: none;
-        border: none;
+        border: 1px solid #efaeae;
     }
 
-    .dragArea li {
-        outline: 1px solid #cbcbcb;
-        margin-bottom: 10px;
-        padding: 10px;
-
-        padding-right: 0;
+    .dragArea * ul.dragArea {
         border-right: none;
     }
 
-    .dragArea ul.dragArea {
-        margin-left: 20px;
-        border: 1px dashed #f0f0f0;
+    .menuname {
+        padding: 10px 0 10px 0;
+    }
+
+    .handle {
+        cursor: move;
     }
 </style>

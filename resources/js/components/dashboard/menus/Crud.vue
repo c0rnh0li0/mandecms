@@ -28,6 +28,8 @@
                         { text: '', align: 'center', value: 'name', sortable: false }
                     ],
                     crud_url: '/api/menus',
+                    crud_builder_url: '/api/menus/build',
+                    crud_sort_url: '/api/menus/sort',
 
                     dataDisplay: 'sortable',
 

@@ -40,6 +40,44 @@ class MenusController extends Controller
         return MenuResource::collection(Menu::all());
     }
 
+    public function sort(Request $request)
+    {
+        $sorted = \GuzzleHttp\json_decode($request->input('sorted'));
+        $this->updateSortOrder($sorted);
+        die;
+    }
+
+    protected function updateSortOrder($items, $parent = null, $order = 0)
+    {
+        foreach ($items as $item) {
+            $menu = Menu::findOrFail($item->id);
+            $menu->order = $order++;
+            $menu->parent_id = $parent;
+            $menu->save();
+
+            if (sizeof($item->children) > 0)
+                $this->updateSortOrder($item->children, $item->id);
+        }
+    }
+
+    public function build()
+    {
+        return MenuResource::collection($this->generate());
+    }
+
+    public function generate($parent = null)
+    {
+        $menu = Menu::where('parent_id', '=', $parent)->where('visible', '=', 1)->orderBy('order')->get();
+
+        foreach ($menu as $mitem) {
+            $mitem->children = $this->generate($mitem->id);
+        }
+
+        return $menu;
+    }
+
+
+
     /**
      * Show the form for creating a new resource.
      *

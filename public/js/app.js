@@ -2923,7 +2923,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     crudData: {
@@ -2973,11 +2972,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   created: function created() {
     if (this.dataDisplay == 'sortable') {
-      var pageUrl = this.crudData.crud_url;
+      var pageUrl = this.crudData.crud_builder_url;
       var that = this;
       this.getData(pageUrl).then(function (data) {
         that.records = data.data.data;
-        console.log(that.records);
       }).catch(function (error) {
         that.notify(error);
       });
@@ -3391,6 +3389,8 @@ __webpack_require__.r(__webpack_exports__);
           sortable: false
         }],
         crud_url: '/api/menus',
+        crud_builder_url: '/api/menus/build',
+        crud_sort_url: '/api/menus/sort',
         dataDisplay: 'sortable',
         editedItem: {
           id: '',
@@ -3745,6 +3745,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -3757,21 +3762,49 @@ __webpack_require__.r(__webpack_exports__);
       default: function _default() {
         return [];
       }
+    },
+    sortUrl: {
+      type: String,
+      required: false,
+      default: function _default() {
+        return '';
+      }
     }
   },
   data: function data() {
     return {//items: this.records,
     };
   },
-  mounted: function mounted() {
-    console.log('records in list', this.records);
-  },
+  mounted: function mounted() {},
   methods: {
     editItem: function editItem(item) {
       this.$emit('showEditForm', item);
     },
     deleteItem: function deleteItem(item) {
       this.$emit('showDeleteDialog', item);
+    },
+    saveList: function saveList() {
+      this.$refs.menusortable.serialize();
+    },
+    sort: function sort(sortedArr) {
+      var formData = new FormData();
+      var that = this;
+      var requestOptions = {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      };
+      formData.append('sorted', sortedArr);
+      formData.append('_method', 'post');
+      axios.post(this.sortUrl, formData, requestOptions).then(function (response) {
+        //Object.assign(that.records[that.editedIndex], response.data.data);
+        that.$emit('updated', response.data.data);
+      }).catch(function (err) {
+        if (err && err.response && err.response.status === 422) {
+          that.errors = err.response.data.errors || {};
+          that.errors.msg = err.response.data.message;
+        }
+      });
     }
   }
 });
@@ -3797,6 +3830,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "nested-draggable",
@@ -3809,11 +3854,52 @@ __webpack_require__.r(__webpack_exports__);
       }
     }
   },
+  data: function data() {
+    return {
+      isDragging: false,
+      delayedDragging: false
+    };
+  },
   components: {
     draggable: vuedraggable__WEBPACK_IMPORTED_MODULE_0___default.a
   },
-  mounted: function mounted() {
-    console.log('menus in nested', this.menus);
+  watch: {
+    isDragging: function isDragging(newValue) {
+      var _this = this;
+
+      if (newValue) {
+        this.delayedDragging = true;
+        return;
+      }
+
+      this.$nextTick(function () {
+        _this.delayedDragging = false;
+      });
+    }
+  },
+  mounted: function mounted() {},
+  methods: {
+    dragStart: function dragStart() {
+      this.isDragging = true;
+    },
+    dragEnd: function dragEnd() {
+      this.isDragging = false;
+    },
+    serialize: function serialize() {
+      this.$emit('sort', JSON.stringify(this.menus, null, 2));
+    },
+    orderList: function orderList() {
+      this.menus = this.menus.sort(function (one, two) {
+        return one.order - two.order;
+      });
+    },
+    onMove: function onMove(_ref) {
+      var relatedContext = _ref.relatedContext,
+          draggedContext = _ref.draggedContext;
+      var relatedElement = relatedContext.element;
+      var draggedElement = draggedContext.element;
+      return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed;
+    }
   }
 });
 
@@ -10983,7 +11069,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.dragArea[data-v-1e4d61b8] {\n    min-height: 50px;\n    list-style: none;\n    margin: 0;\n    padding: 0;\n    outline: none;\n    border: none;\n}\n.dragArea li[data-v-1e4d61b8] {\n    outline: 1px solid #cbcbcb;\n    margin-bottom: 10px;\n    padding: 10px;\n\n    padding-right: 0;\n    border-right: none;\n}\n.dragArea ul.dragArea[data-v-1e4d61b8] {\n    margin-left: 20px;\n    border: 1px dashed #f0f0f0;\n}\n", ""]);
+exports.push([module.i, "\n.dragArea[data-v-1e4d61b8] {\n    min-height: 50px;\n    list-style: none;\n    border: 1px solid #efaeae;\n}\n.dragArea * ul.dragArea[data-v-1e4d61b8] {\n    border-right: none;\n}\n.menuname[data-v-1e4d61b8] {\n    padding: 10px 0 10px 0;\n}\n.handle[data-v-1e4d61b8] {\n    cursor: move;\n}\n", ""]);
 
 // exports
 
@@ -47099,21 +47185,18 @@ var render = function() {
                 : _c(
                     "v-card",
                     [
-                      _c(
-                        "v-card-text",
-                        [
-                          _c(_vm.list, {
-                            tag: "component",
-                            staticClass: "elevation-1",
-                            attrs: { records: _vm.records },
-                            on: {
-                              showDeleteDialog: _vm.deleteItemDialog,
-                              showEditForm: _vm.editedItemDialog
-                            }
-                          })
-                        ],
-                        1
-                      )
+                      _c(_vm.list, {
+                        tag: "component",
+                        staticClass: "elevation-1",
+                        attrs: {
+                          records: _vm.records,
+                          "sort-url": _vm.crudData.crud_sort_url
+                        },
+                        on: {
+                          showDeleteDialog: _vm.deleteItemDialog,
+                          showEditForm: _vm.editedItemDialog
+                        }
+                      })
                     ],
                     1
                   )
@@ -47805,7 +47888,34 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    [_c("nested-draggable", { attrs: { flat: "", menus: _vm.records } })],
+    [
+      _c(
+        "v-card-title",
+        [
+          _c(
+            "v-btn",
+            {
+              attrs: { flat: "", color: "red darken-4" },
+              on: { click: _vm.saveList }
+            },
+            [_vm._v("Save")]
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-card-text",
+        [
+          _c("nested-draggable", {
+            ref: "menusortable",
+            attrs: { flat: "", menus: _vm.records },
+            on: { sort: _vm.sort }
+          })
+        ],
+        1
+      )
+    ],
     1
   )
 }
@@ -47832,24 +47942,44 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "draggable",
-    {
-      staticClass: "dragArea",
-      attrs: { flat: "", tag: "ul", list: _vm.menus, group: { name: "g1" } }
-    },
-    _vm._l(_vm.menus, function(el) {
-      return _c(
-        "li",
-        { key: el.name },
-        [
-          _c("p", [_vm._v(_vm._s(el.name))]),
-          _vm._v(" "),
-          _c("nested-draggable", { attrs: { menus: el.children } })
-        ],
-        1
+    "div",
+    [
+      _c(
+        "draggable",
+        {
+          ref: "soratblemenu",
+          staticClass: "dragArea",
+          attrs: {
+            tag: "ul",
+            list: _vm.menus,
+            group: { name: "menuitems" },
+            move: _vm.onMove,
+            handle: ".handle"
+          },
+          on: { start: _vm.dragStart, end: _vm.dragEnd }
+        },
+        _vm._l(_vm.menus, function(el) {
+          return _c(
+            "li",
+            { key: el.id },
+            [
+              _c("p", [
+                _c("i", { staticClass: "fa fa-align-justify handle" }),
+                _vm._v(" "),
+                _c("span", { staticClass: "menuname" }, [
+                  _vm._v(_vm._s(el.name))
+                ])
+              ]),
+              _vm._v(" "),
+              _c("nested-draggable", { attrs: { menus: el.children } })
+            ],
+            1
+          )
+        }),
+        0
       )
-    }),
-    0
+    ],
+    1
   )
 }
 var staticRenderFns = []
@@ -95275,9 +95405,9 @@ secret: xmoah81trlgdEoLLRvTx5mHy9lpmWZIbMlQNotPu
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\wamp\www\mandecms\resources\js\app.js */"./resources/js/app.js");
-__webpack_require__(/*! E:\wamp\www\mandecms\resources\sass\app.scss */"./resources/sass/app.scss");
-module.exports = __webpack_require__(/*! E:\wamp\www\mandecms\resources\sass\cms.scss */"./resources/sass/cms.scss");
+__webpack_require__(/*! E:\wamp64\www\mandecms\resources\js\app.js */"./resources/js/app.js");
+__webpack_require__(/*! E:\wamp64\www\mandecms\resources\sass\app.scss */"./resources/sass/app.scss");
+module.exports = __webpack_require__(/*! E:\wamp64\www\mandecms\resources\sass\cms.scss */"./resources/sass/cms.scss");
 
 
 /***/ })

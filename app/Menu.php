@@ -14,12 +14,12 @@ class Menu extends Model
         return $this->hasMany('App\Menu', 'parent_id', 'id');
     }
 
-    public function page() {
+    public function page()
+    {
         return $this->hasOne('App\Page', 'id', 'page_id');
-        //return $this->belongsTo('App\Page', 'page_id', 'id');
     }
 
     public function category() {
-        return $this->belongsTo('App\Category', 'category_id', 'id');
+        return $this->hasOne('App\Category', 'id', 'category_id');
     }
 }

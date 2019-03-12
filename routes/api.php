@@ -70,6 +70,8 @@ Route::delete('/categories/delete/{category}', 'CategoriesController@destroy');
 
 Route::get('menus', 'MenusController@index');
 Route::get('menus/all', 'MenusController@all');
+Route::get('menus/build', 'MenusController@build');
+Route::post('menus/sort', 'MenusController@sort');
 Route::get('menus/info', 'MenusController@info');
 Route::post('/menus/store', 'MenusController@store');
 Route::put('/menus/update/{menu}', 'MenusController@update');
