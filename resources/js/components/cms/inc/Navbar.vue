@@ -22,15 +22,6 @@
                         @click="onClick($event, item)">
                     {{ item.name }}
                 </v-btn>
-
-                <v-spacer></v-spacer>
-                <v-text-field
-                        append-icon="mdi-magnify"
-                        flat
-                        hide-details
-                        solo-inverted
-                        style="max-width: 300px;">
-                </v-text-field>
             </v-layout>
         </v-container>
     </v-toolbar>

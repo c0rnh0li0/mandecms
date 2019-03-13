@@ -22,6 +22,8 @@ class Category extends JsonResource
             'owner_name' => $this->owner->name,
             'owner' => $this->owner,
             'created_at' => $this->created_at->format('d.m.Y'),
+            'is_page' => false,
+            'is_category' => true,
         ];
     }
 }

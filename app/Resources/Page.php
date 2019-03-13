@@ -26,7 +26,9 @@ class Page extends JsonResource
             'owner' => $this->owner,
             'category' => $this->category,
             'created_at' => $this->created_at->format('d.m.Y'),
-            'menu' => $this->menu
+            'menu' => $this->menu,
+            'is_page' => true,
+            'is_category' => false,
         ];
     }
 }

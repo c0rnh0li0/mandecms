@@ -32,6 +32,7 @@ import MenusCrud from './components/dashboard/menus/Crud.vue';
 
 // frontend page view
 import Page from './components/Page.vue';
+import Index from './components/Index.vue';
 
 // 404 page view
 import Page404 from './components/404.vue';
@@ -162,7 +163,7 @@ const router = new VueRouter({
 
         // frontend section
         {
-            path: '*',
+            path: '/',
             component: Page,
             meta: {
                 forVisitors: true,
@@ -171,6 +172,13 @@ const router = new VueRouter({
         {
             path: '/404',
             component: Page404,
+            meta: {
+                forVisitors: true,
+            },
+        },
+        {
+            path: '*',
+            component: Index,
             meta: {
                 forVisitors: true,
             },
