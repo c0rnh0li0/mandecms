@@ -33,6 +33,9 @@ import MenusCrud from './components/dashboard/menus/Crud.vue';
 // frontend page view
 import Page from './components/Page.vue';
 
+// 404 page view
+import Page404 from './components/404.vue';
+
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -161,6 +164,13 @@ const router = new VueRouter({
         {
             path: '*',
             component: Page,
+            meta: {
+                forVisitors: true,
+            },
+        },
+        {
+            path: '/404',
+            component: Page404,
             meta: {
                 forVisitors: true,
             },

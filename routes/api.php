@@ -56,7 +56,6 @@ Route::delete('/templates/delete/{template}', 'TemplatesController@destroy');
 
 Route::get('pages', 'PagesController@index');
 Route::get('pages/all', 'PagesController@all');
-Route::get('pages/info', 'PagesController@info');
 Route::post('/pages/store', 'PagesController@store');
 Route::put('/pages/update/{page}', 'PagesController@update');
 Route::delete('/pages/delete/{page}', 'PagesController@destroy');
@@ -76,3 +75,5 @@ Route::get('menus/info', 'MenusController@info');
 Route::post('/menus/store', 'MenusController@store');
 Route::put('/menus/update/{menu}', 'MenusController@update');
 Route::delete('/menus/delete/{menu}', 'MenusController@destroy');
+
+Route::get('cms/slug/{any}', 'CMSController@slug')->where('any', '.*');

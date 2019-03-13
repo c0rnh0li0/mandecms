@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Menu;
 use App\Page;
+use App\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use App\Http\Resources\Page as PageResource;
+use App\Http\Resources\Category as CategoryResource;
 
 class PagesController extends Controller
 {
@@ -90,17 +93,6 @@ class PagesController extends Controller
                 'message' => 'Error creating page!'
             ], 201);
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**

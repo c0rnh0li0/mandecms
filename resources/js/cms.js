@@ -5,6 +5,7 @@ import Auth from './AuthFunctions.js';
 import Page from './components/Page';
 import Vuetify from 'vuetify';
 import Vuex from 'vuex';
+import store from './store';
 
 Vue.component('passport-clients', require('./components/dashboard/passport/Clients.vue').default);
 Vue.component('passport-authorized-clients', require('./components/dashboard/passport/AuthorizedClients.vue').default);
@@ -23,36 +24,13 @@ Vue.component('Page', Page);
 
 import 'vuetify/dist/vuetify.min.css';
 
-const store = new Vuex.Store({
-    state: {
-        policies: []
-    },
-    getters: {
-        hasAccess: (state) => (id) => {
-            // const MANAGE_USERS = 2;
-            // store.getters.hasAccess(MANAGE_USERS);
-            return state.policies.find(policy => policy.id === id);
-        }
-    },
-    mutations: {
-        // store.commit('addPolicy', { /* policyobject */ })
-        // in components: this.$store.commit('addPolicy')
-        addPolicy (state, policy) {
-            state.policies.push(policy);
-        },
-        addPolicies (state, policies) {
-            state.policies = policies;
-        },
-    }
-});
-
 const cms = new Vue({
     el: '#cms',
     store,
     router: Routes,
     render: h => h(Page),
-    mounted() {
-
+    created(){
+        this.$store.dispatch('loadMenus');
     }
 });
 
