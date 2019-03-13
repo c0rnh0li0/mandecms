@@ -141,10 +141,7 @@ class PagesController extends Controller
         $page->hero_image = $this->uploadFileName($request, 'hero_image', $this->hero_path, $page->hero_image);
 
         if ($page->save()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Successfully updated page!'
-            ], 201);
+            return new PageResource($page);
         }
         else {
             return response()->json([

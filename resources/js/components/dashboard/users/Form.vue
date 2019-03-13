@@ -150,14 +150,14 @@
                             that.$emit('saved');
                         }
 
-                        that.$emit('notified', response.data.message);
+                        that.$emit('notified', response.data.message, response.data.success ? 'success' : 'error');
                     }).catch(function(err) {
                         if (err && err.response && err.response.status === 422) {
                             that.errors = err.response.data.errors || {};
                             that.errors.msg = err.response.data.message;
                         }
                         else {
-                            that.$emit('notified', err.message);
+                            that.$emit('notified', err.message, 'error');
                         }
                     });
                 }
@@ -199,7 +199,7 @@
                         });
                     })
                     .catch(function (error) {
-                        this.$emit('notified', error);
+                        this.$emit('notified', error, 'error');
                     });
             },
 

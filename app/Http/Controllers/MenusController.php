@@ -44,7 +44,11 @@ class MenusController extends Controller
     {
         $sorted = \GuzzleHttp\json_decode($request->input('sorted'));
         $this->updateSortOrder($sorted);
-        die;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Menu order sucessfully saved!'
+        ], 201);
     }
 
     protected function updateSortOrder($items, $parent = null, $order = 0)
@@ -107,7 +111,7 @@ class MenusController extends Controller
         $menu = new Menu();
 
         $menu->name = $request->input('name');
-        $menu->parent_id = $request->input('parent_id');
+        $menu->parent_id = $request->input('parent_id', 'NULL');
         $menu->order = $this->getNextOrder($request->input('parent_id'));
         $menu->slug = $request->input('slug');
         $menu->visible = $request->input('visible') == true ? 1 : 0;
@@ -170,7 +174,7 @@ class MenusController extends Controller
         $menu = Menu::findOrFail($id);
 
         $menu->name = $request->input('name');
-        $menu->parent_id = $request->input('parent_id');
+        //$menu->parent_id = $request->input('parent_id', 'NULL');
         //$menu->order = $request->input('order');
         $menu->slug = $request->input('slug');
         $menu->visible = $request->input('visible') == true ? 1 : 0;
@@ -178,10 +182,7 @@ class MenusController extends Controller
         $menu->category_id = $request->input('category_id');
 
         if ($menu->save()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Successfully updated menu item!'
-            ], 201);
+            return new MenuResource($menu);
         }
         else {
             return response()->json([

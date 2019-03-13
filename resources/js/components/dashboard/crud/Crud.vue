@@ -10,7 +10,7 @@
                     :timeout="3000"
                     :top="true"
                     :vertical="false">
-                <span class="red--text lighten-4">{{ notification }}</span>
+                <span :class="snackClass">{{ notification }}</span>
                 <v-btn color="white"
                        flat
                        @click="snackbar = false">
@@ -78,7 +78,7 @@
                     <component :is="list"
                                :records="records"
                                :sort-url="crudData.crud_sort_url"
-                               class="elevation-1"
+                               @notified="notify"
                                @showDeleteDialog="deleteItemDialog"
                                @showEditForm="editedItemDialog">
                     </component>
@@ -154,6 +154,8 @@
 
                 formTitle: '',
                 formMaxWidth: '500px',
+
+                snackClass: '',
             }
         },
         created() {
@@ -165,7 +167,7 @@
                         that.records = data.data.data;
                     })
                     .catch(error => {
-                        that.notify(error);
+                        that.notify(error, 'error');
                     });
             }
         },
@@ -175,17 +177,6 @@
             if (typeof this.crudData.formMaxWidth != 'undefined') {
                 this.formMaxWidth = this.crudData.formMaxWidth;
             }
-
-
-            /*let that = this;
-            this.getData(this.buildPagingUrl())
-                .then(data => {
-                    that.updateData(data.data);
-                    that.loading = false;
-                })
-                .catch(error => {
-                    that.notify(error);
-                });*/
 
             if (this.crudData.onMounted != null && typeof this.crudData.onMounted == 'function') {
                 this.crudData.onMounted();
@@ -202,7 +193,7 @@
                             that.loading = false;
                         })
                         .catch(error => {
-                            that.notify(error);
+                            that.notify(error, 'error');
                         });
                 },
                 deep: true
@@ -229,7 +220,7 @@
                         that.updateData(data.data);
                     })
                     .catch(function (error) {
-                        that.notify(error);
+                        that.notify(error, 'error');
                     });
             },
         },
@@ -318,20 +309,28 @@
 
                 axios.post(this.deleteUrl + item.id, formData).then(function (response) {
                     if (response.data.success == true) {
-                        that.notify(response.data.message);
+                        that.notify(response.data.message, 'success');
 
-                        that.getData(that.buildPagingUrl())
+                        let pageUrl = that.buildPagingUrl();
+
+                        if (that.dataDisplay == 'sortable')
+                            pageUrl = that.crudData.crud_builder_url;
+
+                        that.getData(pageUrl)
                             .then(function (data) {
-                                that.updateData(data.data);
+                                if (that.dataDisplay == 'sortable')
+                                    that.records = data.data.data;
+                                else
+                                    that.updateData(data.data);
                             })
                             .catch(function (error) {
-                                that.notify(error);
+                                that.notify(error, 'error');
                             });
 
                         that.delete_dialog = false;
                     }
                 }).catch(function(err) {
-                    that.notify(err);
+                    that.notify(err, 'error');
                 });
             },
 
@@ -353,30 +352,45 @@
                 }
             },
 
-            notify(text) {
+            notify(text, stype = 'success') {
+                let sColor = 'red';
+                if (stype == 'success')
+                    sColor = 'green';
+                if (stype == 'error')
+                    sColor = 'red';
+                if (stype == 'warning')
+                    sColor = 'orange';
+
+                this.snackClass = sColor + '--text lighten-4';
                 this.notification = text;
                 this.snackbar = true;
             },
 
             itemCreated() {
+                let pageUrl = this.buildPagingUrl();
+
+                if (this.dataDisplay == 'sortable')
+                    pageUrl = this.crudData.crud_builder_url;
+
                 let that = this;
-                this.getData(this.buildPagingUrl())
+                this.getData(pageUrl)
                     .then(function (data) {
-                        that.updateData(data.data);
+                        if (that.dataDisplay == 'sortable')
+                            that.records = data.data.data;
+                        else
+                            that.updateData(data.data);
                     })
                     .catch(function (error) {
-                        that.notify(error);
+                        that.notify(error, 'error');
                     });
 
-                this.notify('Sucessfully saved!');
+                this.notify('Sucessfully saved!', 'success');
                 this.form_dialog = false;
             },
 
             itemUpdated(data) {
-                console.log('item updated', data);
-
                 Object.assign(this.records[this.editedIndex], data);
-                this.notify('\'' + data.name + '\' sucessfully saved!');
+                this.notify('\'' + data.name + '\' sucessfully saved!', 'success');
                 this.form_dialog = false;
             },
 

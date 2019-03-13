@@ -6,28 +6,30 @@
                    :list="menus"
                    :group="{ name: 'menuitems' }"
                    :move="onMove"
-                   @start="dragStart" @end="dragEnd"
+                   @start="dragStart"
+                   @end="dragEnd"
                    handle=".handle">
             <li v-for="el in menus" :key="el.id">
+                <div class="menu-info">
+                    <div class="text-xs-start menu-name">
+                    <span class="menuname">
+                        <i class="fa fa-align-justify handle"></i>
+                        {{ el.name }}
+                    </span>
+                        <small>
+                            ({{ el.slug }})
+                        </small>
+                    </div>
+                    <div class="menu-actions">
+                        <v-icon small class="mr-2" @click="editItem(el)">edit</v-icon>
+                        <v-icon small class="mr-2" @click="deleteItem(el)">delete</v-icon>
+                    </div>
+                </div>
 
 
-                        <div class="text-xs-start">
-                            <span class="menuname">
-                                <i class="fa fa-align-justify handle"></i>
-                                {{ el.name }}
-                            </span>
-                            <small>
-                                ({{ el.slug }})
-                            </small>
-                        </div>
-                        <div class="menu-actions pa-3">
-                            <v-icon small class="mr-2" @click="editItem(el)">edit</v-icon>
-                            <v-icon small class="mr-2" @click="deleteItem(el)">delete</v-icon>
-                        </div>
+                <v-spacer></v-spacer>
 
-
-
-                <nested-draggable :menus="el.children" />
+                <nested-draggable :menus="el.children"></nested-draggable>
             </li>
         </draggable>
     </div>
@@ -73,6 +75,7 @@
             },
             dragEnd() {
                 this.isDragging = false;
+                this.$emit('menuchanged', true);
             },
             serialize() {
                 this.$emit('sort', JSON.stringify(this.menus, null, 2));
@@ -96,7 +99,7 @@
     .dragArea {
         min-height: 50px;
         list-style: none;
-        border: 1px solid #efaeae;
+        border: 1px dashed #efaeae;
     }
 
     .dragArea li {
@@ -107,9 +110,17 @@
         border-right: none;
     }
 
-    .menu-actions {
+    .menu-actions, .menu-name {
         display: inline-block;
         position: relative;
+    }
+
+    .menu-actions {
+        float: right;
+    }
+
+    .menu-info {
+        padding: 5px 0 10px 0;
     }
 
     .handle {

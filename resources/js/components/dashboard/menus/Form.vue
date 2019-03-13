@@ -108,7 +108,7 @@
                     that.menucategories = response.data.data;
                 })
                 .catch(function (err) {
-                    that.$emit('notified', err.message);
+                    that.$emit('notified', err.message, 'error');
                 });
 
             this.getPages()
@@ -116,7 +116,7 @@
                     that.menupages = response.data.data;
                 })
                 .catch(function (err) {
-                    that.$emit('notified', err.message);
+                    that.$emit('notified', err.message, 'error');
                 });
         },
         watch: {
@@ -179,14 +179,14 @@
                             that.$emit('saved');
                         }
 
-                        that.$emit('notified', response.data.message);
+                        that.$emit('notified', response.data.message, response.data.success ? 'success' : 'error');
                     }).catch(function(err) {
                         if (err && err.response && err.response.status === 422) {
                             that.errors = err.response.data.errors || {};
                             that.errors.msg = err.response.data.message;
                         }
                         else {
-                            that.$emit('notified', err.message);
+                            that.$emit('notified', err.message, 'error');
                         }
                     });
                 }
@@ -196,8 +196,8 @@
                 this.$emit('close');
             },
 
-            setData(policyData) {
-                this.editedItem = policyData;
+            setData(menuData) {
+                this.editedItem = menuData;
                 this.errors = [];
 
                 if (this.editedItem.page && this.editedItem.page.id) {

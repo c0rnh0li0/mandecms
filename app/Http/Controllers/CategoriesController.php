@@ -132,10 +132,7 @@ class CategoriesController extends Controller
         $category->url = $request->input('url');
 
         if ($category->save()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Successfully updated category!'
-            ], 201);
+            return new CategoryResource($category);
         }
         else {
             return response()->json([

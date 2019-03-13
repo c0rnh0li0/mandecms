@@ -193,7 +193,7 @@
                     that.templates = response.data.data;
                 })
                 .catch(function (err) {
-                    that.$emit('notified', err.message);
+                    that.$emit('notified', err.message, 'error');
                 });
 
             this.getCategories()
@@ -201,7 +201,7 @@
                     that.categories = response.data.data;
                 })
                 .catch(function (err) {
-                    that.$emit('notified', err.message);
+                    that.$emit('notified', err.message, 'error');
                 });
         },
         methods: {
@@ -240,14 +240,14 @@
                             that.$emit('saved');
                         }
 
-                        that.$emit('notified', response.data.message);
+                        that.$emit('notified', response.data.message, response.data.success ? 'success' : 'error');
                     }).catch(function(err) {
                         if (err && err.response && err.response.status === 422) {
                             that.errors = err.response.data.errors || {};
                             that.errors.msg = err.response.data.message;
                         }
                         else {
-                            that.$emit('notified', err.message);
+                            that.$emit('notified', err.message, 'error');
                         }
                     });
                 }

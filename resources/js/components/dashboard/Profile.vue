@@ -9,7 +9,7 @@
                 :timeout="3000"
                 :top="true"
                 :vertical="false">
-            <span class="red--text lighten-4">{{ notification }}</span>
+            <span :class="snackClass">{{ notification }}</span>
             <v-btn color="white"
                    flat
                    @click="snackbar = false">
@@ -301,7 +301,17 @@
                 }
             },
 
-            notify(text) {
+            notify(text, stype = 'success') {
+                let sColor = 'red';
+                if (stype == 'success')
+                    sColor = 'green';
+                if (stype == 'error')
+                    sColor = 'red';
+                if (stype == 'warning')
+                    sColor = 'orange';
+
+                this.snackClass = sColor + '--text lighten-4';
+
                 this.notification = text;
                 this.snackbar = true;
             },
