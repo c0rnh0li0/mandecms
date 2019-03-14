@@ -207,7 +207,7 @@
                     .catch(function (error) {
                         // handle error
                         console.log(error);
-                    })
+                    });
             },
             saveProfile (e) {
                 this.editedItem.method = 'PUT';

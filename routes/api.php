@@ -76,4 +76,10 @@ Route::post('/menus/store', 'MenusController@store');
 Route::put('/menus/update/{menu}', 'MenusController@update');
 Route::delete('/menus/delete/{menu}', 'MenusController@destroy');
 
+Route::get('settings', 'SettingsController@index');
+Route::post('/settings/store', 'SettingsController@store');
+Route::put('/settings/update/{setting}', 'SettingsController@update');
+
+Route::get('tags', 'TagsController@index');
+
 Route::get('cms/slug/{any}', 'CMSController@slug')->where('any', '.*');

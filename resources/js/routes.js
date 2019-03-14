@@ -30,6 +30,9 @@ import CategoriesCrud from './components/dashboard/categories/Crud.vue';
 // menus views
 import MenusCrud from './components/dashboard/menus/Crud.vue';
 
+// settings views
+import CMSSettings from './components/dashboard/Settings';
+
 // frontend page view
 import Page from './components/Page.vue';
 import Index from './components/Index.vue';
@@ -158,6 +161,17 @@ const router = new VueRouter({
             meta: {
                 forAuth: true,
                 breadcrumb: 'Templates',
+            },
+        },
+
+        // settings section
+        {
+            path: '/dashboard/cms/settings',
+            component: CMSSettings,
+            name: 'Settings',
+            meta: {
+                forAuth: true,
+                breadcrumb: 'Settings',
             },
         },
 

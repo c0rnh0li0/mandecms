@@ -64,6 +64,9 @@
                     <router-link tag="v-list-tile" to="/dashboard/profile/tokens">
                         <v-list-tile-title>Tokens</v-list-tile-title>
                     </router-link>
+                    <router-link tag="v-list-tile" to="/dashboard/cms/settings">
+                        <v-list-tile-title>Site settings</v-list-tile-title>
+                    </router-link>
                     <v-list-tile @click="logout">
                         <v-list-tile-title>Logout</v-list-tile-title>
                     </v-list-tile>

@@ -61,7 +61,7 @@
                     this.is_page = response.data.data.is_page;
                     this.is_category = response.data.data.is_category;
 
-                    this.template = this.is_page ? response.data.data.template.file : 'category_template';
+                    this.template = this.is_page ? response.data.data.template.file : 'category-template';
                     this.is404 = false;
                 }
             }

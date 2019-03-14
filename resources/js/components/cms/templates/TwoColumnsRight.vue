@@ -1,8 +1,8 @@
 <template>
     <div app>
-        <h1>Two columns (right content) -> {{ content.title }}</h1>
-        <p><em>{{ content.intro }}</em></p>
-        <p>{{ content.body }}</p>
+        <h1 v-html="'Two columns (right content) -> ' + content.title"></h1>
+        <p><em v-html="content.intro"></em></p>
+        <p v-html="content.body"></p>
     </div>
 </template>
 

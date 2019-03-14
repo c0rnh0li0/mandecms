@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Tag;
 use Illuminate\Http\Request;
+use App\Http\Resources\Tag as TagsResource;
 
 class TagsController extends Controller
 {
@@ -13,7 +15,7 @@ class TagsController extends Controller
      */
     public function index()
     {
-        //
+        return new TagsResource(Tag::all());
     }
 
     /**
