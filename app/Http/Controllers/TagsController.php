@@ -15,7 +15,8 @@ class TagsController extends Controller
      */
     public function index()
     {
-        return new TagsResource(Tag::all());
+        return response()->json(Tag::all('name'));
+        //return new TagsResource();
     }
 
     /**

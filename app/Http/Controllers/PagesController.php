@@ -81,6 +81,8 @@ class PagesController extends Controller
         $page->url = $request->input('url');
         $page->hero_image = $this->uploadFileName($request, 'hero_image', $this->hero_path, $page->hero_image);
 
+        // TODO: add tags
+
         if ($page->save()) {
             return response()->json([
                 'success' => true,

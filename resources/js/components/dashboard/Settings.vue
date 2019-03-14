@@ -19,9 +19,8 @@
 
         <v-card>
             <v-card-text>
-                <v-toolbar flat color="white" class="mb-3">
+                <v-toolbar flat color="white">
                     <v-toolbar-title>Site settings</v-toolbar-title>
-                    <v-spacer></v-spacer>
                 </v-toolbar>
                 <v-container grid-list-md text-xs-center>
                     <v-form method="POST" v-on:submit.prevent="saveSettings">
@@ -29,7 +28,7 @@
                             <v-flex xs6>
                                 <v-card class="elevation-1">
                                     <v-card-title>
-                                        <h4>Site settings</h4>
+                                        <h4>Global settings</h4>
                                     </v-card-title>
                                     <v-card-text class="px-0">
                                         <v-layout wrap>
@@ -60,7 +59,7 @@
                                             </v-container>
                                             <v-container grid-list-md>
                                                 <v-textarea
-                                                        :value="editedItem.site_description"
+                                                        v-model="editedItem.site_description"
                                                         label="Site description"
                                                         color="red darken-4"
                                                         :messages="errors.site_description"
@@ -68,72 +67,24 @@
                                                 </v-textarea>
                                             </v-container>
                                             <v-container grid-list-md>
-                                                <v-text-field
-                                                        :value="editedItem.site_metatags"
-                                                        label="Meta tags"
-                                                        color="red darken-4"
-                                                        :messages="errors.site_metatags"
-                                                        :error="typeof errors.site_metatags != 'undefined'">
-                                                </v-text-field>
-
-
-                                                <!-- @keyup.native="processMetaTags" -->
-                                                <v-combobox v-model="site_meta"
-                                                            :filter="filter"
-                                                            :hide-no-data="!search"
-                                                            :items="metatags"
-                                                            :search-input.sync="search"
-                                                            hide-selected
-                                                            label="Search for a tag"
-                                                            multiple
-                                                            small-chips
-                                                            solo>
-                                                    <template v-slot:no-data>
-                                                        <v-list-tile>
-                                                            <span class="subheading">Create</span>
-                                                            <v-chip label
-                                                                    small>
-                                                                {{ search }}
-                                                            </v-chip>
-                                                        </v-list-tile>
-                                                    </template>
-                                                    <template v-slot:selection="{ item, parent, selected }">
-                                                        <v-chip v-if="item === Object(item)"
-                                                                :selected="selected"
-                                                                label
-                                                                small>
-                                                            <span class="pr-2">
-                                                              {{ item.name }}
-                                                            </span>
-                                                            <v-icon small @click="parent.selectItem(item)">close</v-icon>
+                                                <v-combobox
+                                                        v-model="site_meta"
+                                                        :items="metatags"
+                                                        label="Site metatags"
+                                                        chips
+                                                        clearable
+                                                        prepend-icon="local_offer"
+                                                        solo
+                                                        multiple>
+                                                    <template v-slot:selection="data">
+                                                        <v-chip :selected="data.selected"
+                                                                close
+                                                                @input="remove(data.item)">
+                                                            <v-avatar class="red darken-4 white--text">
+                                                                {{ data.item.slice(0, 1).toUpperCase() }}
+                                                            </v-avatar>
+                                                            <strong>{{ data.item }}</strong>&nbsp;
                                                         </v-chip>
-                                                    </template>
-                                                    <template v-slot:item="{ index, item }">
-                                                        <v-list-tile-content>
-                                                            <v-text-field
-                                                                    v-if="editing === item"
-                                                                    v-model="editing.name"
-                                                                    autofocus
-                                                                    flat
-                                                                    background-color="transparent"
-                                                                    hide-details
-                                                                    solo
-                                                                    @keyup.enter="edit(index, item)">
-                                                            </v-text-field>
-                                                            <v-chip
-                                                                    v-else
-                                                                    dark
-                                                                    label
-                                                                    small>
-                                                                {{ item.name }}
-                                                            </v-chip>
-                                                        </v-list-tile-content>
-                                                        <v-spacer></v-spacer>
-                                                        <v-list-tile-action @click.stop>
-                                                            <v-btn icon @click.stop.prevent="edit(index, item)">
-                                                                <v-icon>{{ editing !== item ? 'edit' : 'check' }}</v-icon>
-                                                            </v-btn>
-                                                        </v-list-tile-action>
                                                     </template>
                                                 </v-combobox>
                                             </v-container>
@@ -205,30 +156,31 @@
         name: "Settings",
         components: {},
         watch: {
-            site_meta(val, prev) {
-                if (val.length === prev.length) return;
-
-                this.model = val.map(v => {
-                    if (typeof v === 'string') {
-                        v = {
-                            name: v,
-                        }
-
-                        this.site_meta = this.addItemUnique(this.site_meta, v);
-                        this.metatags = this.addItemUnique(this.metatags, v);
-
-                        this.nonce++;
-                    }
-
-                    return v;
-                })
-            },
+            site_meta(val) {
+                if (val) {
+                    this.site_meta = val;
+                    let that = this;
+                    val.forEach(function (tag) {
+                        if(that.metatags.indexOf(tag) === -1)
+                            that.metatags.push(tag);
+                    });
+                }
+            }
         },
-        props: {
-            settings: {type: Object, required: false, default: function(){ return {}; }},
-        },
+        props: {},
         data() {
             return {
+                settings: {
+                    id: '',
+                    site_logo: '',
+                    site_name: '',
+                    site_metatags: '',
+                    site_description: '',
+                    facebook_url: '',
+                    instagram_url: '',
+                    twitter_url: '',
+                    contact_email: '',
+                },
                 editedItem: {
                     id: '',
                     site_logo: '',
@@ -243,39 +195,28 @@
                 errors: [],
 
                 // site logo section
-                imageUrl: '/storage/img/logo.png',
+                imageUrl: '/storage/img/default_logo.png',
                 imageFile: '',
 
                 snackClass: '',
                 snackbar: false,
                 notification: '',
 
-                metatags: [
-                    { header: 'Select a tag or create one' },
-                ],
+                metatags: [],
                 site_meta: [],
-
-                // tags chips section
-                activator: null,
-                attach: null,
-                editing: null,
-                index: -1,
-                nonce: 1,
-                menu: false,
-                x: 0,
-                search: null,
-                y: 0
             }
         },
         mounted() {
             var that = this;
             axios.get('/api/settings')
                 .then(function (response) {
-                    that.settings = response.data.data;
-                    that.imageUrl = '/storage/img/' + that.editedItem.site_logo;
+                    if (!_.isEmpty(response.data)) {
+                        that.settings = response.data.data;
+                        that.editedItem = that.settings;
 
-                    that.editedItem = that.settings;
-                    that.site_meta = that.settings.site_metatags;
+                        that.site_meta = that.settings.site_metatags.split(',');
+                        that.imageUrl = '/storage/img/' + that.editedItem.site_logo;
+                    }
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -283,7 +224,7 @@
 
             axios.get('/api/tags')
                 .then(function (response) {
-                    that.metatags = response.data.data;
+                    that.metatags = response.data;
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -305,6 +246,8 @@
                     if (this.editedItem.hasOwnProperty(property)) {
                         if (property == 'site_logo' && this.imageFile != null)
                             formData.append(property, this.imageFile, this.imageFile.name);
+                        else if (property == 'site_metatags')
+                            formData.append(property, this.site_meta.join(','));
                         else
                             formData.append(property, this.editedItem[property]);
                     }
@@ -321,7 +264,8 @@
                     }
                 };
 
-                formData.append('_method', 'put');
+                formData.append('metatags', this.metatags.join(','));
+                formData.append('_method', this.editedItem.id != '' ? 'put' : 'post');
 
                 axios.post(this.editedItem.id != '' ? '/api/settings/update/1' : '/api/settings/store', formData, requestOptions).then(function (response) {
                     Object.assign(that.editedItem, response.data.data);
@@ -332,30 +276,9 @@
                     }
                 });
             },
-            remove_meta(item) {
-                console.log('to remove', item);
-            },
-
-            edit (index, item) {
-                if (!this.editing) {
-                    this.editing = item
-                    this.index = index
-                } else {
-                    this.editing = null
-                    this.index = -1
-                }
-            },
-            filter (item, queryText, itemText) {
-                if (item.header) return false
-
-                const hasValue = val => val != null ? val : ''
-
-                const text = hasValue(itemText)
-                const query = hasValue(queryText)
-
-                return text.toString()
-                    .toLowerCase()
-                    .indexOf(query.toString().toLowerCase()) > -1
+            remove (item) {
+                this.metatags.splice(this.metatags.indexOf(item), 1)
+                this.metatags = [...this.metatags]
             },
 
             pickFile () {
@@ -391,10 +314,6 @@
                 this.notification = text;
                 this.snackbar = true;
             },
-            addItemUnique(arr, item) {
-                arr.push(item);
-                return [...new Set(arr)];
-            }
         }
     }
 </script>

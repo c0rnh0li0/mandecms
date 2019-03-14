@@ -31,6 +31,7 @@ const cms = new Vue({
     render: h => h(Page),
     created(){
         this.$store.dispatch('loadMenus');
+        this.$store.dispatch('loadSettings');
     }
 });
 

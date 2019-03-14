@@ -38,9 +38,7 @@
                 is404: false,
             }
         },
-        mounted() {
-            console.log('page mounted');
-        },
+        mounted() {},
         created() {
             this.openPage(this.$router.history.current.path);
         },
