@@ -1,5 +1,5 @@
 <template>
-    <v-toolbar app flat scroll-toolbar-off-screen>
+    <v-toolbar app flat scrollOffScreen extended extension-height="3">
         <v-toolbar-side-icon class="hidden-md-and-up" @click="toggleDrawer"/>
         <v-container mx-auto py-0>
             <v-layout>
@@ -22,26 +22,23 @@
                 </v-btn>
             </v-layout>
         </v-container>
+        <v-progress-linear v-show="progressLoading" app fixed :indeterminate="true" slot="extension" height="2" class="ma-0"></v-progress-linear>
     </v-toolbar>
 </template>
 
 <script>
     // Utilities
     import {
-        mapGetters,
         mapMutations
     } from 'vuex';
 
     export default {
-        computed: {
-
-        },
-        created() {
-
+        props: {
+            progressLoading: { type: Boolean, required: false, default: function () { return false; }},
         },
         data() {
             return {
-
+                progressLoading: false,
             }
         },
         methods: {
