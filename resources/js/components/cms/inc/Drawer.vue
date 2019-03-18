@@ -1,20 +1,26 @@
 <template>
   <v-navigation-drawer
     v-model="drawer"
+    class="amber accent-3"
     app
-    dark
-    temporary
-  >
+    temporary>
     <v-list>
       <v-list-tile
-        v-for="(link, i) in links"
-        :key="i"
-        :to="link.to"
-        :href="link.href"
-        @click="onClick($event, link)"
+              v-for="(link, i) in menuitems"
+              :key="i"
+              :to="link.slug"
+              :href="link.slug"
+              @click="onClick($event, link)"
       >
-        <v-list-tile-title v-text="link.text" />
+        <v-list-tile-title class="white--text" v-text="link.name" />
       </v-list-tile>
+      <!-- <router-link tag="v-list-tile" class="white--text"
+                   v-for="(item, i) in $store.state.menuitems"
+                   :key="i"
+                   :href="item.slug"
+                   @click="onClick($event, item)">
+        {{ item.name }}
+      </router-link> -->
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -30,7 +36,7 @@
     name: 'CoreDrawer',
 
     computed: {
-      ...mapGetters(['links']),
+      ...mapGetters(['menuitems']),
       drawer: {
         get () {
           return this.$store.state.drawer
@@ -43,19 +49,14 @@
 
     methods: {
       ...mapMutations(['setDrawer']),
+      ...mapMutations(['toggleDrawer']),
       onClick (e, item) {
-        e.stopPropagation()
+          e.stopPropagation();
+          if (item.to || !item.slug) {
+              return;
+          }
 
-        if (item.to === '/') {
-          this.$vuetify.goTo(0)
-          this.setDrawer(false)
-          return
-        }
-
-        if (item.to || !item.href) return
-
-        this.$vuetify.goTo(item.href)
-        this.setDrawer(false)
+          this.$emit('navigated', item.slug);
       }
     }
   }

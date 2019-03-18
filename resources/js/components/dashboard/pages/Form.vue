@@ -86,6 +86,34 @@
                     </v-container>
 
                     <v-container grid-list-md>
+                        <v-layout row wrap>
+                            <v-flex grow pa-1>
+                                <v-combobox
+                                        v-model="page_meta"
+                                        :items="metatags"
+                                        label="Tags"
+                                        chips
+                                        clearable
+                                        prepend-icon="local_offer"
+                                        solo
+                                        multiple>
+                                    <template v-slot:selection="data">
+                                        <v-chip :selected="data.selected"
+                                                close
+                                                @input="remove(data.item)">
+                                            <v-avatar class="red darken-4 white--text">
+                                                {{ data.item.slice(0, 1).toUpperCase() }}
+                                            </v-avatar>
+                                            <strong>{{ data.item }}</strong>&nbsp;
+                                        </v-chip>
+                                    </template>
+                                </v-combobox>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+
+
+                    <v-container grid-list-md>
                         <v-flex grow pa-1>
                             <v-label>Description</v-label>
                             <ckeditor :editor="editor"
@@ -154,9 +182,23 @@
                 heroFile: '',
 
                 errors: [],
+
+                // meta
+                metatags: [],
+                page_meta: [],
             }
         },
         watch: {
+            page_meta(val) {
+                if (val) {
+                    this.page_meta = val;
+                    let that = this;
+                    val.forEach(function (tag) {
+                        if(that.metatags.indexOf(tag) === -1)
+                            that.metatags.push(tag);
+                    });
+                }
+            },
             pageTitle(val) {
                 this.editedItem.title = val;
 
@@ -203,6 +245,16 @@
                 .catch(function (err) {
                     that.$emit('notified', err.message, 'error');
                 });
+
+            axios.get('/api/tags')
+                .then(function (response) {
+                    response.data.forEach(function (t) {
+                        that.metatags.push(t.name);
+                    });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         },
         methods: {
             save (e) {
@@ -210,7 +262,10 @@
                 let formData = new FormData();
 
                 for (var property in this.editedItem) {
-                    formData.append(property, this.editedItem[property]);
+                    if (property == 'page_metatags')
+                        formData.append(property, this.page_meta.join(','));
+                    else
+                        formData.append(property, this.editedItem[property]);
                 }
 
                 let that = this;
@@ -278,20 +333,29 @@
             },
 
             setData(pageData) {
+                this.editedItem = {};
                 this.editedItem = pageData;
                 this.pageTitle = this.editedItem.title;
 
-                if (this.editedItem.template.id) {
+                if (this.editedItem.page_metatags && this.editedItem.page_metatags != '')
+                    this.page_meta = this.editedItem.page_metatags.split(',');
+                else
+                    this.page_meta = [];
+
+                if (this.editedItem.template.id)
                     this.pageTemplate = this.editedItem.template;
-                }
+                else
+                    this.pageTemplate = '';
 
-                if (this.editedItem.category && this.editedItem.category.id) {
+                if (this.editedItem.category && this.editedItem.category.id)
                     this.pageCategory = this.editedItem.category;
-                }
+                else
+                    this.pageCategory = '';
 
-                if (this.editedItem.hero_image) {
+                if (this.editedItem.hero_image)
                     this.heroUrl = '/storage/hero_images/' + this.editedItem.hero_image;
-                }
+                else
+                    this.heroUrl = null;
 
                 this.errors = [];
             },
@@ -302,6 +366,11 @@
 
             async getCategories() {
                 return await axios.get(this.categoriesUrl);
+            },
+
+            remove (item) {
+                this.page_meta.splice(this.page_meta.indexOf(item), 1);
+                this.page_meta = [...this.page_meta];
             },
 
             slugify(string) {

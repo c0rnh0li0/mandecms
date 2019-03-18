@@ -3,7 +3,7 @@
         <v-container fluid grid-list-md>
             <v-layout row wrap>
                 <v-flex d-flex glow xs12 sm8 md9 lg10>
-                    <v-card flat>
+                    <v-card>
                         <v-card-title primary class="title" v-html="'Two columns (left content) -> ' + content.title"></v-card-title>
                         <v-card-text>
                             <p><em v-html="content.intro"></em></p>
@@ -12,7 +12,7 @@
                     </v-card>
                 </v-flex>
                 <v-flex d-flex shrink xs12 sm4 md3 lg2>
-                    <v-card>
+                    <v-card flat>
                         <v-card-text>4 {{ lorem.slice(0, 100) }}</v-card-text>
                     </v-card>
                 </v-flex>

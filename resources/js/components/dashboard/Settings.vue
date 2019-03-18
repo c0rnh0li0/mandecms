@@ -224,7 +224,9 @@
 
             axios.get('/api/tags')
                 .then(function (response) {
-                    that.metatags = response.data;
+                    response.data.forEach(function (t) {
+                        that.metatags.push(t.name);
+                    });
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -277,8 +279,8 @@
                 });
             },
             remove (item) {
-                this.metatags.splice(this.metatags.indexOf(item), 1)
-                this.metatags = [...this.metatags]
+                this.site_meta.splice(this.site_meta.indexOf(item), 1);
+                this.site_meta = [...this.site_meta];
             },
 
             pickFile () {

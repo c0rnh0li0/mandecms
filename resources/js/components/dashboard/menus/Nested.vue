@@ -7,18 +7,14 @@
                    :group="{ name: 'menuitems' }"
                    :move="onMove"
                    @start="dragStart"
-                   @end="dragEnd"
-                   handle=".handle">
+                   @end="dragEnd">
             <li v-for="el in menus" :key="el.id">
                 <div class="menu-info">
                     <div class="text-xs-start menu-name">
-                    <span class="menuname">
-                        <i class="fa fa-align-justify handle"></i>
-                        {{ el.name }}
-                    </span>
-                        <small>
-                            ({{ el.slug }})
-                        </small>
+                        <span class="menuname">
+                            <span>{{ el.name }}</span>
+                            <small>({{ el.slug }})</small>
+                        </span>
                     </div>
                     <div class="menu-actions">
                         <v-icon small class="mr-2" @click="editItem(el)">edit</v-icon>

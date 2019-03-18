@@ -30,8 +30,8 @@ const cms = new Vue({
     router: Routes,
     render: h => h(Page),
     created(){
-        this.$store.dispatch('loadMenus');
         this.$store.dispatch('loadSettings');
+        this.$store.dispatch('loadMenus');
     }
 });
 

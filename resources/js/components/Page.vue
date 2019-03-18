@@ -1,24 +1,25 @@
 <template>
     <v-app>
         <navbar :progress-loading="loading" ref="nav" @navigated="openPage" app></navbar>
+        <drawer @navigated="openPage" app></drawer>
         <index app v-if="!is404" :content="content" :template="template"></index>
         <router-view v-if="is404"></router-view>
-        <v-footer dark height="auto">
-            <v-card flat tile class="indigo lighten-1 white--text text-xs-center">
+        <v-footer height="auto">
+            <v-card flat tile class="white--text text-xs-center" color="red darken-4">
                 <v-card-text>
-                    <v-btn v-if="$store.getters.settings.contact_email"
+                    <v-btn v-if="$store.getters.settings.contact_email" :href="'mailto:' + $store.getters.settings.contact_email"
                            class="mx-3 white--text" icon>
                         <v-icon class="footer-icon" size="24px">fas fa-envelope</v-icon>
                     </v-btn>
-                    <v-btn v-if="$store.getters.settings.facebook_url"
+                    <v-btn v-if="$store.getters.settings.facebook_url" :href="$store.getters.settings.facebook_url" target="_blank"
                            class="mx-3 white--text" icon>
                         <v-icon class="footer-icon" size="24px">fab fa-facebook</v-icon>
                     </v-btn>
-                    <v-btn v-if="$store.getters.settings.instagram_url"
+                    <v-btn v-if="$store.getters.settings.instagram_url" :href="$store.getters.settings.instagram_url" target="_blank"
                            class="mx-3 white--text" icon>
                         <v-icon class="footer-icon" size="24px">fab fa-instagram</v-icon>
                     </v-btn>
-                    <v-btn v-if="$store.getters.settings.twitter_url"
+                    <v-btn v-if="$store.getters.settings.twitter_url" :href="$store.getters.settings.twitter_url" target="_blank"
                            class="mx-3 white--text" icon>
                         <v-icon class="footer-icon" size="24px">fab fa-twitter</v-icon>
                     </v-btn>
@@ -31,7 +32,7 @@
                 <v-divider></v-divider>
 
                 <v-card-text class="white--text">
-                    &copy;2018 — <strong>Cornholio</strong>
+                    <strong>Cornholio</strong> &copy; 2018
                 </v-card-text>
             </v-card>
         </v-footer>
@@ -40,6 +41,7 @@
 
 <script>
     import Navbar from './cms/inc/Navbar.vue';
+    import Drawer from './cms/inc/Drawer.vue';
     import Index from './Index.vue';
 
     export default {
@@ -47,6 +49,7 @@
         components: {
             Navbar,
             Index,
+            Drawer
         },
         data() {
             return {

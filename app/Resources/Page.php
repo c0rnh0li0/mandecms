@@ -23,6 +23,7 @@ class Page extends JsonResource
             'template_name' => $this->template->name,
             'owner_name' => $this->owner->name,
             'template' => $this->template,
+            'page_metatags' => $this->page_metatags,
             'owner' => $this->owner,
             'category' => $this->category,
             'created_at' => $this->created_at->format('d.m.Y'),

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Menu;
 use App\Page;
+use App\Tag;
 use App\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FacadesRequest;
@@ -77,11 +78,12 @@ class PagesController extends Controller
         $page->body = $request->input('body');
         $page->template_id = $request->input('template_id');
         $page->category_id = $request->input('category_id');
+        $page->page_metatags = $request->input('page_metatags');
         $page->user_id = $request->user('api')->id;
         $page->url = $request->input('url');
         $page->hero_image = $this->uploadFileName($request, 'hero_image', $this->hero_path, $page->hero_image);
 
-        // TODO: add tags
+        $this->saveTags(explode(',', $page->page_metatags));
 
         if ($page->save()) {
             return response()->json([
@@ -131,8 +133,11 @@ class PagesController extends Controller
         $page->body = $request->input('body');
         $page->template_id = $request->input('template_id');
         $page->category_id = $request->input('category_id');
+        $page->page_metatags = $request->input('page_metatags');
         $page->url = $request->input('url');
         $page->hero_image = $this->uploadFileName($request, 'hero_image', $this->hero_path, $page->hero_image);
+
+        $this->saveTags(explode(',', $page->page_metatags));
 
         if ($page->save()) {
             return new PageResource($page);
@@ -189,6 +194,18 @@ class PagesController extends Controller
             }
             else
                 return $prop;
+        }
+    }
+
+    private function saveTags($tagsArr) {
+        foreach ($tagsArr as $tag) {
+            $tagObj = new Tag();
+            $tagObj->name = $tag;
+
+            try {
+                $tagObj->save();
+            }
+            catch (\Exception $exception) {}
         }
     }
 }

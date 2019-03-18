@@ -297,8 +297,9 @@
 
             setDefaultItemData() {
                 this.editedIndex = -1;
+                this.editedItem = this.defaultItem;
                 this.formTitle = 'New ' + this.crudData.singular;
-                this.$refs.form.setData(this.crudData.defaultItem);
+                this.$refs.form.setData(this.editedItem);
             },
 
             deleteItem (item) {

@@ -197,16 +197,19 @@
             },
 
             setData(menuData) {
+                this.editedItem = {};
                 this.editedItem = menuData;
                 this.errors = [];
 
-                if (this.editedItem.page && this.editedItem.page.id) {
+                if (this.editedItem.page && this.editedItem.page.id)
                     this.menuPage = this.editedItem.page;
-                }
+                else
+                    this.menuPage = '';
 
-                if (this.editedItem.category && this.editedItem.category.id) {
+                if (this.editedItem.category && this.editedItem.category.id)
                     this.menuCategory = this.editedItem.category;
-                }
+                else
+                    this.menuCategory = '';
             },
 
             async getCategories() {

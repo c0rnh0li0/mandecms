@@ -212,6 +212,7 @@
                 this.errors = [];
 
                 if (this.editedItem.id == '') {
+                    this.edited_role = '';
                     this.imageFile = '';
                     this.imageUrl = '/storage/user_avatars/default_avatar.png';
                 }
