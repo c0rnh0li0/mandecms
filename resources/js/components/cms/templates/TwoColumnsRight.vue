@@ -1,5 +1,6 @@
 <template>
     <v-content app>
+        <v-parallax v-if="content.hero_image" height="500" :src="'/storage/hero_images/' + content.hero_image"></v-parallax>
         <v-container fluid grid-list-md>
             <v-layout row wrap>
                 <v-flex d-flex shrink xs12 sm4 md3 lg2>

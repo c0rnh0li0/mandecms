@@ -7,6 +7,27 @@
                     <v-container grid-list-md>
                         <v-layout row wrap>
                             <v-flex grow pa-1>
+                                <v-icon @click.stop="pickFile">attach_file</v-icon>
+                                <v-label @click.stop="pickFile">Select Hero image (click)</v-label>
+
+                                <input type="file"
+                                       style="display: none;"
+                                       name="hero_image"
+                                       ref="image"
+                                       accept="image/*"
+                                       @change="onFilePicked">
+
+                                <v-spacer></v-spacer>
+                                <img :src="heroUrl" height="200" v-if="heroUrl" @click.stop="pickFile"/>
+                                <v-spacer></v-spacer>
+                                <span v-if="typeof errors.hero_image != 'undefined'" color="red--text text--darken-4">{{ errors.hero_image[0] }}</span>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+
+                    <v-container grid-list-md>
+                        <v-layout row wrap>
+                            <v-flex grow pa-1>
                                 <v-text-field
                                         v-model="categoryTitle"
                                         label="Title"
@@ -65,6 +86,10 @@
                 categoryTitle: '',
 
                 errors: [],
+
+                // hero images section
+                heroUrl: '',
+                heroFile: '',
             }
         },
         watch: {
@@ -80,7 +105,10 @@
                 let formData = new FormData();
 
                 for (var property in this.editedItem) {
-                    formData.append(property, this.editedItem[property]);
+                    if (property == 'hero_image' && this.heroFile != null)
+                        formData.append(property, this.heroFile, this.heroFile.name);
+                    else
+                        formData.append(property, this.editedItem[property]);
                 }
 
                 let that = this;
@@ -123,6 +151,26 @@
                 }
             },
 
+            pickFile () {
+                this.$refs.image.click();
+            },
+
+            onFilePicked (e) {
+                const files = e.target.files;
+                if(files[0] !== undefined) {
+                    const fr = new FileReader ();
+                    fr.readAsDataURL(files[0]);
+                    fr.addEventListener('load', () => {
+                        this.heroUrl = fr.result;
+                        this.heroFile = files[0]; // this is an image file that can be sent to server...
+                    });
+                } else {
+                    this.editedItem.hero_image = '';
+                    this.heroFile = '';
+                    this.heroUrl = '';
+                }
+            },
+
             close() {
                 this.$emit('close');
             },
@@ -130,6 +178,12 @@
             setData(policyData) {
                 this.editedItem = policyData;
                 this.categoryTitle = this.editedItem.title;
+
+                if (this.editedItem.hero_image)
+                    this.heroUrl = '/storage/hero_images/' + this.editedItem.hero_image;
+                else
+                    this.heroUrl = null;
+
                 this.errors = [];
             },
 

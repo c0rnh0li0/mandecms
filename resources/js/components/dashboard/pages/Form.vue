@@ -7,14 +7,8 @@
                     <v-container grid-list-md>
                         <v-layout row wrap>
                             <v-flex grow pa-1>
-                                <v-text-field
-                                        label="Select Hero image"
-                                        v-model='heroUrl'
-                                        prepend-icon='attach_file'
-                                        color="red darken-4"
-                                        :messages="errors.hero_image"
-                                        :error="typeof errors.hero_image != 'undefined'"
-                                        @click.stop="pickFile"></v-text-field>
+                                <v-icon @click.stop="pickFile">attach_file</v-icon>
+                                <v-label @click.stop="pickFile">Select Hero image (click)</v-label>
 
                                 <input type="file"
                                        style="display: none;"
@@ -26,6 +20,7 @@
                                 <v-spacer></v-spacer>
                                 <img :src="heroUrl" height="200" v-if="heroUrl" @click.stop="pickFile"/>
                                 <v-spacer></v-spacer>
+                                <span v-if="typeof errors.hero_image != 'undefined'" color="red--text text--darken-4">{{ errors.hero_image }}</span>
                             </v-flex>
                         </v-layout>
                     </v-container>
@@ -262,10 +257,16 @@
                 let formData = new FormData();
 
                 for (var property in this.editedItem) {
-                    if (property == 'page_metatags')
+                    if (property == 'hero_image' && this.heroFile != null)
+                        formData.append(property, this.heroFile, this.heroFile.name);
+                    else if (property == 'page_metatags')
                         formData.append(property, this.page_meta.join(','));
                     else
                         formData.append(property, this.editedItem[property]);
+                }
+
+                if (!this.heroFile) {
+                    formData.delete('hero_image');
                 }
 
                 let that = this;

@@ -35,6 +35,7 @@
                         id: '',
                         title: '',
                         description: '',
+                        hero_image: '',
                         url: '',
                         owner: {},
                         created_at: ''
@@ -43,6 +44,7 @@
                         id: '',
                         title: '',
                         description: '',
+                        hero_image: '',
                         url: '',
                         owner: {},
                         created_at: ''

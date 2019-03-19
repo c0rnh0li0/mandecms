@@ -6,6 +6,7 @@ import Page from './components/Page';
 import Vuetify from 'vuetify';
 import Vuex from 'vuex';
 import store from './store';
+//import Vuebar from 'vuebar';
 
 Vue.component('passport-clients', require('./components/dashboard/passport/Clients.vue').default);
 Vue.component('passport-authorized-clients', require('./components/dashboard/passport/AuthorizedClients.vue').default);
@@ -14,6 +15,8 @@ Vue.component('passport-personal-access-tokens', require('./components/dashboard
 Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.use(Auth);
+//Vue.use(Vuebar);
+// <div v-bar>
 
 axios.defaults.headers.common['X-CSRF-TOKEN'] = Laravel.csrfToken;
 axios.defaults.headers.common['Content-Type'] = 'application/json';

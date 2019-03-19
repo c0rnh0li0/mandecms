@@ -37,12 +37,6 @@
                     <v-container grid-list-md>
                         <span>Avatar</span>
                         <span class="red--text text--darken-4"><small>(Click to change)</small></span>
-                        <!-- <v-text-field label="Select Avatar"
-                                      v-model='editedItem.user_avatar'
-                                      prepend-icon='attach_file'
-                                      color="red darken-4"
-                                      :messages="errors.user_avatar"
-                                      :error="typeof errors.user_avatar != 'undefined'"></v-text-field> -->
                         <input type="file"
                                style="display: none"
                                name="user_avatar"

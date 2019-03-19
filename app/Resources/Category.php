@@ -19,11 +19,13 @@ class Category extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'url' => $this->url,
+            'hero_image' => $this->hero_image,
             'owner_name' => $this->owner->name,
             'owner' => $this->owner,
             'created_at' => $this->created_at->format('d.m.Y'),
             'is_page' => false,
             'is_category' => true,
+            'pages' => $this->pages
         ];
     }
 }

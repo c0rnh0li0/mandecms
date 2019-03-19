@@ -67,6 +67,7 @@ class PagesController extends Controller
         $rules = [
             'title' => 'required',
             'body' => 'required',
+            'hero_image' => 'image|nullable|max:1999'
         ];
 
         $this->validate($request, $rules);
@@ -122,6 +123,7 @@ class PagesController extends Controller
         $rules = [
             'title' => 'required',
             'body' => 'required',
+            'hero_image' => 'image|nullable|max:1999'
         ];
 
         $this->validate($request, $rules);

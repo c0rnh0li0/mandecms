@@ -22,6 +22,7 @@ class Page extends JsonResource
             'body' => $this->body,
             'template_name' => $this->template->name,
             'owner_name' => $this->owner->name,
+            'hero_image' => $this->hero_image,
             'template' => $this->template,
             'page_metatags' => $this->page_metatags,
             'owner' => $this->owner,

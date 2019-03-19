@@ -16,16 +16,23 @@ class CMSController extends Controller
     // otherwise return 404
     public function slug($slug)
     {
-        $page = Menu::where('slug', '=', "/{$slug}")->get();
-        if (sizeof($page) == 1 && $page[0]->page_id != null)
-            return new PageResource(Page::findOrFail($page[0]->page_id));
-        else if (sizeof($page) == 1 && $page[0]->category_id != null)
-            return new CategoryResource(Category::findOrFail($page[0]->category_id));
-        else
-            // TODO: do 404 response
-            return response()->json([
-                'success' => false,
-                'code' => 404
-            ], 201);
+        $menu = Menu::where('slug', '=', "/{$slug}")->get();
+        if (sizeof($menu) == 1 && $menu[0]->page_id != null)
+            return new PageResource(Page::findOrFail($menu[0]->page_id));
+        else if (sizeof($menu) == 1 && $menu[0]->category_id != null)
+            return new CategoryResource(Category::findOrFail($menu[0]->category_id));
+        else {
+            $page = Page::where('url', '=', "/{$slug}")->get();
+            if (sizeof($page) == 1 && $page[0]->id != null) {
+                return new PageResource($page[0]);
+            }
+            else {
+                // TODO: do 404 response
+                return response()->json([
+                    'success' => false,
+                    'code' => 404
+                ], 201);
+            }
+        }
     }
 }

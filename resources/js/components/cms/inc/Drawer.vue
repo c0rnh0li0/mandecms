@@ -10,17 +10,9 @@
               :key="i"
               :to="link.slug"
               :href="link.slug"
-              @click="onClick($event, link)"
-      >
+              @click="onClick($event, link)">
         <v-list-tile-title class="white--text" v-text="link.name" />
       </v-list-tile>
-      <!-- <router-link tag="v-list-tile" class="white--text"
-                   v-for="(item, i) in $store.state.menuitems"
-                   :key="i"
-                   :href="item.slug"
-                   @click="onClick($event, item)">
-        {{ item.name }}
-      </router-link> -->
     </v-list>
   </v-navigation-drawer>
 </template>

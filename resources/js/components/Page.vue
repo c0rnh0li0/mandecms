@@ -2,8 +2,8 @@
     <v-app>
         <navbar :progress-loading="loading" ref="nav" @navigated="openPage" app></navbar>
         <drawer @navigated="openPage" app></drawer>
-        <index app v-if="!is404" :content="content" :template="template"></index>
-        <router-view v-if="is404"></router-view>
+        <index app v-if="!is404" :content="content" :template="template" fill-height></index>
+        <router-view v-if="is404" fill-height></router-view>
         <v-footer height="auto">
             <v-card flat tile class="white--text text-xs-center" color="red darken-4">
                 <v-card-text>
@@ -92,8 +92,12 @@
                     this.content.title = response.data.data.title;
                     this.content.intro = response.data.data.description;
                     this.content.body = response.data.data.body;
+                    this.content.hero_image = response.data.data.hero_image;
                     this.is_page = response.data.data.is_page;
                     this.is_category = response.data.data.is_category;
+                    if (this.is_category) {
+                        this.content.pages = response.data.data.pages;
+                    }
 
                     this.template = this.is_page ? response.data.data.template.file : 'category-template';
                     this.is404 = false;

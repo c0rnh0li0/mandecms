@@ -9,6 +9,8 @@ use App\Category;
 
 class CategoriesController extends Controller
 {
+    private $hero_path = 'public/hero_images';
+
     /**
      * Display a listing of the resource.
      *
@@ -62,6 +64,7 @@ class CategoriesController extends Controller
         $rules = [
             'title' => 'required',
             'url' => 'required',
+            'hero_image' => 'image|nullable|max:1999'
         ];
 
         $this->validate($request, $rules);
@@ -72,6 +75,7 @@ class CategoriesController extends Controller
         $category->description = $request->input('description');
         $category->url = $request->input('url');
         $category->created_by = $request->user('api')->id;
+        $category->hero_image = $this->uploadFileName($request, 'hero_image', $this->hero_path, $category->hero_image);
 
         if ($category->save()) {
             return response()->json([
@@ -121,6 +125,7 @@ class CategoriesController extends Controller
         $rules = [
             'title' => 'required',
             'url' => 'required',
+            'hero_image' => 'image|nullable|max:1999'
         ];
 
         $this->validate($request, $rules);
@@ -130,6 +135,7 @@ class CategoriesController extends Controller
         $category->title = $request->input('title');
         $category->description = $request->input('description');
         $category->url = $request->input('url');
+        $category->hero_image = $this->uploadFileName($request, 'hero_image', $this->hero_path, $category->hero_image);
 
         if ($category->save()) {
             return new CategoryResource($category);
@@ -163,6 +169,29 @@ class CategoriesController extends Controller
                 'success' => false,
                 'message' => 'Error deleting category!'
             ], 201);
+        }
+    }
+
+    private function uploadFileName(Request $request, $name, $path, $prop) {
+        // handle file upload
+        if ($request->hasFile($name) && $request->file($name) != null) {
+            // get just filename
+            $filename = pathinfo($request->file($name)->getClientOriginalName(), PATHINFO_FILENAME);
+            // get just extension
+            $extension = $request->file($name)->getClientOriginalExtension();
+            // filename to store
+            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+            // upload
+            $filepath = $request->file($name)->storeAs($path, $fileNameToStore);
+
+            return $fileNameToStore;
+        }
+        else {
+            if ($prop == '' || $prop == null) {
+                return null;
+            }
+            else
+                return $prop;
         }
     }
 }
