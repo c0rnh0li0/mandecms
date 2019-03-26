@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Page as PageModel;
 
 class Page extends JsonResource
 {
@@ -27,6 +28,7 @@ class Page extends JsonResource
             'page_metatags' => $this->page_metatags,
             'owner' => $this->owner,
             'category' => $this->category,
+            'category_id' => $this->category_id,
             'created_at' => $this->created_at->format('d.m.Y'),
             'menu' => $this->menu,
             'is_page' => true,

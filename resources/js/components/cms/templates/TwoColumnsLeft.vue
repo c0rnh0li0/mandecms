@@ -5,7 +5,7 @@
             <v-layout row wrap>
                 <v-flex d-flex glow xs12 sm8 md9 lg10>
                     <v-card>
-                        <v-card-title primary class="title" v-html="'Two columns (left content) -> ' + content.title"></v-card-title>
+                        <v-card-title primary class="title" v-html="content.title"></v-card-title>
                         <v-card-text>
                             <p><em v-html="content.intro"></em></p>
                             <p v-html="content.body"></p>
@@ -14,7 +14,25 @@
                 </v-flex>
                 <v-flex d-flex shrink xs12 sm4 md3 lg2>
                     <v-card flat>
-                        <v-card-text>4 {{ lorem.slice(0, 100) }}</v-card-text>
+                        <v-card-title primary class="title">Related</v-card-title>
+
+                        <v-container grid-list-xl fluid>
+                            <v-layout row wrap>
+                                <v-flex v-for="page in content.related" :key="page.id" xs12 class="p-0 mb-2">
+                                    <v-hover>
+                                        <v-card tile slot-scope="{ hover }" :class="`elevation-${hover ? 12 : 2}`" :href="page.url">
+                                            <v-img :src="`/storage/hero_images/${page.hero_image ? page.hero_image : 'hero_not_available.jpg'}`" height="200px"></v-img>
+                                            <v-card-title primary-title>
+                                                <div>
+                                                    <h3 class="headline ma-0">{{ page.title }}</h3>
+                                                    <div v-html="page.description.substr(0, 50) + '...'"></div>
+                                                </div>
+                                            </v-card-title>
+                                        </v-card>
+                                    </v-hover>
+                                </v-flex>
+                            </v-layout>
+                        </v-container>
                     </v-card>
                 </v-flex>
             </v-layout>

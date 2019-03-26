@@ -89,14 +89,15 @@
                     }
                 }
                 else {
-                    this.content.title = response.data.data.title;
-                    this.content.intro = response.data.data.description;
-                    this.content.body = response.data.data.body;
-                    this.content.hero_image = response.data.data.hero_image;
+                    this.content = response.data.data;
+
                     this.is_page = response.data.data.is_page;
                     this.is_category = response.data.data.is_category;
                     if (this.is_category) {
                         this.content.pages = response.data.data.pages;
+                    }
+                    else if (this.is_page) {
+                        this.content.related = response.data.related;
                     }
 
                     this.template = this.is_page ? response.data.data.template.file : 'category-template';
