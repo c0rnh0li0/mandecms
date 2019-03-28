@@ -47,7 +47,8 @@
                 </v-list>
             </v-menu>
 
-            <v-btn flat small @click="navigate('/dashboard/images')">Images</v-btn>
+            <v-btn flat small @click="navigate('/dashboard/cms/galleries')">Galleries</v-btn>
+
             <v-btn flat small @click="navigate('/dashboard/menus')">Menu</v-btn>
 
             <v-menu>

@@ -25,6 +25,7 @@ class Category extends JsonResource
             'created_at' => $this->created_at->format('d.m.Y'),
             'is_page' => false,
             'is_category' => true,
+            'is_gallery' => $this->is_gallery,
             'pages' => $this->pages
         ];
     }

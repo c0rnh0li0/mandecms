@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Menu;
 use App\Page;
 use App\Category;
+use App\Gallery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use App\Http\Resources\Page as PageResource;
 use App\Http\Resources\Category as CategoryResource;
+use App\Http\Resources\Gallery as GalleryResource;
 
 class CMSController extends Controller
 {
@@ -28,6 +30,8 @@ class CMSController extends Controller
         }
         else if (sizeof($menu) == 1 && $menu[0]->category_id != null)
             return new CategoryResource(Category::findOrFail($menu[0]->category_id));
+        else if (sizeof($menu) == 1 && $menu[0]->gallery_id != null)
+            return new GalleryResource(Gallery::findOrFail($menu[0]->gallery_id));
         else {
             $page = Page::where('url', '=', "/{$slug}")->get();
             if (sizeof($page) == 1 && $page[0]->id != null) {
@@ -39,12 +43,22 @@ class CMSController extends Controller
                 return $pageResource;
             }
             else {
-                // TODO: do 404 response
-                return response()->json([
-                    'success' => false,
-                    'code' => 404
-                ], 201);
+                $category = Category::where('url', '=', "/{$slug}")->get();
+                if (sizeof($category) == 1 && $category[0]->id != null) {
+                    $categoryResource = new CategoryResource($category[0]);
+                    /*$pageResource->additional([
+                        'related' => PageResource::collection(Page::where('category_id', '=', $category[0]->category_id)->where('id', '<>', $category[0]->id)->get())
+                    ]);*/
+
+                    return $categoryResource;
+                }
             }
+
+            // TODO: do 404 response
+            return response()->json([
+                'success' => false,
+                'code' => 404
+            ], 201);
         }
     }
 }

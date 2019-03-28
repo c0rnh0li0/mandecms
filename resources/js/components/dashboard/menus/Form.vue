@@ -56,6 +56,19 @@
                                         color="red darken-4">
                                 </v-combobox>
                             </v-flex>
+                            <v-flex grow pa-1>
+                                <v-combobox
+                                        v-model="menuGallery"
+                                        :items="menugalleries"
+                                        ref="gallery"
+                                        :messages="errors.gallery_id"
+                                        :error="typeof errors.gallery_id != 'undefined'"
+                                        item-text="title"
+                                        item-value="id"
+                                        label="Gallery"
+                                        color="red darken-4">
+                                </v-combobox>
+                            </v-flex>
                         </v-layout>
                     </v-container>
 
@@ -93,8 +106,11 @@
 
                 menucategories: [],
                 menupages: [],
+                menugalleries: [],
+
                 menuCategory: '',
                 menuPage: '',
+                menuGallery: '',
 
                 errors: [],
             }
@@ -118,6 +134,14 @@
                 .catch(function (err) {
                     that.$emit('notified', err.message, 'error');
                 });
+
+            this.getGalleries()
+                .then(function (response) {
+                    that.menugalleries = response.data.data;
+                })
+                .catch(function (err) {
+                    that.$emit('notified', err.message, 'error');
+                });
         },
         watch: {
             menuCategory(val) {
@@ -129,6 +153,10 @@
                     this.menuPage = '';
                     this.editedItem.page_id = '';
                     this.editedItem.page = {};
+
+                    this.menuGallery = '';
+                    this.editedItem.gallery_id = '';
+                    this.editedItem.gallery = {};
                 }
             },
             menuPage(val) {
@@ -136,6 +164,25 @@
                     this.editedItem.page_id = val.id;
                     this.editedItem.slug = val.url;
                     this.editedItem.name = val.title;
+
+                    this.menuCategory = '';
+                    this.editedItem.category_id = '';
+                    this.editedItem.category = {};
+
+                    this.menuGallery = '';
+                    this.editedItem.gallery_id = '';
+                    this.editedItem.gallery = {};
+                }
+            },
+            menuGallery(val) {
+                if (val) {
+                    this.editedItem.gallery_id = val.id;
+                    this.editedItem.slug = val.url;
+                    this.editedItem.name = val.title;
+
+                    this.menuPage = '';
+                    this.editedItem.page_id = '';
+                    this.editedItem.page = {};
 
                     this.menuCategory = '';
                     this.editedItem.category_id = '';
@@ -210,10 +257,19 @@
                     this.menuCategory = this.editedItem.category;
                 else
                     this.menuCategory = '';
+
+                if (this.editedItem.gallery && this.editedItem.gallery.id)
+                    this.menuGallery = this.editedItem.gallery;
+                else
+                    this.menuGallery = '';
             },
 
             async getCategories() {
                 return await axios.get(this.extras.categories_url);
+            },
+
+            async getGalleries() {
+                return await axios.get(this.extras.galleries_url);
             },
 
             async getPages() {

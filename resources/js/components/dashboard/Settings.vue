@@ -22,15 +22,15 @@
                 <v-toolbar flat color="white">
                     <v-toolbar-title>Site settings</v-toolbar-title>
                 </v-toolbar>
-                <v-container grid-list-md text-xs-center>
+                <v-container grid-list-xl>
                     <v-form method="POST" v-on:submit.prevent="saveSettings">
                         <v-layout row wrap>
-                            <v-flex xs6>
+                            <v-flex xs12 sm12 md6 lg6 xl6>
                                 <v-card class="elevation-1">
                                     <v-card-title>
                                         <h4>Global settings</h4>
                                     </v-card-title>
-                                    <v-card-text class="px-0">
+                                    <v-card-text>
                                         <v-layout wrap>
                                             <v-container grid-list-md>
                                                 <span class="red--text text--darken-4">Site logo <small>(Click to change)</small></span>
@@ -92,12 +92,12 @@
                                     </v-card-text>
                                 </v-card>
                             </v-flex>
-                            <v-flex xs6>
+                            <v-flex xs12 sm12 md6 lg6 xl6>
                                 <v-card class="elevation-1">
                                     <v-card-title>
                                         <h4>Contact &amp; Social media</h4>
                                     </v-card-title>
-                                    <v-card-text class="px-0">
+                                    <v-card-text>
                                         <v-layout wrap>
                                             <v-container grid-list-md>
                                                 <v-text-field

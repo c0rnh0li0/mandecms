@@ -27,11 +27,12 @@ class CategoriesController extends Controller
         $search = FacadesRequest::get('q');
         if ($search != '') {
             $categories = Category::where('name', 'LIKE', '%' . $search . '%')
+                ->where('is_gallery', '=', 0)
                 ->orWhere('description', 'LIKE', '%' . $search . '%')
                 ->orderBy($sort, $dir)->paginate(10);
         }
         else {
-            $categories = Category::orderBy($sort, $dir)->paginate(10);
+            $categories = Category::where('is_gallery', '=', 0)->orderBy($sort, $dir)->paginate(10);
         }
 
 
@@ -40,7 +41,7 @@ class CategoriesController extends Controller
 
     public function all()
     {
-        return CategoryResource::collection(Category::all());
+        return CategoryResource::collection(Category::where('is_gallery', '=', 0)->get());
     }
 
     /**

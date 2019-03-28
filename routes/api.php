@@ -67,6 +67,19 @@ Route::post('/categories/store', 'CategoriesController@store');
 Route::put('/categories/update/{category}', 'CategoriesController@update');
 Route::delete('/categories/delete/{category}', 'CategoriesController@destroy');
 
+Route::get('galleries', 'GalleriesController@index');
+Route::get('galleries/all', 'GalleriesController@all');
+Route::get('galleries/info', 'GalleriesController@info');
+Route::post('/galleries/store', 'GalleriesController@store');
+Route::put('/galleries/update/{gallery}', 'GalleriesController@update');
+Route::delete('/galleries/delete/{gallery}', 'GalleriesController@destroy');
+
+Route::get('images', 'ImagesController@index');
+Route::get('images/all/{gallery}', 'ImagesController@all');
+Route::post('/images/store', 'ImagesController@store');
+Route::put('/images/update/{image}', 'ImagesController@update');
+Route::delete('/images/delete/{image}', 'ImagesController@destroy');
+
 Route::get('menus', 'MenusController@index');
 Route::get('menus/all', 'MenusController@all');
 Route::get('menus/build', 'MenusController@build');

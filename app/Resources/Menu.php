@@ -26,6 +26,8 @@ class Menu extends JsonResource
             'children' => $this->children,
             'category_id' => $this->category_id,
             'category' => $this->category,
+            'gallery_id' => $this->gallery_id,
+            'gallery' => $this->gallery,
             'created_at' => $this->created_at->format('d.m.Y'),
         ];
     }

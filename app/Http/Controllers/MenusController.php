@@ -117,6 +117,7 @@ class MenusController extends Controller
         $menu->visible = $request->input('visible') == true ? 1 : 0;
         $menu->page_id = $request->input('page_id');
         $menu->category_id = $request->input('category_id');
+        $menu->gallery_id = $request->input('gallery_id');
 
         if ($menu->save()) {
             return response()->json([
@@ -180,6 +181,7 @@ class MenusController extends Controller
         $menu->visible = $request->input('visible') == true ? 1 : 0;
         $menu->page_id = $request->input('page_id');
         $menu->category_id = $request->input('category_id');
+        $menu->gallery_id = $request->input('gallery_id');
 
         if ($menu->save()) {
             return new MenuResource($menu);

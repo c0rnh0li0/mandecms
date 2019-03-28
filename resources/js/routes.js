@@ -27,6 +27,9 @@ import PagesCrud from './components/dashboard/pages/Crud.vue';
 // categories views
 import CategoriesCrud from './components/dashboard/categories/Crud.vue';
 
+// galleries views
+import GalleriesCrud from './components/dashboard/galleries/Crud.vue';
+
 // menus views
 import MenusCrud from './components/dashboard/menus/Crud.vue';
 
@@ -150,6 +153,17 @@ const router = new VueRouter({
             meta: {
                 forAuth: true,
                 breadcrumb: 'Categories',
+            },
+        },
+
+        // galleries section
+        {
+            path: '/dashboard/cms/galleries',
+            component: GalleriesCrud,
+            name: 'Galleries',
+            meta: {
+                forAuth: true,
+                breadcrumb: 'Galleries',
             },
         },
 

@@ -48,6 +48,9 @@
                         category_id: '',
                         category: {},
 
+                        gallery_id: '',
+                        gallery: {},
+
                         created_at: ''
                     },
                     defaultItem: {
@@ -62,12 +65,17 @@
                         page: {},
 
                         category_id: '',
-                        category: '',
+                        category: {},
+
+                        gallery_id: '',
+                        gallery: {},
+
                         created_at: ''
                     },
                     extras: {
                         pages_url: '/api/pages/all',
                         categories_url: '/api/categories/all',
+                        galleries_url: '/api/galleries/all',
                     },
 
                     onMounted() {

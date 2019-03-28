@@ -22,14 +22,14 @@
                     <v-toolbar-title>Hi {{ editedItem.name }}!</v-toolbar-title>
                     <v-spacer></v-spacer>
                 </v-toolbar>
-                <v-container grid-list-md text-xs-center>
+                <v-container grid-list-xl>
                     <v-layout row wrap>
-                        <v-flex xs4>
+                        <v-flex xs12 sm12 md6 lg4 xl4>
                             <v-card class="elevation-1">
                                 <v-card-title>
                                     <h4>Your info</h4>
                                 </v-card-title>
-                                <v-card-text class="px-0">
+                                <v-card-text>
                                     <v-form method="POST" v-on:submit.prevent="saveProfile">
                                         <v-layout wrap>
                                             <v-input type="hidden" name="id" v-model="editedItem.id"></v-input>
@@ -70,12 +70,12 @@
                                 </v-card-actions>
                             </v-card>
                         </v-flex>
-                        <v-flex xs4>
+                        <v-flex xs12 md6 lg4>
                             <v-card class="elevation-1">
                                 <v-card-title>
                                     <h4>Your avatar</h4>
                                 </v-card-title>
-                                <v-card-text class="px-0">
+                                <v-card-text>
                                     <span class="red--text text--darken-4"><small>(Click to change)</small></span>
                                     <v-container grid-list-md>
                                         <input type="file"
@@ -99,12 +99,12 @@
                                 </v-card-actions>
                             </v-card>
                         </v-flex>
-                        <v-flex xs4>
+                        <v-flex xs12 md6 lg4>
                             <v-card class="elevation-1">
                                 <v-card-title>
                                     <h4>Change your password</h4>
                                 </v-card-title>
-                                <v-card-text class="px-0">
+                                <v-card-text>
                                     <v-form method="POST" v-on:submit.prevent="changePassword">
                                         <v-layout wrap>
                                             <v-input type="hidden" name="id" v-model="editedItem.id"></v-input>
