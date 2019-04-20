@@ -13,7 +13,7 @@
                    color="red darken-4">
                 <v-icon>add</v-icon>
             </v-btn>
-            <image-upload :showForm="form" ref="imageUpload" :gallery-id="galleryId" :gallery="galleryObject" @closeForm="form = false" :image="editedImage"></image-upload>
+            <image-upload :showForm="form" ref="imageUpload" :gallery="galleryId" @closeForm="form = false" :image="editedImage"></image-upload>
 
             <v-toolbar dark color="amber accent-3">
                 <v-toolbar-title>Images</v-toolbar-title>
@@ -59,19 +59,18 @@
         name: 'Images',
         props: {
             galleryImages: {type: Array, required: false, default: function () { return []; }},
-            galleryObject: {type: Object, required: false, default: function () { return {}; }},
-            galleryId: {type: Number, required: false, default: function () { return 0; }}
+            galleryId: {type: Number, required: false, default: function () { return ''; }},
         },
         watch: {
-            gallery(val) {
-                console.log('gallery', gallery)
-            }
+            galleryId(val) {
+                console.log('galleryId', val)
+            },
         },
         data() {
             return {
                 dialog: false,
                 form: false,
-
+                gallery: this.galleryObject,
                 editedImage: {
                     id: '',
                     title: '',
@@ -93,6 +92,7 @@
             openImageForm(imageData) {
                 this.editedImage = imageData;
                 this.$refs.imageUpload.setData(this.editedImage);
+                this.$refs.imageUpload.galleryObject = this.galleryObject;
 
                 this.form = true;
             }

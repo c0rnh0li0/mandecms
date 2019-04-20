@@ -8,7 +8,7 @@
                 <v-form method="POST" v-on:submit.prevent="save">
                     <v-layout wrap>
                         <v-input type="hidden" name="id" v-model="editedItem.id"></v-input>
-                        <v-input type="hidden" name="gallery_id" v-model="galleryId"></v-input>
+                        <v-input type="hidden" name="gallery_id" v-model="gallery"></v-input>
                         <v-container grid-list-md>
                             <v-layout row wrap>
                                 <v-flex grow pa-1 class="text-xs-center">
@@ -72,8 +72,7 @@
     export default {
         props: {
             image: {type: Object, required: false, default: function(){ return {}; }},
-            gallery: {type: Object, required: false, default: function(){ return {}; }},
-            galleryId: {type: Number, required: false, default: function(){ return 0; }},
+            gallery: {type: Number, required: false, default: function(){ return ''; }},
             showForm: {type: Boolean, required: false, default: function(){ return false; }},
         },
         watch: {
@@ -151,7 +150,6 @@
             },
 
             closeForm() {
-                this.showForm = false;
                 this.$emit('closeForm');
             },
 

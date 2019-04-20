@@ -190,6 +190,7 @@
                 newPasswordConfirm: '',
 
                 snackbar: false,
+                snackClass: '',
                 notification: '',
             }
         },

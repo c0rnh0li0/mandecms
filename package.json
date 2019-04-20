@@ -14,14 +14,14 @@
         "bootstrap": "^4.3.1",
         "cross-env": "^5.1",
         "jquery": "^3.2",
-        "laravel-mix": "^4.0.7",
+        "laravel-mix": "^4.0.15",
         "lodash": "^4.17.5",
         "popper.js": "^1.12",
         "resolve-url-loader": "^2.3.2",
-        "sass": "^1.17.2",
+        "sass": "^1.17.3",
         "sass-loader": "^7.1.0",
-        "vue": "^2.6.8",
-        "vue-template-compiler": "^2.6.8"
+        "vue": "^2.6.10",
+        "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
         "@ckeditor/ckeditor5-build-classic": "^11.2.0",
@@ -29,8 +29,8 @@
         "vue-2-breadcrumbs": "^0.5.0",
         "vue-router": "^3.0.2",
         "vuebar": "0.0.20",
-        "vuedraggable": "^2.19.2",
-        "vuetify": "^1.5.6",
+        "vuedraggable": "^2.20.0",
+        "vuetify": "^1.5.7",
         "vuex": "^3.1.0"
     }
 }
