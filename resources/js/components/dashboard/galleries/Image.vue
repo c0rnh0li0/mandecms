@@ -77,7 +77,7 @@
         },
         watch: {
             gallery(val) {
-                console.log('gallery in image form', gallery);
+                //console.log('gallery in image form', gallery);
             }
         },
         data() {

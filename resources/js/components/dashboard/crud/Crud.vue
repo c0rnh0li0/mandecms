@@ -69,6 +69,7 @@
                         <component :is="list"
                                    :key="props.item.id"
                                    :list-item="props.item"
+                                   @extra="showExtras"
                                    @showDeleteDialog="deleteItemDialog"
                                    @showEditForm="editedItemDialog">
                         </component>
@@ -79,6 +80,7 @@
                                :records="records"
                                :sort-url="crudData.crud_sort_url"
                                @notified="notify"
+                               @extra="showExtras"
                                @showDeleteDialog="deleteItemDialog"
                                @showEditForm="editedItemDialog">
                     </component>
@@ -104,6 +106,7 @@
 
 <script>
     export default {
+        name: 'MainCrud',
         props: {
             crudData: { type: Object, required: false, default: {}},
         },
@@ -170,6 +173,11 @@
                         that.notify(error, 'error');
                     });
             }
+
+            /*this.$on('extra', () => {
+                console.log('on extra emit');
+                this.$emit('extra');
+            });*/
         },
         mounted() {
             this.dataDisplay = this.crudData.dataDisplay;
@@ -401,6 +409,11 @@
 
             close() {
                 this.form_dialog = false;
+            },
+
+            showExtras(obj) {
+                console.log('extra from main crud');
+                this.$emit('extra', obj);
             },
 
             findWithAttr(array, attr, value) {

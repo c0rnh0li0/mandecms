@@ -1,8 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition">
-        <template v-slot:activator="{ on }">
-            <v-icon small v-on="on">collections</v-icon>
-        </template>
+    <v-dialog v-model="gallerydialog" fullscreen transition="dialog-bottom-transition">
         <v-card>
             <v-btn fixed
                    dark
@@ -68,7 +65,7 @@
         },
         data() {
             return {
-                dialog: false,
+                gallerydialog: false,
                 form: false,
                 gallery: this.galleryObject,
                 editedImage: {

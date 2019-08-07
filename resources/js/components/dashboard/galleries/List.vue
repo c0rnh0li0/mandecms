@@ -6,19 +6,14 @@
         <td class="text-xs-left">{{ item.owner_name }}</td>
         <td class="text-xs-right">{{ item.created_at }}</td>
         <td class="justify-end layout px-0">
-            <gallery :gallery-images="item.images" :gallery-id="item.id" class="mr-2"></gallery>
+            <v-icon small class="mr-2" @click="itemImages(item)">attach_file</v-icon>
             <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
             <v-icon small class="mr-2" @click="deleteItem(item)">delete</v-icon>
         </td>
     </tr>
 </template>
 <script>
-    import Gallery from './Images';
-
     export default {
-        components: {
-            Gallery
-        },
         props: {
             listItem: {type: Object, required: false, default: function () { return {}; }},
         },
@@ -37,6 +32,10 @@
             },
             addImages(item) {
                 console.log('will upload images');
+            },
+            itemImages(item) {
+                console.log('extra emitter');
+                this.$emit('extra', item);
             }
         }
     }

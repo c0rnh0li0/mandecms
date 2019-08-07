@@ -141,7 +141,7 @@ class GalleriesController extends Controller
         $gallery->hero_image = $this->uploadFileName($request, 'hero_image', $this->hero_path, $gallery->hero_image);
 
         if ($gallery->save()) {
-            return new CategoryResource($gallery);
+            return new GalleryResource($gallery);
         }
         else {
             return response()->json([
