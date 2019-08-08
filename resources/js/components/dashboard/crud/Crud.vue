@@ -173,11 +173,6 @@
                         that.notify(error, 'error');
                     });
             }
-
-            /*this.$on('extra', () => {
-                console.log('on extra emit');
-                this.$emit('extra');
-            });*/
         },
         mounted() {
             this.dataDisplay = this.crudData.dataDisplay;
@@ -412,7 +407,6 @@
             },
 
             showExtras(obj) {
-                console.log('extra from main crud');
                 this.$emit('extra', obj);
             },
 

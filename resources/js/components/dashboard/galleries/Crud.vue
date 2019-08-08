@@ -1,7 +1,7 @@
 <template>
     <div>
         <crud :crud-data="galleries_crud" @extra="showImages"></crud>
-        <gallery :gallerydialog="gallerydialog" :gallery-images="gallery.images" :gallery-id="gallery.id" class="mr-2"></gallery>
+        <gallery :dialogopen="gallerydialog" :gallery-images="gallery.images" :gallery-id="gallery.id" class="mr-2" @closeImageDialog="closeImageDialog" @updateImages="updateImages"></gallery>
     </div>
 </template>
 
@@ -55,27 +55,29 @@
                         images: []
                     },
                     extras: {
-                        showImages(item) {
-                            console.log('will show images in galleries crud');
-                        }
+                        showImages(item) {}
                     },
                 },
                 gallery: null,
-                gallerydialog: false
+                gallerydialog: false,
+                gallery_update_url: '/api/images/all/'
             }
         },
         created() {
             this.gallery = this.galleries_crud.defaultItem;
         },
         methods: {
-            onItemImages(item) {
-                console.log('emitted to galleries crud');
-                console.log(item);
-            },
             showImages(item) {
                 this.gallery = item;
                 this.gallerydialog = true;
                 // show images dialog here
+            },
+            closeImageDialog() {
+                this.gallerydialog = false;
+            },
+            async updateImages(gallery_id) {
+                let imgs = await axios.get(this.gallery_update_url + gallery_id);
+                this.gallery.images = imgs.data.data;
             }
         }
     }

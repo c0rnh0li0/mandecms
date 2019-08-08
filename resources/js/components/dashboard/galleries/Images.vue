@@ -1,42 +1,48 @@
 <template>
-    <v-dialog v-model="gallerydialog" fullscreen transition="dialog-bottom-transition">
+    <v-dialog v-model="dialogopen" fullscreen transition="dialog-bottom-transition">
         <v-card>
             <v-btn fixed
                    dark
                    fab
                    bottom
                    right
-                   @click="openImageForm(defaultImage)"
+                   @click="openImageForm()"
                    color="red darken-4">
                 <v-icon>add</v-icon>
             </v-btn>
-            <image-upload :showForm="form" ref="imageUpload" :gallery="galleryId" @closeForm="form = false" :image="editedImage"></image-upload>
+
+            <image-upload :showForm="form" ref="imageUpload" :gallery="gallery_id" @closeForm="form = false" :image="editedImage" @updated="imageSaved" @saved="imageSaved"></image-upload>
 
             <v-toolbar dark color="amber accent-3">
                 <v-toolbar-title>Images</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn icon dark @click="dialog = false">
+                <v-btn icon dark @click="closeImagesDialog">
                     <v-icon>close</v-icon>
                 </v-btn>
-                <!-- <v-toolbar-items>
-                    <v-btn dark flat @click="dialog = false">Save</v-btn>
-                </v-toolbar-items> -->
             </v-toolbar>
             <v-container grid-list-sm fluid>
                 <v-layout row wrap>
                     <v-flex v-if="galleryImages.length > 0" v-for="image in galleryImages" :key="image.id" xs6 sm4 md2 lg1 xl1 d-flex>
-                        <v-card flat tile class="d-flex">
-                            <v-img :src="`https://picsum.photos/500/300?image=${n * 5 + 10}`"
-                                   :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
-                                   aspect-ratio="1"
-                                   class="grey lighten-2">
-                                <template v-slot:placeholder>
-                                    <v-layout fill-height align-center justify-center ma-0>
-                                        <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                                    </v-layout>
-                                </template>
-                            </v-img>
-                        </v-card>
+                        <v-hover>
+                            <v-card tile slot-scope="{ hover }" :class="`elevation-${hover ? 12 : 2}`">
+                                <v-img :src="'/storage/galleries/' + image.path"
+                                       :lazy-src="'/storage/galleries/' + image.path"
+                                       aspect-ratio="1"
+                                       @click="editImage(image)"
+                                       class="grey lighten-2">
+                                    <template v-slot:placeholder>
+                                        <v-layout fill-height align-center justify-center ma-0>
+                                            <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                        </v-layout>
+                                    </template>
+                                </v-img>
+                                <v-card-title primary-title>
+                                    <div>
+                                        <h3 class="headline ma-0">{{ image.title }}</h3>
+                                    </div>
+                                </v-card-title>
+                            </v-card>
+                        </v-hover>
                     </v-flex>
                     <v-card flat v-else>
                         <v-card-text>No images in this gallery</v-card-text>
@@ -57,14 +63,17 @@
         props: {
             galleryImages: {type: Array, required: false, default: function () { return []; }},
             galleryId: {type: Number, required: false, default: function () { return ''; }},
+            dialogopen: {type: Boolean, required: true, default: function () { return false; }},
         },
         watch: {
             galleryId(val) {
-                console.log('galleryId', val)
-            },
+                this.editedImage.gallery_id = this.gallery_id = val;
+                console.log('galleryId', val);
+            }
         },
         data() {
             return {
+                gallery_id: 0,
                 gallerydialog: false,
                 form: false,
                 gallery: this.galleryObject,
@@ -86,12 +95,31 @@
         },
         mounted() {},
         methods: {
-            openImageForm(imageData) {
-                this.editedImage = imageData;
+            openImageForm() {
+                this.editedImage = this.defaultImage;
+                this.editedImage.gallery_id = this.gallery_id;
+
                 this.$refs.imageUpload.setData(this.editedImage);
                 this.$refs.imageUpload.galleryObject = this.galleryObject;
+                this.$refs.imageUpload.gallery_id = this.gallery_id;
 
                 this.form = true;
+            },
+            editImage(img) {
+                this.editedImage = img;
+                this.$refs.imageUpload.setData(this.editedImage);
+                this.$refs.imageUpload.galleryObject = this.galleryObject;
+                this.$refs.imageUpload.gallery_id = this.gallery_id;
+
+                this.form = true;
+            },
+            closeImagesDialog() {
+                this.$emit('closeImageDialog');
+            },
+            imageSaved() {
+                this.editedImage = this.defaultImage;
+                this.form = false;
+                this.$emit('updateImages', this.gallery_id);
             }
         }
     }

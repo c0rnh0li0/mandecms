@@ -41,7 +41,8 @@ class ImagesController extends Controller
     {
         $rules = [
             'title' => 'required',
-            'path' => 'image|nullable|max:1999'
+            'path' => 'image|nullable|max:1999',
+            'gallery_id' => 'required'
         ];
 
         $this->validate($request, $rules);
@@ -51,6 +52,7 @@ class ImagesController extends Controller
         $image->title = $request->input('title');
         $image->description = $request->input('description');
         $image->path = $this->uploadFileName($request, 'path', $this->images_path, $image->path);
+        $image->gallery_id = $request->input('gallery_id');
 
         if ($image->save()) {
             return response()->json([
@@ -145,6 +147,11 @@ class ImagesController extends Controller
                 'message' => 'Error deleting image!'
             ], 201);
         }
+    }
+
+    public function all($gallery_id) {
+        $images = Image::where('gallery_id', '=', $gallery_id)->get();
+        return ImageResource::collection($images);
     }
 
     private function uploadFileName(Request $request, $name, $path, $prop) {

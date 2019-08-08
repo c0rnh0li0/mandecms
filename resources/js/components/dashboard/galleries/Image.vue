@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="showForm" persistent max-width="500px">
+    <v-dialog v-model="showForm" max-width="500px">
         <v-card>
             <v-card-title>
                 <h2>Image</h2>
@@ -8,7 +8,7 @@
                 <v-form method="POST" v-on:submit.prevent="save">
                     <v-layout wrap>
                         <v-input type="hidden" name="id" v-model="editedItem.id"></v-input>
-                        <v-input type="hidden" name="gallery_id" v-model="gallery"></v-input>
+                        <v-input type="hidden" name="gallery_id" v-model="editedItem.gallery_id"></v-input>
                         <v-container grid-list-md>
                             <v-layout row wrap>
                                 <v-flex grow pa-1 class="text-xs-center">
@@ -72,12 +72,13 @@
     export default {
         props: {
             image: {type: Object, required: false, default: function(){ return {}; }},
-            gallery: {type: Number, required: false, default: function(){ return ''; }},
+            galleryId: {type: Number, required: false, default: function(){ return 0; }},
             showForm: {type: Boolean, required: false, default: function(){ return false; }},
         },
         watch: {
-            gallery(val) {
-                //console.log('gallery in image form', gallery);
+            galleryId(val) {
+                this.editedItem.gallery_id = val;
+                console.log('gallery in image form', val);
             }
         },
         data() {
